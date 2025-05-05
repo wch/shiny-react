@@ -1,5 +1,5 @@
 import React from "react";
-import { useShinyInput, useShinyOutput } from "./shiny-hooks";
+import { useShinyInput, useShinyOutput } from "./hooks/shiny";
 
 function HelloWorldComponent() {
   const [txtin, setTxtin] = useShinyInput<string>("txtin", "Hello, world!");
