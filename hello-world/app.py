@@ -6,16 +6,16 @@ from pathlib import PurePath
 
 from htmltools import HTMLDependency
 
-www_path = PurePath(__file__).parent.parent / "shiny_react" / "distjs"
+www_path = PurePath(__file__).parent.parent / "dist" / "hello-world"
 
 
 def page_dep() -> list[HTMLDependency]:
     return [
         HTMLDependency(
-            name="shinyreact",
+            name="shinyreact-hello-world",
             version="1.0.0",
             source={"subdir": str(www_path)},
-            script={"src": "index.js", "type": "module"},
+            script={"src": "main.js", "type": "module"},
         ),
     ]
 

@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "outDir": "dist",
-    "rootDir": "srcts",
+    "rootDir": "src",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -27,6 +27,5 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["srcts/**/*.ts", "srcts/**/*.tsx"],
-  "exclude": []
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

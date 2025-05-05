@@ -3,10 +3,10 @@ library(htmltools)
 
 shinyReactDependency <- function() {
   htmlDependency(
-    name = "shinyreact",
+    name = "shinyreact-hello-world",
     version = "1.0.0",
-    src = c(file = "../dist"),
-    script = list(src = "index.js", type = "module")
+    src = c(file = "../dist/hello-world"),
+    script = list(src = "main.js", type = "module")
   )
 }
 
