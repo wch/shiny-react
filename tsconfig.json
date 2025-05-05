@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2021",
-    "module": "es2020",
+    "target": "es2022",
+    "module": "es2022",
     "moduleResolution": "node",
-    "lib": ["es2021", "DOM", "DOM.Iterable"],
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -11,7 +11,7 @@
     "checkJs": false,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "outDir": "shiny_react/distjs",
+    "outDir": "dist",
     "rootDir": "srcts",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -27,6 +27,6 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["srcts/**/*.ts", "srcts/index.tsx"],
+  "include": ["srcts/**/*.ts", "srcts/**/*.tsx"],
   "exclude": []
 }
