@@ -6,7 +6,7 @@ from pathlib import PurePath
 
 from htmltools import HTMLDependency
 
-www_path = PurePath(__file__).parent.parent / "dist" / "hello-world"
+www_path = PurePath(__file__).parent.parent.parent / "dist" / "hello-world"
 
 
 def page_dep() -> list[HTMLDependency]:

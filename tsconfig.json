@@ -26,11 +26,13 @@
     "esModuleInterop": true,
     "strict": true,
     "jsx": "react-jsx",
+    // Allow importing JSON files
+    "resolveJsonModule": true,
 
     // For shadcn/ui
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]

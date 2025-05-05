@@ -5,7 +5,7 @@ shinyReactDependency <- function() {
   htmlDependency(
     name = "shinyreact-hello-world",
     version = "1.0.0",
-    src = c(file = "../dist/hello-world"),
+    src = c(file = "../../dist/hello-world"),
     script = list(src = "main.js", type = "module")
   )
 }
@@ -19,7 +19,6 @@ ui <- bootstrapPage(
 
 server <- function(input, output, session) {
   output$txtout <- renderText({
-    req(input$txtin)
     paste("Value of input$txtin():", input$txtin)
   })
 }

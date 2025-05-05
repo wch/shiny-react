@@ -1,8 +1,18 @@
 import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useShinyInput, useShinyOutput } from "../hooks/shiny";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 function ExampleComponent() {
-  const [txtin, setTxtin] = useShinyInput<string>("txtin", "Hello, world!");
+  const [txtin, setTxtin] = useShinyInput<string>("txtin", "");
 
   const txtout = useShinyOutput<string>("txtout", null);
 
@@ -12,16 +22,39 @@ function ExampleComponent() {
 
   return (
     <div>
-      <div>
-        <label style={{ display: "block" }}>
-          Text input value sent to Shiny (<code>input.txtin</code>):{" "}
-        </label>
-        <input type="text" value={txtin} onChange={handleInputChange} />
-      </div>
-      <hr />
-      <div>
-        <pre style={{ whiteSpace: "pre-wrap" }}>{txtout}</pre>
-      </div>
+      <Card className="max-w-100 m-8">
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full max-w-sm items-center gap-1.5 mb-4">
+            <Label htmlFor="txtin">Input txtin</Label>
+            <Input
+              value={txtin}
+              placeholder="Type something..."
+              onChange={handleInputChange}
+            />
+          </div>
+          <p>Reversed string:</p>
+          <p className="text-lg font-semibold">{txtout}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="max-w-100 m-8">
+        <CardContent>
+          <div className="grid w-full max-w-sm items-center gap-1.5 mb-4">
+            <p>
+              I can use the output value in another place. I can also set the
+              input value from a different place. Clicking on this button will
+              set txtin to "Hello, world!"
+            </p>
+            <Button onClick={() => setTxtin("Hello, world!")}>
+              {txtout ? txtout : "Type something above..."}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
