@@ -1,10 +1,10 @@
-import { createRoot } from 'react-dom/client';
-import TestComponent from './TestComponent';
+import { createRoot } from "react-dom/client";
+import HelloWorldComponent from "./HelloWorldComponent";
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
-  root.render(<TestComponent />);
+  root.render(<HelloWorldComponent />);
 } else {
   console.error("Could not find root element to mount React component.");
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { useShinyInput, useShinyOutput } from "./shiny-hooks";
 
-function TestComponent() {
+function HelloWorldComponent() {
   const [txtin, setTxtin] = useShinyInput<string>("txtin", "Hello, world!");
 
   const txtout = useShinyOutput<string>("txtout", null);
@@ -26,4 +26,4 @@ function TestComponent() {
   );
 }
 
-export default TestComponent;
+export default HelloWorldComponent;
