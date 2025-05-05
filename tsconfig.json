@@ -25,7 +25,13 @@
     "noImplicitOverride": true,
     "esModuleInterop": true,
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+
+    // For shadcn/ui
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

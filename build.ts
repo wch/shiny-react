@@ -94,7 +94,7 @@ const metafilePlugin: esbuild.Plugin = {
 async function main() {
   const buildmap = {
     webview: esbuild.context({
-      entryPoints: ["src/hello-world/main.tsx"],
+      entryPoints: ["src/hello-world/main.tsx", "src/example/main.tsx"],
       outdir: "dist/",
       bundle: true,
       format: "esm",
