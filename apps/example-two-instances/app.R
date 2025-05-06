@@ -25,7 +25,8 @@ barePage <- function(..., title = NULL, lang = NULL) {
 ui <- barePage(
   title = "Example with shadcn/ui",
   shinyReactDependency(),
-  tags$div(id = "root")
+  tags$div(id = "root"),
+  tags$div(id = "root2")
 )
 
 server <- function(input, output, session) {
