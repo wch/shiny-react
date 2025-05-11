@@ -1,3 +1,4 @@
+import { debounce } from "@/utils";
 import { useState, useEffect, useCallback } from "react";
 import { ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 
@@ -17,13 +18,14 @@ import { ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
  * `updateTextInput()`). For two-way binding, a custom Shiny input binding
  * would be required.
  *
- * @param inputId The ID that will be used for the Shiny input (`input$<inputId>`).
+ * @param id The ID that will be used for the Shiny input (`input$<inputId>`).
  * @param defaultValue The initial value for the input.
  * @returns A tuple containing the current value and a function to set the value: `[value, setValue]`.
  */
 export function useShinyInput<T>(
-  inputId: string,
+  id: string,
   defaultValue: T,
+  { debounceMs = 200 }: { debounceMs?: number } = {}
 ): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(defaultValue);
 
@@ -34,7 +36,8 @@ export function useShinyInput<T>(
       await window.Shiny.initializedPromise;
       setShinyInitialized(true);
 
-      window.Shiny.reactRegistry.registerInput(inputId, setValue);
+      window.Shiny.reactRegistry.registerInput(id, setValue);
+      window.Shiny.reactRegistry.setInputValue(id, value);
     })();
   }, []); // Run only once on mount
 
@@ -44,9 +47,9 @@ export function useShinyInput<T>(
         return;
       }
 
-      window.Shiny.reactRegistry.setInputValue(inputId, value);
+      window.Shiny.reactRegistry.setInputValue(id, value);
     },
-    [shinyInitialized, inputId],
+    [shinyInitialized, id]
   );
 
   // useEffect(() => {
@@ -71,15 +74,20 @@ export function useShinyInput<T>(
  */
 export function useShinyOutput<T>(
   outputId: string,
-  defaultValue: T | null = null,
-): T | null {
-  const [value, setValue] = useState<T | null>(defaultValue);
+  defaultValue: T | undefined = undefined
+): [T | undefined, boolean] {
+  const [value, setValue] = useState<T | undefined>(defaultValue);
+  const [recalculating, setRecalculating] = useState<boolean>(false);
 
   useEffect(() => {
-    window.Shiny.reactRegistry.registerOutput(outputId, setValue);
+    window.Shiny.reactRegistry.registerOutput(
+      outputId,
+      setValue,
+      setRecalculating
+    );
   }, [outputId]);
 
-  return value;
+  return [value, recalculating];
 }
 
 export class ReactOutputBinding extends window.Shiny.OutputBinding {
@@ -89,18 +97,25 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
 
   override renderValue(el: HTMLElement, data: any): void {
     window.Shiny.reactRegistry.outputs[el.id].setValueFns.forEach((fn) =>
-      fn(data),
+      fn(data)
     );
   }
 
   override renderError(el: HTMLElement, err: ErrorsMessageValue): void {
     console.log(`Error for ${el.id}: ${err}`);
   }
+
+  override showProgress(el: HTMLElement, show: boolean): void {
+    // console.log(`Progress for ${el.id}: ${show}`);
+    window.Shiny.reactRegistry.outputs[el.id].setRecalculatingFns.forEach(
+      (fn) => fn(show)
+    );
+  }
 }
 
 window.Shiny.outputBindings.register(
   new ReactOutputBinding(),
-  "shiny.reactOutput",
+  "shiny.reactOutput"
 );
 
 // Copied from shinyapp.d.ts
@@ -116,6 +131,8 @@ type InputMap = {
     id: string;
     // setFoo functions for all React components which use this input ID
     setValueFns: Array<(value: any) => void>;
+    // Possibly debounce Shiny input value setter
+    shinySetInputValueDebounced: (value: any) => void;
   };
 };
 
@@ -125,6 +142,7 @@ type OutputMap = {
     id: string;
     // setFoo functions for all React components which use this output ID
     setValueFns: Array<(value: any) => void>;
+    setRecalculatingFns: Array<(value: boolean) => void>;
   };
 };
 
@@ -138,12 +156,19 @@ class ShinyReactRegistry {
       this.inputs[inputId] = {
         id: inputId,
         setValueFns: [],
+        shinySetInputValueDebounced: debounce((value: any) => {
+          window.Shiny.setInputValue!(inputId, value);
+        }, 100),
       };
     }
     this.inputs[inputId].setValueFns.push(setValueFn);
   }
 
-  registerOutput(outputId: string, setValue: (value: any) => void) {
+  registerOutput(
+    outputId: string,
+    setValue: (value: any) => void,
+    setRecalculating: (value: boolean) => void
+  ) {
     if (!this.outputs[outputId]) {
       // Need to create a dummy div element with the ID, so that we have
       // something to bind to.
@@ -158,11 +183,13 @@ class ShinyReactRegistry {
       this.outputs[outputId] = {
         id: outputId,
         setValueFns: [],
+        setRecalculatingFns: [],
       };
     }
 
     // Do we need to dedupe?
     this.outputs[outputId].setValueFns.push(setValue);
+    this.outputs[outputId].setRecalculatingFns.push(setRecalculating);
   }
 
   hasInput(inputId: string) {
@@ -174,7 +201,7 @@ class ShinyReactRegistry {
       console.error(`Input ${inputId} not found`);
       return;
     }
-    window.Shiny.setInputValue!(inputId, value);
+    this.inputs[inputId].shinySetInputValueDebounced(value);
     this.inputs[inputId].setValueFns.forEach((fn) => fn(value));
   }
 

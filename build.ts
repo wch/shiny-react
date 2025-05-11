@@ -24,11 +24,11 @@ const esbuildProblemMatcherPlugin: esbuild.Plugin = {
       } else if ("in" in entryPoints[0]) {
         // Case 2: array of {in, out} objects
         entryPointsInputNames = entryPoints.map(
-          (entry) => (entry as { in: string }).in,
+          (entry) => (entry as { in: string }).in
         );
       } else {
         throw new Error(
-          "entryPoints is not an array of strings or {in, out} objects",
+          "entryPoints is not an array of strings or {in, out} objects"
         );
       }
     } else {
@@ -40,8 +40,8 @@ const esbuildProblemMatcherPlugin: esbuild.Plugin = {
     build.onStart(() => {
       console.log(
         `[${watch ? "watch " : ""}${new Date().toISOString()}] build started ${entryPointsInputNames.join(
-          ", ",
-        )}`,
+          ", "
+        )}`
       );
     });
 
@@ -50,14 +50,14 @@ const esbuildProblemMatcherPlugin: esbuild.Plugin = {
         console.error(`✘ [ERROR] ${text}`);
         if (location !== null) {
           console.error(
-            `    ${location.file}:${location.line}:${location.column}:`,
+            `    ${location.file}:${location.line}:${location.column}:`
           );
         }
       });
       console.log(
         `[${watch ? "watch " : ""}${new Date().toISOString()}] build finished ${entryPointsInputNames.join(
-          ", ",
-        )}`,
+          ", "
+        )}`
       );
     });
   },
@@ -81,10 +81,10 @@ const metafilePlugin: esbuild.Plugin = {
 
               fs.writeFileSync(
                 `${bundleName}.esbuild-meta.json`,
-                JSON.stringify(result.metafile),
+                JSON.stringify(result.metafile)
               );
             }
-          },
+          }
         );
       }
     });
@@ -94,7 +94,11 @@ const metafilePlugin: esbuild.Plugin = {
 async function main() {
   const buildmap = {
     webview: esbuild.context({
-      entryPoints: ["src/hello-world/main.tsx", "src/example/main.tsx"],
+      entryPoints: [
+        "src/hello-world/main.tsx",
+        "src/example/main.tsx",
+        "src/plot/main.tsx",
+      ],
       outdir: "dist/",
       bundle: true,
       format: "esm",
@@ -122,7 +126,7 @@ async function main() {
       .catch((e) => {
         console.error(e);
         process.exit(1);
-      }),
+      })
   );
 }
 
