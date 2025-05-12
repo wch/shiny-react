@@ -90,6 +90,9 @@ export function useShinyOutput<T>(
   return [value, recalculating];
 }
 
+// TODO: Implement useShinyOutputValue and useShinyOutputRecalculating
+// TODO: Also get error value?
+
 export class ReactOutputBinding extends window.Shiny.OutputBinding {
   override find(scope: HTMLElement | JQuery<HTMLElement>): JQuery<HTMLElement> {
     return $(scope).find(".react-shiny-output");
@@ -150,6 +153,17 @@ type OutputMap = {
 class ShinyReactRegistry {
   inputs: InputMap = {};
   outputs: OutputMap = {};
+
+  constructor() {
+    window.Shiny.addCustomMessageHandler("shinyReactSetInputs", (msg: any) => {
+      for (const [inputId, value] of Object.entries(msg)) {
+        if (this.inputs[inputId]) {
+          // TODO: Don't use debounced version
+          this.setInputValue(inputId, value);
+        }
+      }
+    });
+  }
 
   registerInput(inputId: string, setValueFn: (value: any) => void) {
     if (!this.inputs[inputId]) {

@@ -1,6 +1,9 @@
+# pyright: strict
+# pyright: reportUnusedFunction=false
 from __future__ import annotations
 
-from shiny import App, Inputs, Outputs, Session, ui, render
+import json
+from shiny import App, Inputs, Outputs, Session, ui, render, reactive
 from shiny.html_dependencies import shiny_deps
 from pathlib import PurePath
 import numpy as np
@@ -62,6 +65,44 @@ def server(input: Inputs, output: Outputs, session: Session):
             return "warning"
         else:
             return "ok"
+
+    @render.text()
+    def out7():
+        return f"Shiny sees input.value7(): {json.dumps(input.value7(), indent=2)}"
+
+    # Saving and restoring state
+    saved_state = reactive.Value({})
+
+    @render.text
+    def saved_state_text():
+        import json
+
+        return json.dumps(saved_state.get(), indent=2)
+
+    @reactive.effect
+    @reactive.event(input.save_state)
+    def save_state():
+
+        with reactive.isolate():
+            keys = dir(input)
+            keys = list(filter(lambda x: not x.startswith("."), keys))
+            filtered_inputs = {}
+            for key in keys:
+                try:
+                    if input[key].is_set():
+                        filtered_inputs[key] = input[key]()
+                except Exception as e:
+                    print("Error getting input", key, e)
+            print(json.dumps(filtered_inputs, indent=2))
+            saved_state.set(filtered_inputs)
+
+    @reactive.effect
+    @reactive.event(input.restore_state)
+    async def restore_state():
+        await session.send_custom_message(
+            "shinyReactSetInputs",
+            saved_state.get(),
+        )
 
     @render.plot()
     async def plot1():
