@@ -35,7 +35,7 @@ server <- function(input, output, session) {
   lapply(1:4, function(i) {
     output[[paste0("out", i)]] <- renderText({
       paste0(
-        "Shiny sees input.value",
+        "Shiny sees input$value",
         i,
         ": ",
         input[[paste0("value", i)]],
@@ -69,7 +69,7 @@ server <- function(input, output, session) {
 
   output$out7 <- renderText({
     paste0(
-      "Shiny sees input.value7(): ",
+      "Shiny sees input$value7: ",
       jsonlite::toJSON(input$value7, auto_unbox = TRUE, pretty = TRUE)
     )
   })
