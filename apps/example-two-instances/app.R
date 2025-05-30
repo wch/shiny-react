@@ -23,8 +23,12 @@ barePage <- function(..., title = NULL, lang = NULL) {
 
 
 ui <- barePage(
-  title = "Example with shadcn/ui",
+  title = "Example with two React app instances",
   shinyReactDependency(),
+  tags$p(
+    "This app has two separate React app instances which both use the same Shiny input value, `txtin`.",
+    style = "padding: 1rem;"
+  ),
   tags$div(id = "root"),
   tags$div(id = "root2")
 )

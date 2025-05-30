@@ -97,7 +97,7 @@ async function main() {
       entryPoints: [
         "src/hello-world/main.tsx",
         "src/example/main.tsx",
-        "src/plot/main.tsx",
+        "src/fancy/main.tsx",
       ],
       outdir: "dist/",
       bundle: true,

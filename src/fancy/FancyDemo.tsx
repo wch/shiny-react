@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
@@ -129,6 +135,7 @@ function RoundTripCard({ className }: { className?: string }) {
     >
       <CardHeader>
         <CardTitle>State takes round trip</CardTitle>
+        <CardDescription>Try moving the slider to 100%</CardDescription>
       </CardHeader>
       <CardContent>
         <>
@@ -159,6 +166,7 @@ function RoundTripCard2({ className }: { className?: string }) {
     >
       <CardHeader>
         <CardTitle>State takes round trip 2</CardTitle>
+        <CardDescription>Try slowly moving the slider to 100%</CardDescription>
       </CardHeader>
       <CardContent>
         {validState === "fatal" ? (

@@ -24,6 +24,10 @@ app_ui = ui.tags.html(
     ui.tags.body(
         shiny_deps(False),
         page_dep(),
+        ui.p(
+            "This app has two separate React app instances which both use the same Shiny input value, `txtin`.",
+            style="padding: 1rem;",
+        ),
         ui.div(id="root"),
         ui.div(id="root2"),
     ),

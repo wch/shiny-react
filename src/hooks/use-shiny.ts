@@ -39,6 +39,8 @@ export function useShinyInput<T>(
       window.Shiny.reactRegistry.registerInput(id, setValue);
       window.Shiny.reactRegistry.setInputValue(id, value);
     })();
+
+    // TODO: Cleanup? This runs twice in dev mode
   }, []); // Run only once on mount
 
   const setValueWrapped = useCallback(

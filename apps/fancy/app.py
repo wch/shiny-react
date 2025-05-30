@@ -8,15 +8,14 @@ from shiny.html_dependencies import shiny_deps
 from pathlib import PurePath
 import numpy as np
 import matplotlib.pyplot as plt
-import asyncio
 from htmltools import HTMLDependency
 
-www_path = PurePath(__file__).parent.parent.parent / "dist" / "plot"
+www_path = PurePath(__file__).parent.parent.parent / "dist" / "fancy"
 
 
 def page_dep() -> HTMLDependency:
     return HTMLDependency(
-        name="shinyreact-plot",
+        name="shinyreact-fancy",
         version="1.0.0",
         source={"subdir": str(www_path)},
         script={"src": "main.js", "type": "module"},
@@ -34,7 +33,7 @@ app_ui = ui.tags.html(
 def server(input: Inputs, output: Outputs, session: Session):
     @render.text()
     def out1():
-        return f"Shiny sees input.value(): {input.value1()}, {type(input.value1())}"
+        return f"Shiny sees input.value1(): {input.value1()}, {type(input.value1())}"
 
     @render.text()
     def out2():
