@@ -18,22 +18,25 @@ import { Label } from "@/components/ui/label";
 
 function ExampleComponent() {
   return (
-    <div className="flex flex-col items-center gap-2 w-full">
-      <UncontrolledSliderCard className="w-140 mx-auto" />
-      <ControlledSliderCard className="w-140 mx-auto" />
-      <TwoSlidersCard className="w-140 mx-auto" />
-      <MultiInputCard className="w-140 mx-auto" />
-      <RoundTripCard className="w-140 mx-auto" />
-      <RoundTripCard2 className="w-140 mx-auto" />
-      <UpdateOnButtonClick className="w-140 mx-auto" />
-      <SaveRestoreStateCard className="w-140 mx-auto" />
+    <div className="flex flex-wrap justify-center gap-6 w-full mx-auto">
+      <UncontrolledSliderCard className="w-120" />
+      <ControlledSliderCard className="w-120" />
+      <TwoSlidersCard className="w-120" />
+      <MultiInputCard className="w-120" />
+      <RoundTripCard className="w-120" />
+      <RoundTripCard2 className="w-120" />
+      <UpdateOnButtonClick className="w-120" />
+      <SaveRestoreStateCard className="w-120" />
 
-      {/* <Card className="w-140 mx-auto">
+      <Card className="w-120">
+        <CardHeader>
+          <CardTitle>Two plots using same output</CardTitle>
+        </CardHeader>
         <CardContent>
           <ImageComponent id="plot1" />
           <ImageComponent id="plot1" />
         </CardContent>
-      </Card> */}
+      </Card>
     </div>
   );
 }
