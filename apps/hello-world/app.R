@@ -1,6 +1,8 @@
 library(shiny)
 library(htmltools)
 
+# Load the shinyreact package (will need to install/load it first)
+# For now, we'll use the local dependency function until the package is built
 shinyReactDependency <- function() {
   htmlDependency(
     name = "shinyreact-hello-world",

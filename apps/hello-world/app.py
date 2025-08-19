@@ -6,6 +6,8 @@ from pathlib import PurePath
 
 from htmltools import HTMLDependency
 
+# In the future, this would be: from shiny_react import shiny_react_dependency
+# For now, we'll use the local dependency function until the package is built
 www_path = PurePath(__file__).parent.parent.parent / "dist" / "hello-world"
 
 

@@ -1,13 +1,21 @@
 {
-  "name": "shiny-react",
+  "name": "shiny-react-monorepo",
   "version": "1.0.0",
-  "description": "Bindings to use Shiny with a React app",
-  "main": "index.js",
+  "description": "Monorepo for shiny-react packages (JavaScript, R, and Python)",
+  "private": true,
+  "workspaces": [
+    "js"
+  ],
   "scripts": {
-    "build": "tsx build.ts",
-    "watch": "tsx build.ts --watch",
-    "build-prod": "tsx build.ts --production",
-    "watch-prod": "tsx build.ts --production --watch"
+    "build": "./scripts/build.sh",
+    "dev": "./scripts/dev.sh",
+    "build:js": "cd js && npm run build",
+    "build:js:prod": "cd js && npm run build-prod",
+    "watch:js": "cd js && npm run watch",
+    "build:examples": "tsx build.ts",
+    "watch:examples": "tsx build.ts --watch",
+    "build:examples:prod": "tsx build.ts --production",
+    "watch:examples:prod": "tsx build.ts --production --watch"
   },
   "author": "Winston Chang",
   "license": "MIT",
