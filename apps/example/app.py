@@ -9,13 +9,20 @@ from htmltools import HTMLDependency
 www_path = PurePath(__file__).parent.parent.parent / "dist" / "example"
 
 
-def page_dep() -> HTMLDependency:
-    return HTMLDependency(
-        name="shinyreact-example",
-        version="1.0.0",
-        source={"subdir": str(www_path)},
-        script={"src": "main.js", "type": "module"},
-        stylesheet={"href": "main.css"},
+# def page_dep() -> HTMLDependency:
+#     return HTMLDependency(
+#         name="shinyreact-example",
+#         version="1.0.0",
+#         source={"subdir": str(www_path)},
+#         script={"src": "main.js", "type": "module"},
+#         stylesheet={"href": "main.css"},
+#     )
+
+
+def page_dep():
+    return ui.TagList(
+        ui.include_js(www_path / "main.js", type="module"),
+        ui.include_css(www_path / "main.css"),
     )
 
 

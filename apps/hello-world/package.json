@@ -1,0 +1,32 @@
+{
+  "name": "shiny-react-hello-world",
+  "version": "1.0.0",
+  "description": "Hello World app for shiny-react",
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "dev": "./scripts/dev.sh",
+    "build:js": "cd js && npm run build",
+    "build:js:prod": "cd js && npm run build-prod",
+    "watch:js": "cd js && npm run watch",
+    "build:examples": "tsx build.ts",
+    "watch:examples": "tsx build.ts --watch",
+    "build:examples:prod": "tsx build.ts --production",
+    "watch:examples:prod": "tsx build.ts --production --watch"
+  },
+  "author": "Winston Chang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/react-dom": "^19.1.7",
+    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
+    "esbuild": "^0.25.9",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  }
+}
