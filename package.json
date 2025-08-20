@@ -1,49 +1,37 @@
 {
-  "name": "shiny-react-monorepo",
-  "version": "1.0.0",
-  "description": "Monorepo for shiny-react packages (JavaScript, R, and Python)",
-  "private": true,
-  "workspaces": [
-    "js"
-  ],
-  "scripts": {
-    "build": "./scripts/build.sh",
-    "dev": "./scripts/dev.sh",
-    "build:js": "cd js && npm run build",
-    "build:js:prod": "cd js && npm run build-prod",
-    "watch:js": "cd js && npm run watch",
-    "build:examples": "tsx build.ts",
-    "watch:examples": "tsx build.ts --watch",
-    "build:examples:prod": "tsx build.ts --production",
-    "watch:examples:prod": "tsx build.ts --production --watch"
-  },
+  "name": "shiny-react",
+  "version": "0.0.1",
+  "description": "React bindings for Shiny applications (R and Python)",
   "author": "Winston Chang",
   "license": "MIT",
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.5",
-    "@types/node": "^22.15.3",
-    "@types/react-dom": "^19.1.3",
-    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.10.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "esbuild": "^0.25.3",
-    "esbuild-plugin-tailwindcss": "^2.0.1",
-    "lucide-react": "^0.507.0",
-    "postcss": "^8.5.3",
-    "prettier": "^3.5.3",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.2.0",
-    "tailwindcss": "^4.1.5",
-    "tsx": "^4.19.4",
-    "tw-animate-css": "^1.2.9",
-    "typescript": "^5.8.3"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wch/shiny-react.git"
   },
-  "dependencies": {
-    "@radix-ui/react-checkbox": "^1.3.1",
-    "@radix-ui/react-label": "^2.1.6",
-    "@radix-ui/react-slider": "^1.3.4",
-    "@radix-ui/react-slot": "^1.2.1"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsx build.ts",
+    "watch": "tsx build.ts --watch",
+    "build-prod": "tsx build.ts --production",
+    "watch-prod": "tsx build.ts --production --watch"
+  },
+  "peerDependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/react-dom": "^19.1.7",
+    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
+    "esbuild": "^0.25.9",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
   }
 }
