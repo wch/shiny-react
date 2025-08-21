@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
     "target": "es2022",
     "module": "es2022",
     "moduleResolution": "node",
@@ -11,10 +13,7 @@
     "checkJs": false,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "outDir": "dist",
-    "rootDir": "src",
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
@@ -25,15 +24,7 @@
     "noImplicitOverride": true,
     "esModuleInterop": true,
     "strict": true,
-    "jsx": "react-jsx",
-    // Allow importing JSON files
-    "resolveJsonModule": true,
-
-    // For shadcn/ui
-    // "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
-import tailwindPlugin from "esbuild-plugin-tailwindcss";
 import * as fs from "fs";
+import { spawn } from "child_process";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
@@ -18,21 +18,16 @@ const esbuildProblemMatcherPlugin: esbuild.Plugin = {
     // Get the input file names
     let entryPointsInputNames: string[];
     if (Array.isArray(entryPoints)) {
-      if (entryPoints.every((e) => typeof e === "string")) {
-        // Case 1: string[] - already an array of strings
-        entryPointsInputNames = entryPoints;
-      } else if ("in" in entryPoints[0]) {
-        // Case 2: array of {in, out} objects
-        entryPointsInputNames = entryPoints.map(
-          (entry) => (entry as { in: string }).in
-        );
-      } else {
-        throw new Error(
-          "entryPoints is not an array of strings or {in, out} objects"
-        );
-      }
+      // Case 1: Array of strings or {in, out} objects
+      entryPointsInputNames = entryPoints.map((e) => {
+        if (typeof e === "string") {
+          return e;
+        } else {
+          return e.in;
+        }
+      });
     } else {
-      // Case 3: Record<string, string>
+      // Case 2: Entire object is Record<string, string>
       const record = entryPoints;
       entryPointsInputNames = Object.values(record);
     }
@@ -91,28 +86,85 @@ const metafilePlugin: esbuild.Plugin = {
   },
 };
 
+function runTypeScript(watchMode = false): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const args = ["--emitDeclarationOnly"];
+    if (watchMode) {
+      args.push("--watch");
+    }
+
+    const tsc = spawn("npx", ["tsc", ...args], {
+      stdio: "inherit",
+      shell: true,
+    });
+
+    if (!watchMode) {
+      tsc.on("close", (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`TypeScript compilation failed with code ${code}`));
+        }
+      });
+    } else {
+      // In watch mode, don't wait for close
+      resolve();
+    }
+
+    tsc.on("error", (err) => {
+      reject(err);
+    });
+  });
+}
+
 async function main() {
   const buildmap = {
-    webview: esbuild.context({
-      entryPoints: [
-        "src/hello-world/main.tsx",
-        "src/example/main.tsx",
-        "src/fancy/main.tsx",
-      ],
-      outdir: "dist/",
+    esm: esbuild.context({
+      entryPoints: ["src/index.ts"],
+      outfile: "dist/index.mjs",
       bundle: true,
       format: "esm",
       minify: production,
       sourcemap: "linked",
       sourcesContent: true,
-      tsconfig: "./tsconfig.json",
-      external: [],
+      external: ["react", "react-dom"],
       logLevel: "silent",
       metafile: metafile,
-      plugins: [metafilePlugin, esbuildProblemMatcherPlugin, tailwindPlugin()],
+      plugins: [metafilePlugin, esbuildProblemMatcherPlugin],
+    }),
+    cjs: esbuild.context({
+      entryPoints: ["src/index.ts"],
+      outfile: "dist/index.js",
+      bundle: true,
+      format: "cjs",
+      minify: production,
+      sourcemap: "linked",
+      sourcesContent: true,
+      external: ["react", "react-dom"],
+      logLevel: "silent",
+      metafile: metafile,
+      plugins: [metafilePlugin, esbuildProblemMatcherPlugin],
     }),
   };
 
+  // Start TypeScript compilation for declarations
+  if (watch) {
+    console.log("Starting TypeScript compiler in watch mode...");
+    runTypeScript(true).catch((e) => {
+      console.error("TypeScript watch failed:", e);
+    });
+  } else {
+    console.log("Running TypeScript compiler for declarations...");
+    try {
+      await runTypeScript(false);
+      console.log("TypeScript declarations generated successfully");
+    } catch (e) {
+      console.error("TypeScript compilation failed:", e);
+      process.exit(1);
+    }
+  }
+
+  // Start esbuild
   Object.values(buildmap).forEach((build) =>
     build
       .then(async (context) => {
