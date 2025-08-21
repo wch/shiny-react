@@ -22,17 +22,3 @@ shinyReactDependency <- function() {
     script = list(src = "main.js", type = "module")
   )
 }
-
-ui <- barePage(
-  title = "Hello Shiny React",
-  shinyReactDependency(),
-  tags$div(id = "root")
-)
-
-server <- function(input, output, session) {
-  output$txtout <- renderText({
-    paste("Value of input$txtin():", input$txtin)
-  })
-}
-
-shinyApp(ui = ui, server = server)
