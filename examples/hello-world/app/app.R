@@ -1,6 +1,17 @@
 library(shiny)
 library(htmltools)
 
+barePage <- function(..., title = NULL, lang = NULL) {
+  ui <- list(
+    shiny:::jqueryDependency(),
+    if (!is.null(title)) tags$head(tags$title(title)),
+    ...
+  )
+  attr(ui, "lang") <- lang
+  ui
+}
+
+
 # Load the shinyreact package (will need to install/load it first)
 # For now, we'll use the local dependency function until the package is built
 shinyReactDependency <- function() {
@@ -12,9 +23,8 @@ shinyReactDependency <- function() {
   )
 }
 
-ui <- bootstrapPage(
-  # Use theme only here to load BS5, to make it look same as Python version
-  theme = bslib::bs_theme(),
+ui <- barePage(
+  title = "Hello Shiny React",
   shinyReactDependency(),
   tags$div(id = "root")
 )
