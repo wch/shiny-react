@@ -1,5 +1,4 @@
 library(shiny)
-library(htmltools)
 
 barePage <- function(..., title = NULL, lang = NULL) {
   ui <- list(
@@ -9,16 +8,4 @@ barePage <- function(..., title = NULL, lang = NULL) {
   )
   attr(ui, "lang") <- lang
   ui
-}
-
-
-# Load the shinyreact package (will need to install/load it first)
-# For now, we'll use the local dependency function until the package is built
-shinyReactDependency <- function() {
-  htmlDependency(
-    name = "shiny-react-hello-world",
-    version = "1.0.0",
-    src = c(file = "../dist/"),
-    script = list(src = "main.js", type = "module")
-  )
 }

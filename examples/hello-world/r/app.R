@@ -4,7 +4,8 @@ source("utils.R", local = TRUE)
 
 ui <- barePage(
   title = "Hello Shiny React",
-  shinyReactDependency(),
+  # shinyReactDependency(),
+  tags$head(tags$script(src = "main.js", type = "module")),
   tags$div(id = "root")
 )
 
