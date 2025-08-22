@@ -52,6 +52,8 @@ npm run build-prod
 
 The `examples/hello-world/` directory contains a complete example demonstrating the library usage with both R and Python Shiny applications.
 
+![Hello World Example](docs/hello-world-screenshot.jpg)
+
 To use it, first build the shiny-react library using the instructions above.
 
 ### Running the Hello World Example
