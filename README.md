@@ -40,7 +40,7 @@ npm run watch
 
 ## Hello World Example
 
-The `examples/hello-world/` directory contains a complete example demonstrating the library usage with both R and Python Shiny applications.
+The [examples/hello-world/](examples/hello-world/) directory contains a complete example demonstrating the library usage with both R and Python Shiny applications.
 
 ![Hello World Example](docs/hello-world-screenshot.jpg)
 
@@ -77,15 +77,23 @@ Open your browser to `http://localhost:8000`
 
 ## Usage
 
+With Shiny-React, the front end is written in React, while the back end is written with Shiny in R or Python. 
+
+The front end sends values to the back end using the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
+
+The back end sends data to the front end by setting Shiny output values just like in any other Shiny app. The front end reads output values with the `useShinyOutput` hook.
+
+Here is an example of a React component for the front end:
+
 ```typescript
 import { useShinyInput, useShinyOutput } from 'shiny-react';
 
 function MyComponent() {
-  // Send data to Shiny
-  const [inputValue, setInputValue] = useShinyInput<string>("myInput", "default");
+  // Input values sent to Shiny
+  const [inputValue, setInputValue] = useShinyInput<string>("my_input", "default value");
 
-  // Receive data from Shiny
-  const outputValue = useShinyOutput<string>("myOutput", undefined);
+  // Output values received from Shiny
+  const outputValue = useShinyOutput<string>("my_output", undefined);
 
   return (
     <div>
@@ -98,3 +106,25 @@ function MyComponent() {
   );
 }
 ```
+
+Here is a corresponding Shiny server function for the back end, written in R:
+
+```r
+function(input, output, session) {
+  output$my_output <- renderText({
+    toupper(input$my_input)
+  })
+}
+```
+
+And the same thing in Python:
+
+```python
+def server(input, output, session):
+    @render.text()
+    def my_output():
+        return input.my_input().upper()
+```
+
+
+Note that some other code is needed on the back end to create the complete Shiny app, but it is not shown here. See [examples/hello-world/r/app.R](examples/hello-world/r/app.R) and [examples/hello-world/py/app.py](examples/hello-world/py/app.py) for more complete examples.

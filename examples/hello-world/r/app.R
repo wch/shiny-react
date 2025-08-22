@@ -14,7 +14,7 @@ ui <- barePage(
 
 server <- function(input, output, session) {
   output$txtout <- renderText({
-    paste("Value of input$txtin():", input$txtin)
+    toupper(input$txtin)
   })
 }
 
