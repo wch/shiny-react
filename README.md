@@ -40,7 +40,7 @@ npm run watch
 
 ## Hello World Example
 
-The [examples/hello-world/](examples/hello-world/) directory contains a complete example demonstrating the library usage with both R and Python Shiny applications.
+The [examples/hello-world/](examples/hello-world/) directory contains a simple example demonstrating Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
 
 ![Hello World Example](docs/hello-world-screenshot.jpg)
 
