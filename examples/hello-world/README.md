@@ -42,7 +42,6 @@ This is a simple example demonstrating how to use the shiny-react library to cre
    - ESBuild bundling for R app (outputs to `r/www/main.js`)
    - ESBuild bundling for Python app (outputs to `py/www/main.js`)
 
-
    Note that if you build just an R or Python Shiny application (instead of both, as in this example), then you can simplify the `build` and `watch` scripts in `package.json` to only target one output directory.
 
 3. Run either the R or Python Shiny application:
@@ -55,6 +54,6 @@ This is a simple example demonstrating how to use the shiny-react library to cre
    shiny run py/app.py --port 8000
    ```
 
-   The command above uses port 8000, but you can use any port you like.
+   The commands above use port 8000, but you can use a different port.
 
 4. Open your web browser and navigate to `http://localhost:8000` to see the Shiny-React application in action.
