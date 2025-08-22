@@ -11,7 +11,9 @@ function HelloWorldComponent() {
   };
 
   return (
-    <div>
+    <div className="card">
+      <h1>Hello Shiny React!</h1>
+      <hr />
       <div>
         <label style={{ display: "block" }}>
           Text input value sent to Shiny (<code>input.txtin</code>):{" "}

@@ -1,35 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
 body {
-  font-family: sans-serif;
-  margin: 20px;
-  background-color: #f9f9f9;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+  min-height: 100dvh;
+  color: #334155;
 }
 
-.container {
+#root {
+  padding: 16px;
+  min-height: calc(100dvh - 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  width: 450px;
   max-width: 600px;
   margin: 0 auto;
   background: white;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1 {
+  margin: 0;
   text-align: center;
-  color: #333;
+  color: #1e293b;
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.025em;
+}
+
+label {
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 input {
   width: 100%;
-  padding: 8px;
-  margin: 5px 0;
-  border: 1px solid #ddd;
-  border-radius: 3px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
   box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background: white;
 }
 
-.output {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 3px;
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: white;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 24px 0;
+}
+
+pre {
+  margin: 16px 0 0 0;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #475569;
+  transition: all 0.2s ease;
+}
+
+pre:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
