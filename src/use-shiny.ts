@@ -66,13 +66,17 @@ export function useShinyInput<T>(
 }
 
 /**
- * Hook to receive and subscribe to Shiny output values.
- * Creates a hidden DOM element and a custom Shiny output binding
- * to receive data updates for the specified outputId.
+ * Hook to receive and subscribe to Shiny output values from the server. Creates
+ * a hidden DOM element and registers a custom Shiny output binding to receive
+ * reactive data updates for the specified outputId.
  *
  * @param outputId The ID of the Shiny output to subscribe to.
- * @param defaultValue Optional default value.
- * @returns The current value of the Shiny output.
+ * @param defaultValue Optional default value to use before the first server
+ * update.
+ * @returns A tuple containing [value, recalculating] where:
+ *   - value: The current value of the Shiny output
+ *   - recalculating: Boolean indicating if the server is currently
+ *     recalculating this output
  */
 export function useShinyOutput<T>(
   outputId: string,
