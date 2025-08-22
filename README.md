@@ -12,24 +12,14 @@ Note that this library is not yet available on npm. It must be built from source
 
 ## Building the Library
 
-Install dependencies:
 ```bash
+# Install dependencies
 npm install
-```
 
-Build the library:
-```bash
+# Build the library
 npm run build
-```
-
-For development with watch mode:
-```bash
+# Or for development with watch mode
 npm run watch
-```
-
-For production builds:
-```bash
-npm run build-prod
 ```
 
 ## Architecture
@@ -58,38 +48,32 @@ To use it, first build the shiny-react library using the instructions above.
 
 ### Running the Hello World Example
 
-1. Navigate to the example directory:
-   ```bash
-   cd examples/hello-world
-   ```
+Build the JavaScript and CSS for the React application:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+cd examples/hello-world
 
-3. Build the React application:
-   ```bash
-   npm run build
-   # Or for development with watch mode:
-   npm run watch
-   ```
+# Install dependencies
+npm install
 
-4. Run either the R or Python Shiny application:
-   ```bash
-   # For R
-   R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
+# Build the React application
+npm run build
+# Or for development with watch mode
+npm run watch
+```
 
-   # For Python
-   shiny run py/app.py --port 8000
-   ```
+In another terminal, run either the R or Python Shiny application:
 
-5. Open your browser to `http://localhost:8000`
+```bash
+# For R
+R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
 
-The example demonstrates:
-- Sending data from React to Shiny using `useShinyInput`
-- Receiving data from Shiny in React using `useShinyOutput`
-- Real-time bidirectional communication between React and Shiny
+# For Python
+shiny run py/app.py --port 8000
+```
+
+Open your browser to `http://localhost:8000`
+
 
 ## Usage
 
