@@ -16,26 +16,30 @@ def server(input: Inputs, output: Outputs, session: Session):
     @render.text()
     def txtout():
         return input.txtin().upper()
-    
+
     @render.text()
     def numberout():
         return str(input.numberin())
-    
+
     @render.text()
     def checkboxout():
         return str(input.checkboxin())
-    
+
     @render.text()
     def radioout():
         return str(input.radioin())
-    
+
     @render.text()
     def selectout():
         return str(input.selectin())
-    
+
     @render.text()
     def sliderout():
         return str(input.sliderin())
+
+    @render.text()
+    def dateout():
+        return str(input.datein())
 
 
 app = App(app_ui, server, static_assets=str(PurePath(__file__).parent / "www"))

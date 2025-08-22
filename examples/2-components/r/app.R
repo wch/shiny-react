@@ -22,7 +22,6 @@ server <- function(input, output, session) {
   })
 
   output$checkboxout <- renderText({
-    print(input$checkboxin)
     input$checkboxin
   })
 
@@ -33,9 +32,13 @@ server <- function(input, output, session) {
   output$selectout <- renderText({
     input$selectin
   })
-  
+
   output$sliderout <- renderText({
     input$sliderin
+  })
+
+  output$dateout <- renderText({
+    input$datein
   })
 }
 
