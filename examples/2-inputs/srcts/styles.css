@@ -149,11 +149,13 @@ input {
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 input:focus {
   outline: none;
   border-color: rgba(102, 126, 234, 0.6);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 input::placeholder {
