@@ -2,11 +2,15 @@
   "name": "shiny-react-hello-world",
   "version": "1.0.0",
   "type": "module",
-  "description": "Hello World app for shiny-react",
+  "description": "Hello World app using shiny-react",
   "scripts": {
-    "build": "tsc --noEmit && esbuild srcts/main.tsx --bundle --outfile=dist/main.js --format=esm --minify --alias:react=react && mkdir -p r/www py/www && cp dist/main.js r/www/ && cp dist/main.js py/www/",
-    "watch": "tsc --noEmit --watch & esbuild srcts/main.tsx --bundle --outfile=dist/main.js --format=esm --minify --alias:react=react --watch & chokidar dist/ --command 'mkdir -p r/www py/www && cp dist/main.js r/www/ && cp dist/main.js py/www/'",
-    "clean": "rm -rf dist r/www py/www"
+    "build": "npm run build-r && npm run build-py",
+    "watch": "concurrently \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch\"",
+    "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react",
+    "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch",
+    "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react",
+    "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch",
+    "clean": "rm -rf r/www py/www"
   },
   "author": "Winston Chang",
   "license": "MIT",
@@ -14,7 +18,7 @@
     "@types/node": "^24.3.0",
     "@types/react-dom": "^19.1.7",
     "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
-    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.0.1",
     "esbuild": "^0.25.9",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.2.0",

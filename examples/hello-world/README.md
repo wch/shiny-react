@@ -13,7 +13,7 @@ This is a simple example demonstrating how to use the shiny-react library to cre
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
   - `HelloWorldComponent.tsx` - Main React component using shiny-react hooks
-- **`dist/`** - Intermediate build directory (generated)
+  - `styles.css` - Simple CSS styling for the application
 - **`r/www/`** - Built JavaScript output for R Shiny app (generated)
 - **`py/www/`** - Built JavaScript output for Python Shiny app (generated)
 - **`node_modules/`** - npm dependencies (generated)
@@ -30,7 +30,7 @@ This is a simple example demonstrating how to use the shiny-react library to cre
    npm run build
    ```
 
-   The build process compiles the TypeScript React code into a single JavaScript bundle in `dist/main.js` and copies it to both `r/www/main.js` and `py/www/main.js`.
+   The build process compiles the TypeScript React code and CSS into JavaScript bundles output directly to `r/www/main.js` and `py/www/main.js`. The CSS is automatically bundled into the JavaScript files.
 
    Or for development with watch mode:
    ```bash
@@ -39,17 +39,17 @@ This is a simple example demonstrating how to use the shiny-react library to cre
 
    The watch mode runs three processes concurrently:
    - TypeScript type checking in watch mode
-   - ESBuild bundling in watch mode (outputs to `dist/main.js`)
-   - Chokidar file watcher that automatically copies `dist/main.js` to both `r/www/` and `py/www/` whenever it changes
+   - ESBuild bundling for R app (outputs to `r/www/main.js`)
+   - ESBuild bundling for Python app (outputs to `py/www/main.js`)
 
 
-   Note that if you build just an R or Python Shiny application (instead of both, as in this example), then you can simplify the `build` and `watch` scripts in `package.json`. Instead of writing to `dist/main.js`, you can output the file directly to `r/www/main.js` or `py/www/main.js`, and you don't need to use the `chokidar` tool to copy the file.
+   Note that if you build just an R or Python Shiny application (instead of both, as in this example), then you can simplify the `build` and `watch` scripts in `package.json` to only target one output directory.
 
 3. Run either the R or Python Shiny application:
 
    ```bash
    # For R
-   R -e "shiny::runApp('r/app.R', port=8000)"
+   R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
    
    # For Python
    shiny run py/app.py --port 8000

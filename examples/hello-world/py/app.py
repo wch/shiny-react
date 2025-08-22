@@ -7,7 +7,10 @@ from utils import page_bare
 from pathlib import PurePath
 
 app_ui = page_bare(
-    ui.head_content(ui.tags.script(src="main.js", type="module")),
+    ui.head_content(
+        ui.tags.script(src="main.js", type="module"),
+        ui.tags.link(href="main.css", rel="stylesheet"),
+    ),
     ui.div(id="root"),
     title="Hello Shiny React",
 )

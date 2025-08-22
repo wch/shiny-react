@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import HelloWorldComponent from "./HelloWorldComponent";
+import "./styles.css";
 
 const container = document.getElementById("root");
 if (container) {
