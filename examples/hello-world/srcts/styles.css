@@ -10,7 +10,6 @@ body {
 }
 
 #root {
-  padding: 16px;
   min-height: calc(100dvh - 32px);
   display: flex;
   align-items: center;
