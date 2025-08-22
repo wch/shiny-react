@@ -38,20 +38,42 @@ npm run watch
 3. **Dual Package Support**: Compatible with both CommonJS (`require()`) and ESM (`import`) module systems
 4. **TypeScript Support**: Full TypeScript declarations included
 
-## Hello World Example
+## Examples
 
-The [examples/hello-world/](examples/hello-world/) directory contains a simple example demonstrating Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
+### Hello World Example
 
-![Hello World Example](docs/hello-world-screenshot.jpg)
+The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simple example demonstrating basic Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
 
-To use it, first build the shiny-react library using the instructions above.
+![Hello World Example](docs/hello-world.jpeg)
 
-### Running the Hello World Example
+### Input Component Examples
 
-Build the JavaScript and CSS for the React application:
+The [examples/2-inputs/](examples/2-inputs/) directory showcases various input components and their integration with Shiny. This comprehensive example demonstrates:
+
+- **Text Input** - Basic text input with server-side transformation
+- **Number Input** - Numeric input with range constraints
+- **Checkbox Input** - Boolean checkbox for true/false values
+- **Radio Button Input** - Single selection from multiple options
+- **Select Input** - Dropdown selection from a list of choices
+- **Slider Input** - Range slider for numeric values with visual feedback
+- **Date Input** - HTML5 date picker for date selection
+- **Button Input** - Click counter demonstrating event handling
+
+Each component follows consistent patterns and demonstrates real-time bidirectional communication between React and Shiny.
+
+![Input Component Examples](docs/inputs.jpeg)
+
+To use either example, first build the shiny-react library using the instructions above.
+
+### Running the Examples
+
+For either example, build the JavaScript and CSS for the React application:
 
 ```bash
-cd examples/hello-world
+# For Hello World example
+cd examples/1-hello-world
+# Or, for Component examples
+cd examples/2-inputs
 
 # Install dependencies
 npm install
@@ -127,4 +149,68 @@ def server(input, output, session):
 ```
 
 
-Note that some other code is needed on the back end to create the complete Shiny app, but it is not shown here. See [examples/hello-world/r/app.R](examples/hello-world/r/app.R) and [examples/hello-world/py/app.py](examples/hello-world/py/app.py) for more complete examples.
+Note that some other code is needed on the back end to create the complete Shiny app, but it is not shown here. See [examples/1-hello-world/r/app.R](examples/1-hello-world/r/app.R) and [examples/1-hello-world/py/app.py](examples/1-hello-world/py/app.py) for more complete examples.
+
+
+## Docs
+
+The concept behind Shiny-React is that it provides a way to write applications with a React front end and a Shiny back end. The front end uses React's reactivity, and the back end uses Shiny's reactivity. These are both forms of reactivity, but they have differences from each other.
+
+
+Front end:
+- Front end is written in React.
+- `useShinyInput` hook
+  - In order to send values to the Shiny back end, the front end can use the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
+  - When the `useShinyInput` hook is used, it returns a tuple of the state variable and the setter function.
+  - When the setter function is called, it both updates the state variable and sends the value to the Shiny back end as a Shiny input value. Values are deduplicated: if the value is identical to the previous value, then it does not send the value to the Shiny back end. (It uses JavaScript's `===` operator to test for identity.)
+  - From the perspective of the front end, `useShinyInput` can be thought of as extending a state variable all the way to the server. The server can read this state variable, but it cannot modify it. (If it were able to modify this state variable, then there could be race conditions and synchronization problems, because of the async nature of the communication.)
+- `useShinyOutput` hook
+  - The front end also has a `useShinyOutput` hook, which returns a tuple containing the value of the Shiny output variable, and a boolean indicating whether the server is currently recalculating this output.
+  - The Shiny output variable is set on the server; the front end can only read the value.
+
+
+Back end:
+- Back end is written in Shiny for R or Python.
+- Shiny's reactivity system can be thought of as a directed graph of reactive values and reactive functions.
+- Inputs values are received from the front end. They are **reactive values**, and so when they change, they cause re-execution of any reactive functions that depend on them.
+  - In R, an input value can be accessed with `input$my_input`, without parentheses.
+  - In Python, an input value can be accessed with `input.my_input()`, with parentheses.
+- **Output values** are set by reactive functions, which automatically re-execute when their reactive inputs change. These output values are then sent to the front end.
+  - In R, an output value can be set with:
+    ```r
+    output$my_output <- renderText({
+      toupper(input$my_input)
+    })
+    ```
+  - In Python, an output value can be set with:
+    ```python
+    @render.text()
+    def my_output():
+        return input.my_input().upper()
+    ```
+- Shiny also has reactive functions that automatically re-execute when their reactive inputs change, and their return values can be used by other reactive functions. These re-execute whenever their reactive inputs change, and the most recent value is cached.
+  - In R, these are called **reactive expressions**, and are created with:
+    ```r
+    computed_value <- reactive({
+      toupper(input$my_input)
+    })
+    ```
+  - In Python, these are called **reactive calculations**, and are created with:
+    ```python
+    @reactive.calc
+    def computed_value():
+        return input.my_input().upper()
+    ```
+- Shiny also has reactive functions that are only used for **side effects** -- their return values are not used, but functions like these can be useful for doing things like writing data to disk, logging to the console, or sending network requests.
+  - In R, these are called **reactive observers**, and are created with:
+    ```r
+    observe({
+      write.csv(input$my_input, "data.csv")
+    })
+    ```
+  - In Python, these are called **reactive effects**, and are created with:
+    ```python
+    @reactive.effect
+    def _data_writer_effect():
+        write.csv(input.my_input(), "data.csv")
+    ```
