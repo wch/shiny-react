@@ -5,18 +5,15 @@
     "noEmit": true,
     "moduleResolution": "node",
     "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "inlineSources": true,
-    "checkJs": false,
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "outDir": "dist",
-    "rootDir": "srcts",
-    "esModuleInterop": true,
-    "strict": true,
-    "jsx": "react-jsx"
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./srcts/*"]
+    }
   },
   "include": ["srcts/**/*.ts", "srcts/**/*.tsx"]
 }

@@ -15,7 +15,7 @@ app_ui = page_bare(
 def server(input: Inputs, output: Outputs, session: Session):
     @render.text()
     def txtout():
-        return f"Value of input.txtin(): {input.txtin()}"
+        return input.txtin().upper()
 
 
 app = App(app_ui, server, static_assets=str(PurePath(__file__).parent / "www"))
