@@ -1,7 +1,3 @@
-# pyright: strict
-# pyright: reportUnusedFunction=false
-from __future__ import annotations
-
 from shiny import App, Inputs, Outputs, Session, ui, render
 from utils import page_bare
 from pathlib import PurePath

@@ -1,6 +1,3 @@
-# pyright: strict
-from __future__ import annotations
-
 from shiny import ui
 from shiny.html_dependencies import shiny_deps
 
