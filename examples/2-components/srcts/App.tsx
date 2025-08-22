@@ -6,6 +6,7 @@ import RadioInputCard from "./RadioInputCard";
 import SelectInputCard from "./SelectInputCard";
 import SliderInputCard from "./SliderInputCard";
 import DateInputCard from "./DateInputCard";
+import ButtonInputCard from "./ButtonInputCard";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <SelectInputCard />
         <SliderInputCard />
         <DateInputCard />
+        <ButtonInputCard />
       </div>
     </div>
   );

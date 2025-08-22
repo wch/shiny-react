@@ -40,6 +40,10 @@ server <- function(input, output, session) {
   output$dateout <- renderText({
     input$datein
   })
+
+  output$buttonout <- renderText({
+    input$buttonin
+  })
 }
 
 shinyApp(ui = ui, server = server)

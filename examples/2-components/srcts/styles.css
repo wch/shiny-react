@@ -369,3 +369,46 @@ hr {
   font-weight: 500;
   margin-top: 8px;
 }
+
+.button-input {
+  width: 100%;
+  padding: 16px 20px;
+  margin: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  box-shadow:
+    0 4px 12px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.button-input:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.button-input:active {
+  transform: translateY(0);
+  box-shadow:
+    0 4px 12px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.button-value {
+  text-align: center;
+  font-size: 14px;
+  color: #4a5568;
+  font-weight: 500;
+  margin-top: 8px;
+  font-family: monospace;
+}
