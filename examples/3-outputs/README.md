@@ -20,7 +20,10 @@ These functions send arbitrary data structures (which can be converted to JSON) 
   - `App.tsx` - Main App component that displays all examples
   - `Card.tsx` - Basic card component with title
   - Components:
-    - `JsonTableCard.tsx` - Table data visualization with interactive slider and statistics display
+    - `SliderCard.tsx` - Interactive slider control for data subsetting
+    - `DataTableCard.tsx` - Table display of mtcars dataset
+    - `StatisticsCard.tsx` - MPG statistics visualization with range indicators
+    - `PlotCard.tsx` - Scatter plot visualization using ImageOutput component
   - `styles.css` - Styling for table display and statistics visualization
 - **`r/www/`** - Built JavaScript output for R Shiny app (generated)
 - **`py/www/`** - Built JavaScript output for Python Shiny app (generated)
@@ -68,35 +71,47 @@ These functions send arbitrary data structures (which can be converted to JSON) 
 
 ## Features Demonstrated
 
-### JSON & Table Data (Primary Focus)
+### Multiple Output Types (Primary Focus)
 
-The main feature of this example is the **JsonTableCard** component, which demonstrates:
+This example demonstrates multiple coordinated output types across separate cards:
 
-1. **Slider Control for Data Subsetting**: A range slider (1-32) that controls how many rows are displayed from the mtcars dataset
-2. **Column-First JSON Data**: Server returns mtcars data in column-first format (e.g., `{mpg: [21.0, 21.0, ...], cyl: [6, 6, ...]}`)
-3. **Statistics Visualization**: Server calculates and returns mpg statistics (mean, median, min, max) displayed as an interactive range visualization
-4. **Real-time Updates**: As you move the slider, both the table data and statistics update automatically
+1. **Data Control Card**: Interactive slider (1-32) that controls how many rows to load from the mtcars dataset
+2. **Statistics Card**: MPG statistics (mean, median, min, max) with visual range indicators and positioned dots
+3. **Data Table Card**: Column-first JSON data displayed as a styled table with dynamic column extraction
+4. **Plot Card**: Scatter plot visualization (MPG vs Weight) with trend line using ImageOutput component
+5. **Real-time Coordination**: All four cards update automatically when the slider changes, demonstrating reactive data flow
 
-The table displays the classic mtcars dataset with dynamic column extraction, showing all available columns (mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb).
+Each card displays a different output type while remaining synchronized through the shared `table_rows` input. The example showcases JSON objects, structured data, and image outputs working together.
 
 ## Technical Implementation
 
 ### Data Flow
-1. React slider component sends `table_rows` input to Shiny server
-2. Server subsets mtcars dataset to the requested number of rows
-3. Server returns JSON data via `table_data` (column-first format) and `table_stats` (mpg statistics) outputs
-4. React component dynamically extracts column names and receives parsed JSON automatically
-5. Data is rendered in a styled table with statistics range visualization
+1. **SliderCard** sends `table_rows` input to Shiny server
+2. Server subsets mtcars dataset to the requested number of rows  
+3. Server returns three different output types:
+   - `table_data`: Column-first JSON format for the table
+   - `table_stats`: MPG statistics object for range visualization
+   - `plot1`: Rendered plot image for scatter plot display
+4. Each card component receives and displays its respective output type
+5. All cards update reactively when the slider input changes
 
 ### Backend Implementation
-- **R**: Uses `renderObject()` to serialize data frames directly to column-first format
-- **Python**: Uses `render_object()` with pandas `.to_dict(orient="list")` for column-first format
+- **R**: Uses `renderObject()` for JSON data and `renderPlot()` for plot generation
+- **Python**: Uses `render_object()` for JSON data and `render.plot()` with matplotlib for plots  
 - Both backends calculate mpg statistics (mean, median, min, max) for the range visualization
+- Plot generation creates MPG vs Weight scatter plots with trend lines
 
 ### Frontend Implementation
-- Dynamic column extraction from JSON data structure
-- Direct data reading without intermediate copying for performance
-- Interactive statistics visualization with positioned mean and median indicators
-- Full TypeScript type safety with `TableStats` interface
+- **Modular Card Architecture**: Each output type is isolated in its own card component
+- **Dynamic Column Extraction**: Table card reads JSON structure and extracts column names automatically
+- **ImageOutput Component**: Custom component for displaying plot images from Shiny
+- **Reactive Coordination**: All four cards respond to the same input control
+- **TypeScript Type Safety**: Full type safety with proper interfaces for complex data structures
 
-This example showcases that shiny-react outputs can handle complex, structured data seamlessly while maintaining performance and type safety.
+### Component Breakdown
+- **SliderCard**: Uses `useShinyInput` to send data control values
+- **DataTableCard**: Uses `useShinyOutput` to receive and display table data
+- **StatisticsCard**: Uses `useShinyOutput` to receive stats and render range visualization
+- **PlotCard**: Uses `ImageOutput` component to display server-generated plots
+
+This example demonstrates shiny-react's ability to coordinate multiple output types across separate UI components while maintaining clean separation of concerns and reactive data flow.
