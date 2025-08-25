@@ -1,0 +1,33 @@
+{
+  "name": "shiny-react-hello-world",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Hello World app using shiny-react",
+  "scripts": {
+    "build": "npm run build-r && npm run build-py",
+    "watch": "concurrently \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch\"",
+    "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react",
+    "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --alias:react=react --watch",
+    "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react",
+    "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --alias:react=react --watch",
+    "clean": "rm -rf r/www py/www"
+  },
+  "author": "Winston Chang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/react-dom": "^19.1.7",
+    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
+    "concurrently": "^9.0.1",
+    "esbuild": "^0.25.9",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "shiny-react": "file:../../"
+  }
+}
