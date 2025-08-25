@@ -1,8 +1,8 @@
 {
-  "name": "shiny-react-hello-world",
+  "name": "shiny-react-outputs",
   "version": "1.0.0",
   "type": "module",
-  "description": "Hello World app using shiny-react",
+  "description": "Outputs example app using shiny-react",
   "scripts": {
     "build": "concurrently \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
     "watch": "concurrently \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch\"",
