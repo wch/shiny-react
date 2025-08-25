@@ -1,7 +1,6 @@
 from shiny import App, Inputs, Outputs, Session, ui, render
 from utils import page_bare
-from pathlib import PurePath
-import datetime
+from pathlib import Path
 
 app_ui = page_bare(
     ui.head_content(
@@ -47,4 +46,4 @@ def server(input: Inputs, output: Outputs, session: Session):
         return str(input.buttonin())
 
 
-app = App(app_ui, server, static_assets=str(PurePath(__file__).parent / "www"))
+app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
