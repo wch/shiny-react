@@ -186,8 +186,9 @@ def server(input, output, session):
 - **TypeScript Compilation**: Provides type checking during development
 
 ### Communication Layer
-- **ShinyReactRegistry**: Global registry managing input/output mappings
-- **Debounced Updates**: Input changes debounced (100ms) to prevent excessive server calls
+- **ShinyReactRegistry**: Global registry managing input/output mappings  
+- **Debounced Updates**: Input changes debounced (default 100ms) to prevent excessive server calls
+- **Event Priority System**: Bypass deduplication for event-style inputs like buttons
 - **Promise-based Initialization**: Waits for Shiny to initialize before establishing connections
 - **Custom Output Binding**: Extends Shiny's output system for React integration
 
@@ -268,7 +269,10 @@ Shiny-React connects two different reactivity systems:
 function useShinyInput<T>(
   id: string, 
   defaultValue: T,
-  options?: { debounceMs?: number }
+  options?: { 
+    debounceMs?: number;
+    priority?: EventPriority;
+  }
 ): [T, (value: T) => void]
 ```
 
@@ -277,13 +281,15 @@ function useShinyInput<T>(
 **Parameters**:
 - `id`: The Shiny input ID (accessed as `input$id` in R or `input.id()` in Python)
 - `defaultValue`: Initial value for the input
-- `options.debounceMs`: Debounce delay in milliseconds (default: 200ms)
+- `options.debounceMs`: Debounce delay in milliseconds (default: 100ms)
+- `options.priority`: Event priority level - use `"event"` for button clicks to ensure reactive invalidation even with identical values
 
 **Returns**: `[value, setValue]` tuple identical to React's `useState`
 
 **Key Behaviors**:
 - Values are debounced before sending to prevent excessive server calls
-- Values are deduplicated (identical consecutive values are not sent)
+- Values are deduplicated (identical consecutive values are not sent, unless using `priority: "event"`)
+- Event priority bypasses deduplication for cases like button clicks where identical values still need to trigger updates
 - Waits for Shiny initialization before sending values
 - Updates are sent to `ShinyReactRegistry` which manages server communication
 
@@ -310,8 +316,16 @@ const [sliderValue, setSliderValue] = useShinyInput<number>("sliderin", 50);
 // Date input (HTML5 date picker)
 const [dateValue, setDateValue] = useShinyInput<string>("datein", "2024-01-01");
 
-// Button click counter
-const [buttonCount, setButtonCount] = useShinyInput<number>("buttonin", 0);
+// Button click with event priority (ensures reactive updates even with identical values)
+const [buttonValue, setButtonValue] = useShinyInput<null | object>("buttonin", null, {
+  debounceMs: 0,
+  priority: "event"
+});
+
+// Slider with immediate updates (no debouncing)
+const [sliderValue, setSliderValue] = useShinyInput<number>("sliderin", 50, {
+  debounceMs: 0
+});
 ```
 
 ### useShinyOutput Hook
@@ -549,14 +563,23 @@ function InputOutputCard({ title, inputElement, outputValue }: InputOutputCardPr
 }
 ```
 
-### Button Input Pattern (Event Handling)
+### Button Input Pattern (Event Handling with Event Priority)
 ```typescript
 function ButtonInputCard() {
-  const [buttonCount, setButtonCount] = useShinyInput<number>("buttonin", 0);
+  // Use priority: "event" to ensure each button click triggers server updates
+  // even though we send the same empty object value each time
+  const [buttonValue, setButtonValue] = useShinyInput<null | object>(
+    "buttonin", 
+    null, 
+    {
+      debounceMs: 0,      // No delay for button clicks
+      priority: "event"   // Bypass deduplication for event-style inputs
+    }
+  );
   const buttonOut = useShinyOutput<string>("buttonout", undefined);
 
   const handleButtonClick = () => {
-    setButtonCount(buttonCount + 1);  // Increment counter on each click
+    setButtonValue({});  // Send empty object - value doesn't matter for events
   };
 
   return (
@@ -565,7 +588,12 @@ function ButtonInputCard() {
       inputElement={
         <div>
           <button onClick={handleButtonClick}>Click Me</button>
-          <div>Button sends: {buttonCount}</div>
+          <div>Button sends: {JSON.stringify(buttonValue)}</div>
+          <div style={{ fontSize: "0.8em", color: "#666", marginTop: "4px" }}>
+            Note: useShinyInput is called with priority:"event" so that even
+            though the value (an empty object) is sent every time the button is
+            clicked, it will still cause reactive invalidation on the server.
+          </div>
         </div>
       }
       outputValue={buttonOut}
@@ -628,6 +656,227 @@ function RadioInputCard() {
   );
 }
 ```
+
+## Debouncing and Event Priority
+
+### Understanding Debouncing
+
+**Debouncing** delays sending input values to the Shiny server to prevent excessive server calls during rapid user interactions. By default, `useShinyInput` debounces updates by 100ms.
+
+**When to Use Debouncing**:
+- **Text inputs**: Prevent server calls on every keystroke
+- **Sliders**: Reduce server load during dragging
+- **Any high-frequency input**: Optimize performance for rapid value changes
+
+**When to Disable Debouncing (`debounceMs: 0`)**:
+- **Button clicks**: Users expect immediate response
+- **Sliders where immediate feedback is important**: Real-time visualization
+- **Form submissions**: No delay wanted for user actions
+
+```typescript
+// Default debouncing (100ms) - good for text inputs
+const [text, setText] = useShinyInput<string>("text_input", "");
+
+// No debouncing - immediate updates for sliders
+const [slider, setSlider] = useShinyInput<number>("slider_input", 50, {
+  debounceMs: 0
+});
+
+// Custom debouncing - longer delay for expensive operations  
+const [expensiveInput, setExpensiveInput] = useShinyInput<string>("expensive", "", {
+  debounceMs: 500  // Wait 500ms before sending
+});
+```
+
+### Understanding Event Priority
+
+**Event Priority** controls how Shiny handles duplicate values. Normally, Shiny deduplicates consecutive identical values to avoid unnecessary reactive updates.
+
+**Normal Priority (default)**:
+- Values are compared and deduplicated
+- `setValue(5)` followed by `setValue(5)` only triggers one server update
+- Good for most inputs like text, sliders, dropdowns
+
+**Event Priority (`priority: "event"`)**:
+- Bypasses deduplication completely
+- Every call to `setValue()` triggers a server update, even with identical values
+- Essential for button clicks and event-like interactions
+
+```typescript
+// Normal priority - deduplicates identical values
+const [count, setCount] = useShinyInput<number>("counter", 0);
+
+// Event priority - every button click triggers server update
+const [buttonEvent, setButtonEvent] = useShinyInput<object>("button_click", {}, {
+  priority: "event",
+  debounceMs: 0
+});
+```
+
+### Button Click Pattern with Event Priority
+
+Buttons require special handling because users expect each click to register, even if the "value" doesn't change:
+
+```typescript
+function EventButton() {
+  // Send empty object with event priority - the value doesn't matter
+  const [buttonClick, setButtonClick] = useShinyInput<null | object>(
+    "button_input", 
+    null, 
+    {
+      debounceMs: 0,       // Immediate response
+      priority: "event"    // Every click triggers server update
+    }
+  );
+  
+  const clickCount = useShinyOutput<number>("click_count", 0);
+
+  return (
+    <div>
+      <button onClick={() => setButtonClick({})}>
+        Click Me
+      </button>
+      <p>Clicked {clickCount} times</p>
+    </div>
+  );
+}
+```
+
+**Server-side button handling**:
+```r
+# R - Track button clicks by counting non-null values
+num_button_clicks <- 0
+output$click_count <- renderText({
+  if (is.null(input$button_input)) {
+    return(0)
+  }
+  num_button_clicks <<- num_button_clicks + 1
+  num_button_clicks
+})
+```
+
+```python
+# Python - Track button clicks
+num_button_clicks = 0
+
+@render.text()
+def click_count():
+    if input.button_input() is None:
+        return "0"
+    global num_button_clicks
+    num_button_clicks += 1
+    return str(num_button_clicks)
+```
+
+### Debouncing Best Practices
+
+**Text Input with Debouncing**:
+```typescript
+// Good for search boxes - don't search on every keystroke
+const [searchTerm, setSearchTerm] = useShinyInput<string>("search", "", {
+  debounceMs: 300  // Wait for user to pause typing
+});
+```
+
+**Slider with Immediate Updates**:
+```typescript
+// Good for real-time charts - show changes immediately
+const [chartValue, setChartValue] = useShinyInput<number>("chart_param", 50, {
+  debounceMs: 0  // Immediate updates for smooth interaction
+});
+```
+
+**Performance Considerations**:
+- **Too low debounce**: Server overload from rapid updates
+- **Too high debounce**: UI feels unresponsive
+- **Sweet spot**: 100-300ms for most text inputs, 0ms for buttons and real-time controls
+
+## Server-to-Client Messages
+
+The server can send **custom messages** directly to React components for notifications, real-time updates, and server-initiated events.
+
+### Client-Side Message Handling
+
+Register message handlers in React components using `window.Shiny.addCustomMessageHandler`:
+
+```typescript
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [toasts, setToasts] = useState<Array<{id: number, message: string, type: string}>>([]);
+
+  useEffect(() => {
+    const handleLogEvent = (msg: { message: string; type: string }) => {
+      const newToast = { id: Date.now(), message: msg.message, type: msg.type };
+      setToasts(prev => [...prev, newToast]);
+      
+      // Auto-remove after 6 seconds
+      setTimeout(() => {
+        setToasts(prev => prev.filter(toast => toast.id !== newToast.id));
+      }, 6000);
+    };
+
+    window.Shiny.addCustomMessageHandler("logEvent", handleLogEvent);
+  }, []);
+
+  return (
+    <div className="toast-container">
+      {toasts.map(toast => (
+        <div key={toast.id} className={`toast toast-${toast.type}`}>
+          {toast.message}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Server-Side Message Sending
+
+**R Shiny**:
+```r
+server <- function(input, output, session) {
+  # Send single message
+  session$sendCustomMessage("logEvent", list(
+    message = "User logged in", 
+    type = "info"
+  ))
+  
+  # Send periodic messages
+  observe({
+    invalidateLater(2000)  # Every 2 seconds
+    log_event <- list(message = "Server update", type = "info")
+    session$sendCustomMessage("logEvent", log_event)
+  })
+}
+```
+
+**Python Shiny**:
+```python
+def server(input: Inputs, output: Outputs, session: Session):
+    # Send single message  
+    await session.send_custom_message("logEvent", {
+        "message": "User logged in", 
+        "type": "info"
+    })
+    
+    # Send periodic messages
+    @reactive.effect
+    async def _():
+        reactive.invalidate_later(2)  # Every 2 seconds
+        await session.send_custom_message("logEvent", {
+            "message": "Server update", 
+            "type": "info"
+        })
+```
+
+### Use Cases
+- **Notifications**: Toast messages, alerts
+- **Progress**: Long-running task updates
+- **Real-time data**: Server-initiated data streams
+- **System events**: Status changes, heartbeats
+
+**Note**: Custom messages are server→client only and bypass the normal input/output reactive system.
 
 ## Backend Patterns and Best Practices
 
@@ -977,7 +1226,12 @@ def server(input, output, session):
 ```typescript
 // Increase debounce delay for expensive operations
 const [value, setValue] = useShinyInput<string>("expensive_input", "", { 
-  debounceMs: 500  // Wait 500ms instead of default 200ms
+  debounceMs: 500  // Wait 500ms instead of default 100ms
+});
+
+// Disable debouncing for immediate feedback
+const [realTimeValue, setRealTimeValue] = useShinyInput<number>("real_time", 0, {
+  debounceMs: 0  // No delay for real-time interactions
 });
 ```
 
