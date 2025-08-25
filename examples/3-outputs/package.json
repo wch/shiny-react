@@ -7,9 +7,9 @@
     "build": "concurrently \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
     "watch": "concurrently \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch\"",
     "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react",
-    "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --sourcemap --alias:react=react --watch",
+    "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --minify --alias:react=react --watch",
     "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react",
-    "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --sourcemap --alias:react=react --watch",
+    "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --minify --alias:react=react --watch",
     "clean": "rm -rf r/www py/www"
   },
   "author": "Winston Chang",
