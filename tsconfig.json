@@ -13,7 +13,6 @@
     "checkJs": false,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,

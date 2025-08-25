@@ -1,10 +1,11 @@
 # Output Examples
 
-This example demonstrates advanced output capabilities using the shiny-react library, showcasing how React components can receive and display complex data structures from Shiny applications.
+This example demonstrates how to output complex data structures from Shiny applications using the shiny-react library.
 
-The front end is implemented with React and TypeScript. There are two versions of the Shiny back end: one is implemented with R, and the other with Python.
+- In R, it uses a `renderObject()` function, implemented in the `utils.R` file.
+- In Python, it uses a `render_object()` function, implemented in the `utils.py` file.
 
-The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receive values from the Shiny back end. This example focuses on demonstrating that outputs can be complex data structures (JSON objects and arrays) rather than just simple strings, featuring an interactive table with dynamically controlled data generation.
+These functions send arbitrary data structures (which can be converted to JSON) to the frontend, where they are displayed using React components.
 
 ## Directory Structure
 
@@ -17,19 +18,10 @@ The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receiv
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
   - `App.tsx` - Main App component that displays all examples
-  - `InputOutputCard.tsx` - Reusable card wrapper for input/output pairs
   - `Card.tsx` - Basic card component with title
   - Components:
-    - `JsonTableCard.tsx` - **NEW**: Demonstrates JSON outputs and table data with slider control
-    - `TextInputCard.tsx` - Text input (uppercased by server)
-    - `NumberInputCard.tsx` - Number input with min/max/step
-    - `CheckboxInputCard.tsx` - Boolean checkbox input
-    - `RadioInputCard.tsx` - Radio button group selection
-    - `SelectInputCard.tsx` - Dropdown select input
-    - `SliderInputCard.tsx` - Range slider input
-    - `DateInputCard.tsx` - HTML5 date picker input
-    - `ButtonInputCard.tsx` - Button that sends incremental counter values
-  - `styles.css` - Comprehensive CSS styling with responsive design and table styles
+    - `JsonTableCard.tsx` - Table data visualization with interactive slider and statistics display
+  - `styles.css` - Styling for table display and statistics visualization
 - **`r/www/`** - Built JavaScript output for R Shiny app (generated)
 - **`py/www/`** - Built JavaScript output for Python Shiny app (generated)
 - **`node_modules/`** - npm dependencies (generated)
@@ -80,39 +72,31 @@ The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receiv
 
 The main feature of this example is the **JsonTableCard** component, which demonstrates:
 
-1. **Slider Control for Data Generation**: A range slider (1-20) that controls how many rows of data the server generates
-2. **JSON Array Output**: Server returns an array of table data as JSON, parsed and displayed in a styled table
-3. **JSON Object Output**: Server calculates and returns statistics (total rows, average age, average score) as a JSON object
+1. **Slider Control for Data Subsetting**: A range slider (1-32) that controls how many rows are displayed from the mtcars dataset
+2. **Column-First JSON Data**: Server returns mtcars data in column-first format (e.g., `{mpg: [21.0, 21.0, ...], cyl: [6, 6, ...]}`)
+3. **Statistics Visualization**: Server calculates and returns mpg statistics (mean, median, min, max) displayed as an interactive range visualization
 4. **Real-time Updates**: As you move the slider, both the table data and statistics update automatically
-5. **TypeScript Type Safety**: Full type safety for complex data structures (TableData interface)
 
-The table displays sample data with columns: Name, Age, City, and Score. The server generates random data using seeded randomization for consistent results.
-
-### Additional Input Components (Legacy Examples)
-
-This example also includes the following input types for comparison:
-
-1. **Text Input** - Basic text input that gets uppercased by the server
-2. **Number Input** - Numeric input with range constraints (0-100)  
-3. **Checkbox Input** - Boolean checkbox for true/false values
-4. **Radio Button Input** - Single selection from multiple options
-5. **Select Input** - Dropdown selection from a list of choices
-6. **Slider Input** - Range slider for numeric values with visual feedback
-7. **Date Input** - HTML5 date picker for date selection
-8. **Button Input** - Click counter that increments on each button press
+The table displays the classic mtcars dataset with dynamic column extraction, showing all available columns (mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb).
 
 ## Technical Implementation
 
 ### Data Flow
 1. React slider component sends `table_rows` input to Shiny server
-2. Server generates array of objects and calculates statistics
-3. Server returns JSON data via `table_data` and `table_stats` outputs
-4. React component receives and parses JSON automatically
-5. Data is rendered in styled table and statistics cards
+2. Server subsets mtcars dataset to the requested number of rows
+3. Server returns JSON data via `table_data` (column-first format) and `table_stats` (mpg statistics) outputs
+4. React component dynamically extracts column names and receives parsed JSON automatically
+5. Data is rendered in a styled table with statistics range visualization
 
 ### Backend Implementation
-- **R**: Uses `jsonlite::toJSON()` to serialize data frames and lists
-- **Python**: Uses `json.dumps()` to serialize dictionaries and lists
-- Both backends use seeded randomization for consistent data generation
+- **R**: Uses `renderObject()` to serialize data frames directly to column-first format
+- **Python**: Uses `render_object()` with pandas `.to_dict(orient="list")` for column-first format
+- Both backends calculate mpg statistics (mean, median, min, max) for the range visualization
 
-This example showcases that shiny-react outputs are not limited to simple strings—they can handle complex data structures seamlessly.
+### Frontend Implementation
+- Dynamic column extraction from JSON data structure
+- Direct data reading without intermediate copying for performance
+- Interactive statistics visualization with positioned mean and median indicators
+- Full TypeScript type safety with `TableStats` interface
+
+This example showcases that shiny-react outputs can handle complex, structured data seamlessly while maintaining performance and type safety.

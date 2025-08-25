@@ -1,5 +1,5 @@
 import React from "react";
-import { useShinyInput, useShinyOutput } from "shiny-react";
+import { useShinyInput, useShinyOutput, ImageOutput } from "shiny-react";
 import Card from "./Card";
 
 interface TableStats {
@@ -10,7 +10,7 @@ interface TableStats {
   max: number;
 }
 
-function TableCard() {
+function TableStatsCard() {
   const [rowCount, setRowCount] = useShinyInput<number>("table_rows", 5);
   const [tableData] = useShinyOutput<Record<string, number[]> | undefined>(
     "table_data",
@@ -128,9 +128,16 @@ function TableCard() {
             </div>
           </div>
         )}
+
+        <div className="plot-section">
+          <h3>Data Visualization</h3>
+          <div className="plot-container">
+            <ImageOutput id="plot1" className="data-plot" />
+          </div>
+        </div>
       </div>
     </Card>
   );
 }
 
-export default TableCard;
+export default TableStatsCard;

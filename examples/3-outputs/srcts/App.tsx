@@ -1,11 +1,11 @@
-import TableCard from "./JsonTableCard";
+import TableStatsCard from "./TableStatsCard";
 
 function App() {
   return (
     <div className="app-container">
       <h1>Shiny React Output Examples</h1>
       <div className="cards-wrap">
-        <TableCard />
+        <TableStatsCard />
       </div>
     </div>
   );

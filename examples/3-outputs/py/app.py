@@ -2,6 +2,8 @@ from shiny import App, Inputs, Outputs, Session, ui, render
 from utils import page_bare, render_object
 from pathlib import Path
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 mtcars = pd.read_csv(Path(__file__).parent / "mtcars.csv")
 
@@ -37,37 +39,34 @@ def server(input: Inputs, output: Outputs, session: Session):
             "max": float(mtcars_subset["mpg"].max()),
         }
 
-    @render.text()
-    def txtout():
-        return input.txtin().upper()
+    @render.plot()
+    def plot1():
+        num_rows = input.table_rows()
+        mtcars_subset = mtcars.head(num_rows)
 
-    @render.text()
-    def numberout():
-        return str(input.numberin())
+        # Create a scatter plot of mpg vs wt
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.scatter(
+            mtcars_subset["wt"],
+            mtcars_subset["mpg"],
+            color="steelblue",
+            alpha=0.7,
+            s=60,
+        )
 
-    @render.text()
-    def checkboxout():
-        return str(input.checkboxin())
+        # Add a trend line
+        z = np.polyfit(mtcars_subset["wt"], mtcars_subset["mpg"], 1)
+        p = np.poly1d(z)
+        ax.plot(
+            mtcars_subset["wt"], p(mtcars_subset["wt"]), "r--", alpha=0.8, linewidth=2
+        )
 
-    @render.text()
-    def radioout():
-        return str(input.radioin())
+        ax.set_xlabel("Weight (1000 lbs)")
+        ax.set_ylabel("Miles per Gallon")
+        ax.set_title(f"MPG vs Weight - {len(mtcars_subset)} cars")
+        ax.grid(True, alpha=0.3)
 
-    @render.text()
-    def selectout():
-        return str(input.selectin())
-
-    @render.text()
-    def sliderout():
-        return str(input.sliderin())
-
-    @render.text()
-    def dateout():
-        return str(input.datein())
-
-    @render.text()
-    def buttonout():
-        return str(input.buttonin())
+        return fig
 
 
 app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"), debug=True)
