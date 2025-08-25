@@ -28,6 +28,6 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "shiny-react": "git+https://github.com/wch/shiny-react.git"
+    "shiny-react": "github:wch/shiny-react"
   }
 }
