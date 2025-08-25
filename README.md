@@ -44,7 +44,7 @@ npm run watch
 
 The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simple example demonstrating basic Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
 
-![Hello World Example](docs/hello-world.jpeg)
+![Hello World Example](docs/1-hello-world.jpeg)
 
 ### Input Component Examples
 
@@ -61,19 +61,25 @@ The [examples/2-inputs/](examples/2-inputs/) directory showcases various input c
 
 Each component follows consistent patterns and demonstrates real-time bidirectional communication between React and Shiny.
 
-![Input Component Examples](docs/inputs.jpeg)
+![Input Component Examples](docs/2-inputs.jpeg)
 
-To use either example, first build the shiny-react library using the instructions above.
+### Output Examples
+
+The [examples/3-outputs/](examples/3-outputs/) directory demonstrates outputs that consist of arbitrary JSON data, as well as plot outputs.
+
+![Output Examples](docs/3-outputs.jpeg)
 
 ### Running the Examples
 
-For either example, build the JavaScript and CSS for the React application:
+For any example, build the JavaScript and CSS for the React application:
 
 ```bash
 # For Hello World example
 cd examples/1-hello-world
-# Or, for Component examples
+# Or, for Input Component examples
 cd examples/2-inputs
+# Or, for Output examples
+cd examples/3-outputs
 
 # Install dependencies
 npm install
@@ -162,7 +168,7 @@ Front end:
 - `useShinyInput` hook
   - In order to send values to the Shiny back end, the front end can use the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
   - When the `useShinyInput` hook is used, it returns a tuple of the state variable and the setter function.
-  - When the setter function is called, it both updates the state variable and sends the value to the Shiny back end as a Shiny input value. Values are deduplicated: if the value is identical to the previous value, then it does not send the value to the Shiny back end. (It uses JavaScript's `===` operator to test for identity.)
+  - When the setter function is called, it both updates the state variable and sends the value to the Shiny back end as a Shiny input value. Values are deduplicated: if the value is identical to the previous value, then it does not send the value to the Shiny back end.
   - From the perspective of the front end, `useShinyInput` can be thought of as extending a state variable all the way to the server. The server can read this state variable, but it cannot modify it. (If it were able to modify this state variable, then there could be race conditions and synchronization problems, because of the async nature of the communication.)
 - `useShinyOutput` hook
   - The front end also has a `useShinyOutput` hook, which returns a tuple containing the value of the Shiny output variable, and a boolean indicating whether the server is currently recalculating this output.
