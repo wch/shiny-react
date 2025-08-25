@@ -41,8 +41,14 @@ server <- function(input, output, session) {
     input$datein
   })
 
+  num_button_clicks <- 0
   output$buttonout <- renderText({
-    input$buttonin
+    # Take a reactive dependency on the button, and ignore starting null value
+    if (is.null(input$buttonin)) {
+      return()
+    }
+    num_button_clicks <<- num_button_clicks + 1
+    num_button_clicks
   })
 }
 

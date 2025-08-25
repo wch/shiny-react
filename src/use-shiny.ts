@@ -1,32 +1,55 @@
 import { debounce } from "./utils";
 import { useState, useEffect, useCallback } from "react";
+import { EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
 import { ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 
 /**
  * A React hook for managing a Shiny input value.
  *
- * This hook initializes a state variable with `defaultValue`. It returns the
+ * This hook initializes a state variable with `defaultValue` and returns the
  * current value and a function to update it, similar to `React.useState`.
  *
  * When the component mounts, it waits for Shiny to initialize. Once Shiny is
- * initialized, this hook uses an effect to call `window.Shiny.setInputValue()`
- * whenever the input's `value` or `inputId` changes, effectively sending updates
- * from the React component to the Shiny server.
+ * initialized, this hook registers the input with the Shiny React registry and
+ * uses debounced updates to send values to the Shiny server via
+ * `window.Shiny.setInputValue()`.
+ *
+ * The hook supports debouncing to optimize performance by batching rapid
+ * updates, and allows setting priority levels for input events.
  *
  * Note: This hook only sends data *to* Shiny. It does not automatically update
  * the React state if the input is changed on the server-side (e.g., using
- * `updateTextInput()`). For two-way binding, a custom Shiny input binding
- * would be required.
+ * `updateTextInput()`). For two-way binding, a custom Shiny input binding would
+ * be required.
  *
- * @param id The ID that will be used for the Shiny input (`input$<inputId>`).
+ * @param id The ID that will be used for the Shiny input (`input$<id>`).
  * @param defaultValue The initial value for the input.
- * @returns A tuple containing the current value and a function to set the value: `[value, setValue]`.
+ * @param options Optional configuration object.
+ * @param options.debounceMs Debounce delay in milliseconds for input updates
+ * (default: 100).
+ * @param options.priority Priority level for the input event (from Shiny's
+ * EventPriority enum).
+ * @returns A tuple containing the current value and a function to set the
+ * value: `[value, setValue]`.
  */
 export function useShinyInput<T>(
   id: string,
   defaultValue: T,
-  { debounceMs = 200 }: { debounceMs?: number } = {}
+  {
+    debounceMs = 100,
+    priority,
+  }: {
+    debounceMs?: number;
+    priority?: EventPriority;
+  } = {}
 ): [T, (value: T) => void] {
+  // NOTE: It's a little odd that debounceMs and priority passed this way; the
+  // debounceMs is associated with the specific input name, and in Shiny's API,
+  // priority is associated with each individual call to setInputValue(). But
+  // here they're both associated with the input name, and also if there are
+  // multiple calls to useShinyInput("foo"), then the priority will be from the
+  // first call. This all should be straightened out in the future.
+
   const [value, setValue] = useState<T>(defaultValue);
 
   const [shinyInitialized, setShinyInitialized] = useState<boolean>(false);
@@ -36,7 +59,10 @@ export function useShinyInput<T>(
       await window.Shiny.initializedPromise;
       setShinyInitialized(true);
 
-      window.Shiny.reactRegistry.registerInput(id, setValue);
+      window.Shiny.reactRegistry.registerInput(id, setValue, {
+        debounceMs,
+        priority,
+      });
       window.Shiny.reactRegistry.setInputValue(id, value);
     })();
 
@@ -141,7 +167,10 @@ type InputMap = {
     // setFoo functions for all React components which use this input ID
     setValueFns: Array<(value: any) => void>;
     // Possibly debounce Shiny input value setter
-    shinySetInputValueDebounced: (value: any) => void;
+    shinySetInputValueDebounced: (
+      value: any,
+      opts?: { priority?: EventPriority }
+    ) => void;
   };
 };
 
@@ -171,14 +200,24 @@ class ShinyReactRegistry {
     });
   }
 
-  registerInput(inputId: string, setValueFn: (value: any) => void) {
+  registerInput(
+    inputId: string,
+    setValueFn: (value: any) => void,
+    opts: { priority?: EventPriority; debounceMs?: number } = {}
+  ) {
+    const { debounceMs = 100 } = opts;
+    let setInputValueOpts: { priority?: EventPriority } = {};
+    if (opts.priority) {
+      setInputValueOpts.priority = opts.priority;
+    }
+
     if (!this.inputs[inputId]) {
       this.inputs[inputId] = {
         id: inputId,
         setValueFns: [],
         shinySetInputValueDebounced: debounce((value: any) => {
-          window.Shiny.setInputValue!(inputId, value);
-        }, 100),
+          window.Shiny.setInputValue!(inputId, value, setInputValueOpts);
+        }, debounceMs),
       };
     }
     this.inputs[inputId].setValueFns.push(setValueFn);
@@ -216,12 +255,16 @@ class ShinyReactRegistry {
     return this.inputs[inputId] !== undefined;
   }
 
-  setInputValue(inputId: string, value: any) {
+  setInputValue(
+    inputId: string,
+    value: any,
+    opts?: { priority?: EventPriority }
+  ) {
     if (!this.inputs[inputId]) {
       console.error(`Input ${inputId} not found`);
       return;
     }
-    this.inputs[inputId].shinySetInputValueDebounced(value);
+    this.inputs[inputId].shinySetInputValueDebounced(value, opts);
     this.inputs[inputId].setValueFns.forEach((fn) => fn(value));
   }
 

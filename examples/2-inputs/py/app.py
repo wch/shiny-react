@@ -41,9 +41,16 @@ def server(input: Inputs, output: Outputs, session: Session):
     def dateout():
         return str(input.datein())
 
+    # Track number of button clicks
+    num_button_clicks = 0
+
     @render.text()
     def buttonout():
-        return str(input.buttonin())
+        if input.buttonin() is None:
+            return None
+        nonlocal num_button_clicks
+        num_button_clicks += 1
+        return str(num_button_clicks)
 
 
 app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))

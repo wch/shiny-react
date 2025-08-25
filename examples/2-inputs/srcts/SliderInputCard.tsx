@@ -3,7 +3,10 @@ import { useShinyInput, useShinyOutput } from "shiny-react";
 import InputOutputCard from "./InputOutputCard";
 
 function SliderInputCard() {
-  const [sliderIn, setSliderIn] = useShinyInput<number>("sliderin", 50);
+  // Note that debounce has been set to 0, so that the value is sent immediately.
+  const [sliderIn, setSliderIn] = useShinyInput<number>("sliderin", 50, {
+    debounceMs: 0,
+  });
   const sliderOut = useShinyOutput<number>("sliderout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +28,12 @@ function SliderInputCard() {
             className="slider-input"
           />
           <div className="slider-value">Current value: {sliderIn}</div>
+          <div
+            className="debounce-info"
+            style={{ fontSize: "0.8em", color: "#666", marginTop: "4px" }}
+          >
+            Note: Debounce is set to 0ms for immediate updates
+          </div>
         </div>
       }
       outputValue={sliderOut}
