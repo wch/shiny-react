@@ -50,7 +50,7 @@ function main() {
     console.log("Usage: create-shiny-react-app <app-name>");
     console.log("");
     console.log(
-      "Creates a new shiny-react application using the hello-world template."
+      "Creates a new shiny-react application using the 1-hello-world template."
     );
     console.log("");
     console.log("Example:");
@@ -69,7 +69,7 @@ function main() {
 
   // Find the shiny-react package directory
   const packageDir = path.dirname(__dirname);
-  const templateDir = path.join(packageDir, "examples", "hello-world");
+  const templateDir = path.join(packageDir, "examples", "1-hello-world");
 
   console.log(`Creating new shiny-react app: ${appName}`);
   console.log(`Template: ${templateDir}`);
