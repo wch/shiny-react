@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, render, reactive
-from shinyreact page_bare, render_object
+from shinyreact import page_bare, render_object
 from pathlib import Path
 from shinyreact load_dotenv
 from chatlas import ChatOpenAI, content_image_url

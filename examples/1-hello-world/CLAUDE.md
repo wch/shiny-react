@@ -1061,7 +1061,7 @@ renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs 
 **Basic Server Structure**:
 ```python
 from shiny import App, Inputs, Outputs, Session, ui, render
-from shinyreact page_bare, render_object
+from shinyreact import page_bare, render_object
 from pathlib import Path
 
 # UI with bare page
