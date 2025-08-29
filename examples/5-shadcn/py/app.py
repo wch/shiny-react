@@ -1,10 +1,21 @@
-from shiny import App, Inputs, Outputs, Session, ui, reactive
-from utils import page_bare, render_object, generate_sample_data, filter_data, calculate_metrics
+from shiny import App, Inputs, Outputs, Session, ui, render, reactive
+from utils import page_bare, render_object
 from pathlib import Path
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
 
-# Generate sample data once when app starts
-sample_data = generate_sample_data()
+# Generate sample data
+sample_data = pd.DataFrame(
+    {
+        "id": range(1, 9),
+        "name": ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"],
+        "age": [25, 30, 35, 28, 32, 27, 29, 33],
+        "score": [85.5, 92.1, 88.3, 88.7, 95.2, 81.9, 87.4, 90.6],
+        "category": ["A", "B", "A", "C", "B", "A", "C", "B"],
+    }
+)
 
 app_ui = page_bare(
     ui.head_content(
@@ -12,73 +23,64 @@ app_ui = page_bare(
         ui.tags.link(href="main.css", rel="stylesheet"),
     ),
     ui.div(id="root"),
-    title="Shiny React Dashboard",
+    title="Shiny + shadcn/ui Example",
 )
 
+
 def server(input: Inputs, output: Outputs, session: Session):
-    
-    @reactive.calc
-    def filtered_data():
-        """Reactive data filtering"""
-        # Get input values with defaults
-        date_range = input.date_range() if input.date_range() is not None else "last_30_days"
-        search_term = input.search_term() if input.search_term() is not None else ""
-        selected_categories = input.selected_categories() if input.selected_categories() is not None else []
-        
-        return filter_data(
-            sample_data,
-            date_range=date_range,
-            search_term=search_term,
-            selected_categories=selected_categories
-        )
-    
-    @render_object()
-    def metrics_data():
-        """Calculate and return metrics"""
-        data = filtered_data()
-        return calculate_metrics(data)
-    
-    @render_object()
-    def chart_data():
-        """Return chart data"""
-        data = filtered_data()
-        
-        # Convert DataFrames to lists of dictionaries for JSON serialization
-        revenue_trend_list = data['revenue_trend'].to_dict('records')
-        category_performance_list = data['category_performance'].to_dict('records')
-        
-        return {
-            'revenue_trend': revenue_trend_list,
-            'category_performance': category_performance_list
-        }
-    
+
+    @render.text
+    def processed_text():
+        text = input.user_text() if input.user_text() is not None else ""
+        if text == "":
+            return ""
+        # Simple text processing - uppercase and reverse
+        return "".join(reversed(text.upper()))
+
+    @render.text
+    def text_length():
+        text = input.user_text() if input.user_text() is not None else ""
+        return len(text)
+
+    # Button event handling
+    @reactive.effect
+    @reactive.event(input.button_trigger)
+    def handle_button():
+        current_time = datetime.now()
+        print(f"Button clicked at: {current_time}")
+
+    @render.text
+    @reactive.event(input.button_trigger)
+    def button_response():
+        # React to button trigger
+        return f"Event received at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+    # Table data output
     @render_object()
     def table_data():
-        """Return table data"""
-        data = filtered_data()
-        
-        # Sort products by revenue (descending) and take top 10
-        products = data['products'].copy()
-        if len(products) > 0:
-            products_sorted = products.sort_values('revenue', ascending=False)
-            top_products = products_sorted.head(10)
-            
-            # Convert to list of dictionaries
-            rows = top_products.to_dict('records')
-        else:
-            rows = []
-        
-        return {
-            'rows': rows,
-            'total_rows': len(data['products'])
-        }
-    
-    @reactive.effect
-    def debug_inputs():
-        """Debug: Print input changes"""
-        print(f"Date range: {input.date_range()}")
-        print(f"Search term: {input.search_term()}")
-        print(f"Selected categories: {input.selected_categories()}")
-        print("---")
+        # Convert DataFrame to dict format for JSON
+        return sample_data.to_dict(orient="list")
+
+    # Plot output
+    @render.plot()
+    def plot1():
+        fig, ax = plt.subplots()
+
+        ax.scatter(sample_data["age"], sample_data["score"], s=30, alpha=0.7)
+
+        # Add trend line
+        z = np.polyfit(sample_data["age"], sample_data["score"], 1)
+        p = np.poly1d(z)
+        # Create sorted x values for smooth trend line
+        x_trend = np.linspace(sample_data["age"].min(), sample_data["age"].max(), 100)
+        ax.plot(x_trend, p(x_trend), "r--", linewidth=2, alpha=0.8)
+
+        ax.set_xlabel("Age")
+        ax.set_ylabel("Score")
+        ax.set_title("Age vs Score")
+        ax.grid(True, alpha=0.3)
+
+        return fig
+
 
 app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))

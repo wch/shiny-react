@@ -1,4 +1,3 @@
-import { spawn } from "child_process";
 import chokidar from "chokidar";
 import * as esbuild from "esbuild";
 import tailwindPlugin from "esbuild-plugin-tailwindcss";
@@ -91,7 +90,7 @@ async function main() {
       process.exit(0);
     });
   } else {
-    // Production build
+    // Non-watch build
     Object.entries(buildmap).forEach(([target, build]) =>
       build
         .then(async (context: esbuild.BuildContext) => {
