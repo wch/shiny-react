@@ -69,17 +69,73 @@ The [examples/3-outputs/](examples/3-outputs/) directory demonstrates outputs th
 
 ![Output Examples](docs/3-outputs.jpeg)
 
+### Server-to-Client Messages Example
+
+The [examples/4-messages/](examples/4-messages/) directory showcases advanced server-to-client communication patterns using custom message handlers. This example demonstrates how Shiny servers can proactively send messages to React components for real-time notifications, status updates, and other server-initiated events.
+
+Key features demonstrated:
+- **Custom Message Handlers** - Registering handlers for specific message types
+- **Server-Initiated Communication** - Messages sent from server without user input
+- **Real-time Updates** - Live notifications and status changes
+- **Toast Notifications** - User-friendly message display system
+
+![Server Messages Example](docs/4-messages.jpeg)
+
+### Modern UI with shadcn/ui Components
+
+The [examples/5-shadcn/](examples/5-shadcn/) directory demonstrates building modern, professional UIs using [shadcn/ui](https://ui.shadcn.com/) components with Tailwind CSS. This example shows how to integrate popular React component libraries with Shiny-React applications.
+
+Key features demonstrated:
+- **shadcn/ui Components** - Professional, accessible UI components
+- **Tailwind CSS Integration** - Modern utility-first styling
+- **Component Composition** - Building complex UIs from simple components
+- **Theme System** - Customizable design tokens and styling
+- **TypeScript Integration** - Full type safety with component props
+
+![shadcn/ui Example](docs/5-shadcn.jpeg)
+
+### Interactive Dashboard
+
+The [examples/6-dashboard/](examples/6-dashboard/) directory presents a comprehensive dashboard application with charts, tables, and interactive data visualization. This sophisticated example demonstrates how to build data-driven applications with Shiny-React.
+
+Key features demonstrated:
+- **Interactive Charts** - Dynamic data visualization with filtering
+- **Data Tables** - Sortable, filterable tabular data display
+- **Multi-Component Communication** - Coordinated updates across multiple UI elements
+- **Real-time Data** - Live updates from server calculations
+- **Responsive Design** - Modern dashboard layout with shadcn/ui components
+- **Advanced State Management** - Complex data flow patterns
+
+![Dashboard Example](docs/6-dashboard.jpeg)
+
+### AI Chat Application
+
+The [examples/7-chat/](examples/7-chat/) directory showcases an advanced AI chat application with multi-modal input support, dynamic theming, and LLM integration. This production-ready example demonstrates sophisticated patterns for building modern conversational interfaces.
+
+Key features demonstrated:
+- **Multi-modal Input** - Text and image attachments support
+- **Streaming Responses** - Real-time AI response streaming
+- **Dynamic Themes** - Multiple theme variants with live switching
+- **File Upload** - Drag-and-drop image handling
+- **LLM Integration** - Compatible with OpenAI API (R: ellmer, Python: chatlas)
+- **Advanced UI Patterns** - Professional chat interface with shadcn/ui
+- **Custom Message Handlers** - Server-initiated streaming communication
+
+![AI Chat Example](docs/7-chat.jpeg)
+
 ### Running the Examples
 
 For any example, build the JavaScript and CSS for the React application:
 
 ```bash
-# For Hello World example
-cd examples/1-hello-world
-# Or, for Input Component examples
-cd examples/2-inputs
-# Or, for Output examples
-cd examples/3-outputs
+# Choose any example directory:
+cd examples/1-hello-world        # Basic communication
+cd examples/2-inputs             # Input components
+cd examples/3-outputs            # Output components
+cd examples/4-messages           # Server messages
+cd examples/5-shadcn             # shadcn/ui components
+cd examples/6-dashboard          # Interactive dashboard
+cd examples/7-chat               # AI chat application
 
 # Install dependencies
 npm install
