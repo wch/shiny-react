@@ -196,13 +196,6 @@ shiny run py/app.py --port 8000 --reload
 
 Open `http://localhost:8000` in your browser.
 
-### Advanced Examples
-
-Several sophisticated examples demonstrate advanced patterns:
-
-- **[examples/5-shadcn/](examples/5-shadcn/)** - Modern UI with [shadcn/ui](https://ui.shadcn.com/) components and Tailwind CSS
-- **[examples/6-dashboard/](examples/6-dashboard/)** - Interactive dashboard with charts, tables, and filtering
-- **[examples/7-chat/](examples/7-chat/)** - AI chat application with multi-modal input, themes, and LLM integration
 
 ## Usage
 
