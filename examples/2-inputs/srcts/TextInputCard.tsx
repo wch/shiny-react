@@ -12,13 +12,13 @@ function TextInputCard() {
 
   return (
     <InputOutputCard
-      title="Text Input"
+      title='Text Input'
       inputElement={
         <input
-          type="text"
+          type='text'
           value={txtin}
           onChange={handleInputChange}
-          placeholder="Enter your message here..."
+          placeholder='Enter your message here...'
         />
       }
       outputValue={txtout}

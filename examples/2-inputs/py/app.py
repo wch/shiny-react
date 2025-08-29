@@ -52,5 +52,18 @@ def server(input: Inputs, output: Outputs, session: Session):
         num_button_clicks += 1
         return str(num_button_clicks)
 
+    @render.text()
+    def batchout():
+        import json
+        import datetime
+
+        data = input.batchdata()
+        if data is None:
+            return "No data submitted yet."
+
+        data["receivedAt"] = datetime.datetime.now().isoformat()
+
+        return json.dumps(data, indent=2)
+
 
 app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))

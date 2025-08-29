@@ -12,39 +12,39 @@ function RadioInputCard() {
 
   return (
     <InputOutputCard
-      title="Radio Button Input"
+      title='Radio Button Input'
       inputElement={
-        <div className="radio-group">
-          <label className="radio-label">
+        <div className='radio-group'>
+          <label className='radio-label'>
             <input
-              type="radio"
-              name="radio-options"
-              value="option1"
+              type='radio'
+              name='radio-options'
+              value='option1'
               checked={radioIn === "option1"}
               onChange={handleInputChange}
-              className="radio-input"
+              className='radio-input'
             />
             Option 1
           </label>
-          <label className="radio-label">
+          <label className='radio-label'>
             <input
-              type="radio"
-              name="radio-options"
-              value="option2"
+              type='radio'
+              name='radio-options'
+              value='option2'
               checked={radioIn === "option2"}
               onChange={handleInputChange}
-              className="radio-input"
+              className='radio-input'
             />
             Option 2
           </label>
-          <label className="radio-label">
+          <label className='radio-label'>
             <input
-              type="radio"
-              name="radio-options"
-              value="option3"
+              type='radio'
+              name='radio-options'
+              value='option3'
               checked={radioIn === "option3"}
               onChange={handleInputChange}
-              className="radio-input"
+              className='radio-input'
             />
             Option 3
           </label>

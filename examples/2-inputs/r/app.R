@@ -50,6 +50,19 @@ server <- function(input, output, session) {
     num_button_clicks <<- num_button_clicks + 1
     num_button_clicks
   })
+
+  output$batchout <- renderText({
+    data <- input$batchdata
+    if (is.null(data)) {
+      return("No data submitted yet.")
+    }
+    data$receivedAt <- as.character(Sys.time())
+    jsonlite::toJSON(
+      data,
+      auto_unbox = TRUE,
+      pretty = TRUE
+    )
+  })
 }
 
 shinyApp(ui = ui, server = server)

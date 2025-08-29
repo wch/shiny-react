@@ -15,16 +15,16 @@ function CheckboxInputCard() {
 
   return (
     <InputOutputCard
-      title="Checkbox Input"
+      title='Checkbox Input'
       inputElement={
         <div>
           <label>
             <input
-              id="checkbox-input"
-              type="checkbox"
+              id='checkbox-input'
+              type='checkbox'
               checked={checkboxIn}
               onChange={handleInputChange}
-              className="checkbox-input"
+              className='checkbox-input'
             />
             Enable feature
           </label>

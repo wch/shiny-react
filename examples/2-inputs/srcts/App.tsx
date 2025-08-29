@@ -7,6 +7,7 @@ import SelectInputCard from "./SelectInputCard";
 import SliderInputCard from "./SliderInputCard";
 import DateInputCard from "./DateInputCard";
 import ButtonInputCard from "./ButtonInputCard";
+import BatchFormCard from "./BatchFormCard";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <SliderInputCard />
         <DateInputCard />
         <ButtonInputCard />
+        <BatchFormCard />
       </div>
     </div>
   );

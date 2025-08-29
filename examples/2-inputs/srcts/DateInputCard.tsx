@@ -4,8 +4,8 @@ import InputOutputCard from "./InputOutputCard";
 
 function DateInputCard() {
   // Get today's date as default in YYYY-MM-DD format
-  const today = new Date().toISOString().split('T')[0];
-  
+  const today = new Date().toISOString().split("T")[0];
+
   const [dateIn, setDateIn] = useShinyInput<string>("datein", today);
   const dateOut = useShinyOutput<string>("dateout", undefined);
 
@@ -15,17 +15,17 @@ function DateInputCard() {
 
   return (
     <InputOutputCard
-      title="Date Input"
+      title='Date Input'
       inputElement={
         <div>
           <label>Select a date:</label>
           <input
-            type="date"
+            type='date'
             value={dateIn}
             onChange={handleInputChange}
-            className="date-input"
+            className='date-input'
           />
-          <div className="date-value">Selected date: {dateIn}</div>
+          <div className='date-value'>Selected date: {dateIn}</div>
         </div>
       }
       outputValue={dateOut}

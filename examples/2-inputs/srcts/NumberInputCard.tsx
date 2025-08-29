@@ -12,15 +12,15 @@ function NumberInputCard() {
 
   return (
     <InputOutputCard
-      title="Number Input"
+      title='Number Input'
       inputElement={
         <input
-          type="number"
+          type='number'
           value={numberIn}
           onChange={handleInputChange}
-          min="0"
-          max="100"
-          step="1"
+          min='0'
+          max='100'
+          step='1'
         />
       }
       outputValue={numberOut}

@@ -12,18 +12,18 @@ function SelectInputCard() {
 
   return (
     <InputOutputCard
-      title="Select Input"
+      title='Select Input'
       inputElement={
         <select
           value={selectIn}
           onChange={handleInputChange}
-          className="select-input"
+          className='select-input'
         >
-          <option value="apple">Apple</option>
-          <option value="banana">Banana</option>
-          <option value="orange">Orange</option>
-          <option value="grape">Grape</option>
-          <option value="mango">Mango</option>
+          <option value='apple'>Apple</option>
+          <option value='banana'>Banana</option>
+          <option value='orange'>Orange</option>
+          <option value='grape'>Grape</option>
+          <option value='mango'>Mango</option>
         </select>
       }
       outputValue={selectOut}
