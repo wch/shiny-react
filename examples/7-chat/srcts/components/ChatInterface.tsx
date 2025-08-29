@@ -1,20 +1,14 @@
+import { ImageInput } from "@/components/ImageInput";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
-import { Bot, Plus, Send, User, X } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Bot, User } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { useShinyInput, useShinyOutput } from "shiny-react";
-
-interface ImageAttachment {
-  name: string;
-  content: string; // base64 encoded data
-  type: string; // MIME type
-  size: number; // file size in bytes
-}
+import { ImageAttachment } from "@/hooks/useImageUpload";
 
 interface ChatMessage {
   text: string;
@@ -39,14 +33,9 @@ function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [currentAttachments, setCurrentAttachments] = useState<
-    ImageAttachment[]
-  >([]);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [dragCounter, setDragCounter] = useState(0);
+  const [currentAttachments, setCurrentAttachments] = useState<ImageAttachment[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Handle streaming messages
   useEffect(() => {
@@ -142,131 +131,6 @@ function ChatInterface() {
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  // File handling constants and functions
-  const MAX_FILE_SIZE_MB = 5;
-  const SUPPORTED_IMAGE_TYPES = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-  ];
-
-  const validateFile = (file: File): string | null => {
-    if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
-      return `File type ${file.type} is not supported. Please use JPEG, PNG, WebP, or GIF.`;
-    }
-    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      return `File size must be less than ${MAX_FILE_SIZE_MB}MB.`;
-    }
-    return null;
-  };
-
-  const processFiles = useCallback(async (files: FileList | File[]) => {
-    const fileArray = Array.from(files);
-    const newAttachments: ImageAttachment[] = [];
-
-    for (const file of fileArray) {
-      const error = validateFile(file);
-      if (error) {
-        alert(error); // In production, you'd want better error handling
-        continue;
-      }
-
-      // Convert to base64
-      const reader = new FileReader();
-      const base64Promise = new Promise<string>((resolve) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          // Remove the data:image/...;base64, prefix
-          const base64 = result.split(",")[1];
-          resolve(base64);
-        };
-      });
-
-      reader.readAsDataURL(file);
-      const base64Content = await base64Promise;
-
-      newAttachments.push({
-        name: file.name,
-        content: base64Content,
-        type: file.type,
-        size: file.size,
-      });
-    }
-
-    setCurrentAttachments((prev) => [...prev, ...newAttachments]);
-  }, []);
-
-  // Drag and drop handlers with improved event handling
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragOver(false);
-      setDragCounter(0);
-
-      if (isLoading) return;
-
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        processFiles(files);
-      }
-    },
-    [isLoading, processFiles]
-  );
-
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDragCounter((prev) => prev + 1);
-
-    if (e.dataTransfer.types.includes("Files")) {
-      setIsDragOver(true);
-    }
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDragCounter((prev) => {
-      const newCount = prev - 1;
-      if (newCount <= 0) {
-        setIsDragOver(false);
-        return 0;
-      }
-      return newCount;
-    });
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        processFiles(files);
-      }
-      // Reset the input value so the same file can be selected again
-      e.target.value = "";
-    },
-    [processFiles]
-  );
-
-  const removeAttachment = useCallback((index: number) => {
-    setCurrentAttachments((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + " B";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
 
   return (
@@ -417,133 +281,17 @@ function ChatInterface() {
 
           {/* Input Area */}
           <div className='chat-input-area flex-shrink-0'>
-            <div className='max-w-4xl mx-auto space-y-3'>
-              {/* Image Previews */}
-              {currentAttachments.length > 0 && (
-                <div className='space-y-2'>
-                  <div className='text-xs text-muted-foreground'>
-                    {currentAttachments.length} image
-                    {currentAttachments.length !== 1 ? "s" : ""} attached
-                  </div>
-                  <div className='grid grid-cols-4 gap-2'>
-                    {currentAttachments.map((attachment, index) => (
-                      <div
-                        key={index}
-                        className='relative border rounded-lg overflow-hidden bg-muted/50'
-                      >
-                        <div className='aspect-square relative'>
-                          <img
-                            src={`data:${attachment.type};base64,${attachment.content}`}
-                            alt={attachment.name}
-                            className='w-full h-full object-cover'
-                          />
-                          <Button
-                            size='sm'
-                            variant='secondary'
-                            className='absolute top-1 right-1 h-5 w-5 p-0'
-                            onClick={() => removeAttachment(index)}
-                            disabled={isLoading}
-                          >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </div>
-                        <div className='p-1'>
-                          <div className='text-xs truncate font-medium'>
-                            {attachment.name}
-                          </div>
-                          <div className='text-xs text-muted-foreground'>
-                            {formatFileSize(attachment.size)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Text Input with Drag and Drop */}
-              <div
-                className={cn(
-                  "relative flex gap-2 p-2 rounded-lg border transition-colors",
-                  isDragOver && !isLoading
-                    ? "border-primary bg-primary/10"
-                    : "border-input",
-                  isLoading && "opacity-50"
-                )}
-                onDrop={handleDrop}
-                onDragEnter={handleDragEnter}
-                onDragLeave={handleDragLeave}
-                onDragOver={handleDragOver}
-              >
-                {/* Hidden File Input */}
-                <input
-                  ref={fileInputRef}
-                  type='file'
-                  className='sr-only'
-                  accept={SUPPORTED_IMAGE_TYPES.join(",")}
-                  multiple
-                  onChange={handleFileSelect}
-                  disabled={isLoading}
-                />
-
-                {/* Plus Icon Button */}
-                <Button
-                  type='button'
-                  size='icon'
-                  variant='ghost'
-                  className={cn(
-                    "h-8 w-8 flex-shrink-0",
-                    isDragOver && "pointer-events-none"
-                  )}
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isLoading}
-                >
-                  <Plus className='h-4 w-4' />
-                </Button>
-
-                {/* Text Input */}
-                <input
-                  type='text'
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={
-                    isDragOver
-                      ? "Drop images here..."
-                      : "Type your message here..."
-                  }
-                  disabled={isLoading}
-                  className={cn(
-                    "flex-1 bg-transparent border-none outline-none focus:ring-0 text-sm",
-                    isDragOver && "pointer-events-none"
-                  )}
-                />
-
-                {/* Send Button */}
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={
-                    (!inputValue.trim() && currentAttachments.length === 0) ||
-                    isLoading
-                  }
-                  size='icon'
-                  className={cn(
-                    "h-8 w-8 flex-shrink-0",
-                    isDragOver && "pointer-events-none"
-                  )}
-                >
-                  <Send className='h-4 w-4' />
-                </Button>
-
-                {/* Drag Over Overlay */}
-                {isDragOver && !isLoading && (
-                  <div className='absolute inset-0 flex items-center justify-center bg-primary/20 rounded-lg pointer-events-none z-10'>
-                    <div className='text-sm font-medium text-primary'>
-                      Drop images here
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className='max-w-4xl mx-auto'>
+              <ImageInput
+                attachments={currentAttachments}
+                onAttachmentsChange={setCurrentAttachments}
+                inputValue={inputValue}
+                onInputChange={setInputValue}
+                onSend={handleSendMessage}
+                onKeyPress={handleKeyPress}
+                isLoading={isLoading}
+                placeholder="Type your message here..."
+              />
             </div>
           </div>
         </CardContent>
