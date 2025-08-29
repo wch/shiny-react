@@ -6,7 +6,6 @@ mtcars <- read.csv("mtcars.csv")
 
 ui <- barePage(
   title = "Hello Shiny React",
-  # shinyReactDependency(),
   tags$head(
     tags$script(src = "main.js", type = "module"),
     tags$link(href = "main.css", rel = "stylesheet")
