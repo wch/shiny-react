@@ -155,7 +155,78 @@ def server(input, output, session):
 ```
 
 
-Note that some other code is needed on the back end to create the complete Shiny app, but it is not shown here. See [examples/1-hello-world/r/app.R](examples/1-hello-world/r/app.R) and [examples/1-hello-world/py/app.py](examples/1-hello-world/py/app.py) for more complete examples.
+Note that some other code is needed on the back end to create the complete Shiny app, including utility functions provided in `shinyreact.R` and `shinyreact.py`. See the complete examples in [examples/1-hello-world/](examples/1-hello-world/) for more details.
+
+## Backend Utilities
+
+### shinyreact.R and shinyreact.py
+
+Each Shiny-React application includes utility files that provide essential functions for React integration:
+
+**shinyreact.R** (R backend):
+- `barePage()` - Creates a bare HTML page without default Shiny styling, suitable for React applications
+- `renderObject()` - Custom renderer for sending arbitrary JSON data to React components
+
+**shinyreact.py** (Python backend):
+- `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications  
+- `render_object()` - Custom renderer for sending arbitrary JSON data to React components
+
+### Sending Arbitrary JSON with renderObject/render_object
+
+The `renderObject()` (R) and `render_object()` (Python) functions allow you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
+
+**R Usage:**
+```r
+# Send a data frame (automatically converted to column-major JSON format)
+output$table_data <- renderObject({
+  mtcars[1:input$num_rows, ]
+})
+
+# Send custom JSON objects
+output$statistics <- renderObject({
+  list(
+    mean = mean(mtcars$mpg),
+    median = median(mtcars$mpg),
+    min = min(mtcars$mpg),
+    max = max(mtcars$mpg)
+  )
+})
+```
+
+**Python Usage:**
+```python
+# Send a data frame (converted to column-major JSON format)
+@render_object()
+def table_data():
+    num_rows = input.table_rows()
+    return mtcars.head(num_rows).to_dict(orient="list")
+
+# Send custom JSON objects
+@render_object()
+def statistics():
+    return {
+        "mean": float(mtcars["mpg"].mean()),
+        "median": float(mtcars["mpg"].median()),
+        "min": float(mtcars["mpg"].min()),
+        "max": float(mtcars["mpg"].max())
+    }
+```
+
+**React Frontend:**
+```typescript
+// Receive complex data structures
+const [tableData] = useShinyOutput<Record<string, number[]>>("table_data", undefined);
+const [stats] = useShinyOutput<{mean: number; median: number; min: number; max: number}>("statistics", undefined);
+```
+
+**Data Frame Format:** Data frames are serialized in **column-major format** as JSON objects where each column becomes a property with an array of values:
+```json
+{
+  "mpg": [21, 21, 22.8, 21.4, ...],
+  "cyl": [6, 6, 4, 6, ...], 
+  "disp": [160, 160, 108, 258, ...]
+}
+```
 
 
 ## Docs
