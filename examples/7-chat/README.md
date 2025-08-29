@@ -102,11 +102,11 @@ Navigate to `http://localhost:8000`
 
 ```
 examples/7-chat/
-├── package.json              # Node.js dependencies and scripts
-├── tsconfig.json            # TypeScript configuration
-├── build.ts                 # Custom build script with Tailwind CSS
-├── components.json          # shadcn/ui configuration
-├── srcts/                   # React TypeScript source
+├── package.json            # Node.js dependencies and scripts
+├── tsconfig.json           # TypeScript configuration
+├── build.ts                # Custom build script with Tailwind CSS
+├── components.json         # shadcn/ui configuration
+├── srcts/                  # React TypeScript source
 │   ├── main.tsx            # App entry point
 │   ├── globals.css         # Tailwind + CSS variables + theme styles
 │   ├── components/
@@ -123,15 +123,15 @@ examples/7-chat/
 │   └── lib/
 │       └── utils.ts        # Utility functions
 ├── r/                      # R Shiny backend
-│   ├── app.R              # Main R application with ellmer
-│   ├── utils.R            # R utility functions
-│   └── www/               # Built assets (auto-generated)
+│   ├── app.R               # Main R application with ellmer
+│   ├── shinyreact.R        # R functions for shiny-react
+│   └── www/                # Built assets (auto-generated)
 ├── py/                     # Python Shiny backend
-│   ├── app.py             # Main Python application with chatlas
-│   ├── utils.py           # Python utility functions
-│   ├── requirements.txt   # Python dependencies
-│   └── www/               # Built assets (auto-generated)
-└── README.md              # This file
+│   ├── app.py              # Main Python application with chatlas
+│   ├── shinyreact.py       # Python functions for shiny-react
+│   ├── requirements.txt    # Python dependencies
+│   └── www/                # Built assets (auto-generated)
+└── README.md               # This file
 ```
 
 ## Customization

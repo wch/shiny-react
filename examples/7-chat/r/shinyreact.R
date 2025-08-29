@@ -1,6 +1,6 @@
 library(shiny)
 
-# Bare page without default Shiny styling  
+# Bare page without default Shiny styling
 barePage <- function(..., title = NULL, lang = NULL) {
   ui <- list(
     shiny:::jqueryDependency(),
@@ -12,12 +12,21 @@ barePage <- function(..., title = NULL, lang = NULL) {
 }
 
 # Custom renderer for arbitrary JSON data
-renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
+renderObject <- function(
+  expr,
+  env = parent.frame(),
+  quoted = FALSE,
+  outputArgs = list()
+) {
   func <- installExprFunction(expr, "func", env, quoted, label = "renderObject")
   createRenderFunction(
     func,
-    function(value, session, name, ...) { value },
-    function(...) { stop("Not implemented") },
+    function(value, session, name, ...) {
+      value
+    },
+    function(...) {
+      stop("Not implemented")
+    },
     outputArgs
   )
 }

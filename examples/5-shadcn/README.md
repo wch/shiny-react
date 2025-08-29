@@ -25,14 +25,14 @@ This example demonstrates how to set up and use **shadcn/ui** components with **
 
 ```
 5-shadcn/
-├── package.json              # Dependencies including shadcn/ui packages
-├── tsconfig.json             # TypeScript configuration with path aliases
-├── components.json           # shadcn/ui CLI configuration  
-├── build.ts                  # Custom build script with Tailwind processing
-├── srcts/                    # React TypeScript source
+├── package.json             # Dependencies including shadcn/ui packages
+├── tsconfig.json            # TypeScript configuration with path aliases
+├── components.json          # shadcn/ui CLI configuration  
+├── build.ts                 # Custom build script with Tailwind processing
+├── srcts/                   # React TypeScript source
 │   ├── main.tsx             # Application entry point
 │   ├── globals.css          # Global styles and CSS variables
-│   ├── css.d.ts            # CSS module type definitions
+│   ├── css.d.ts             # CSS module type definitions
 │   ├── lib/
 │   │   └── utils.ts         # Utility functions (cn helper)
 │   └── components/
@@ -47,13 +47,13 @@ This example demonstrates how to set up and use **shadcn/ui** components with **
 │       ├── ButtonEventCard.tsx # Button event example
 │       └── PlotCard.tsx     # Plot display example
 ├── r/                       # R Shiny backend
-│   ├── app.R               # Main R application
-│   ├── utils.R             # R utility functions
-│   └── www/                # Built assets (auto-generated)
+│   ├── app.R                # Main R application
+│   ├── shinyreact.R         # R functions for shiny-react
+│   └── www/                 # Built assets (auto-generated)
 └── py/                      # Python Shiny backend  
-    ├── app.py              # Main Python application
-    ├── utils.py            # Python utility functions
-    └── www/                # Built assets (auto-generated)
+    ├── app.py               # Main Python application
+    ├── shinyreact.py        # Python functions for shiny-react
+    └── www/                 # Built assets (auto-generated)
 ```
 
 ## Getting Started

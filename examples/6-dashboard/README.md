@@ -40,12 +40,12 @@ This example demonstrates a modern, interactive analytics dashboard built with *
 
 ```
 5-dashboard/
-├── package.json              # Dependencies and build scripts
-├── tsconfig.json             # TypeScript configuration
-├── tailwind.config.js        # Tailwind CSS configuration
-├── postcss.config.js         # PostCSS configuration
-├── components.json           # shadcn/ui configuration
-├── srcts/                    # React TypeScript source
+├── package.json             # Dependencies and build scripts
+├── tsconfig.json            # TypeScript configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+├── postcss.config.js        # PostCSS configuration
+├── components.json          # shadcn/ui configuration
+├── srcts/                   # React TypeScript source
 │   ├── main.tsx             # Application entry point
 │   ├── globals.css          # Global styles and CSS variables
 │   ├── lib/
@@ -66,13 +66,13 @@ This example demonstrates a modern, interactive analytics dashboard built with *
 │       ├── DataTable.tsx    # Interactive data table
 │       └── Charts.tsx       # Chart visualizations
 ├── r/                       # R Shiny backend
-│   ├── app.R               # Main R application
-│   ├── utils.R             # Data generation and processing
-│   └── www/                # Built assets (auto-generated)
+│   ├── app.R                # Main R application
+│   ├── shinyreact.R         # R functions for shiny-react
+│   └── www/                 # Built assets (auto-generated)
 └── py/                      # Python Shiny backend  
-    ├── app.py              # Main Python application
-    ├── utils.py            # Data generation and processing
-    └── www/                # Built assets (auto-generated)
+    ├── app.py               # Main Python application
+    ├── shinyreact.py        # Python functions for shiny-react
+    └── www/                 # Built assets (auto-generated)
 ```
 
 ## Getting Started
@@ -171,7 +171,7 @@ React Components <──[useShinyOutput]── Shiny Server
 ## Customization
 
 ### Adding New Metrics
-1. **Backend**: Modify `calculate_metrics()` in `utils.R` or `utils.py`
+1. **Backend**: Modify `calculate_metrics()` in `shinyreact.R` or `shinyreact.py`
 2. **Frontend**: Update `MetricsCards.tsx` to display new metrics
 3. **Types**: Add TypeScript interfaces for new data structures
 

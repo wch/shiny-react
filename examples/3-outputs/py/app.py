@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, render
-from utils import page_bare, render_object
+from shinyreact import page_bare, render_object
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt

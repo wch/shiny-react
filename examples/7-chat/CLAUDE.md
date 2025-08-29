@@ -17,11 +17,11 @@ This is an AI Chat application built with Shiny-React, demonstrating modern web 
 
 ```
 examples/7-chat/
-├── package.json              # Dependencies including shadcn/ui and build scripts
-├── tsconfig.json            # TypeScript configuration with path aliases
-├── build.ts                 # Custom ESBuild configuration with Tailwind CSS
-├── components.json          # shadcn/ui CLI configuration
-├── srcts/                   # React TypeScript source code
+├── package.json            # Dependencies including shadcn/ui and build scripts
+├── tsconfig.json           # TypeScript configuration with path aliases
+├── build.ts                # Custom ESBuild configuration with Tailwind CSS
+├── components.json         # shadcn/ui CLI configuration
+├── srcts/                  # React TypeScript source code
 │   ├── main.tsx            # React app entry point
 │   ├── globals.css         # Tailwind CSS with theme variables and chat styles
 │   ├── components/
@@ -35,15 +35,15 @@ examples/7-chat/
 │   └── lib/
 │       └── utils.ts        # Utility functions (cn helper for class merging)
 ├── r/                      # R Shiny backend
-│   ├── app.R              # Main R Shiny application with ellmer integration
-│   ├── utils.R            # R utility functions (barePage, renderObject)
-│   └── www/               # Built JavaScript/CSS output (auto-generated)
+│   ├── app.R               # Main R Shiny application with ellmer integration
+│   ├── shinyreact.R        # R functions for shiny-react
+│   └── www/                # Built JavaScript/CSS output (auto-generated)
 ├── py/                     # Python Shiny backend
-│   ├── app.py             # Main Python Shiny application with chatlas integration
-│   ├── utils.py           # Python utility functions (page_bare, render_object)
-│   └── www/               # Built JavaScript/CSS output (auto-generated)
+│   ├── app.py              # Main Python Shiny application with chatlas integration
+│   ├── shinyreact.py       # Python functions for shiny-react
+│   └── www/                # Built JavaScript/CSS output (auto-generated)
 ├── README.md               # User-facing setup and usage instructions
-└── CLAUDE.md              # This file - comprehensive technical documentation
+└── CLAUDE.md               # This file - comprehensive technical documentation
 ```
 
 ## Key Features Implementation

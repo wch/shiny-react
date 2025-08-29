@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, render
-from utils import page_bare
+from shinyreact import page_bare
 from pathlib import Path
 
 app_ui = page_bare(

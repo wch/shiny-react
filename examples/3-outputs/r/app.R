@@ -1,7 +1,7 @@
 library(shiny)
 library(jsonlite)
 
-source("utils.R", local = TRUE)
+source("shinyreact.R", local = TRUE)
 mtcars <- read.csv("mtcars.csv")
 
 ui <- barePage(

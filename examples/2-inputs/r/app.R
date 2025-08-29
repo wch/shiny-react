@@ -1,6 +1,6 @@
 library(shiny)
 
-source("utils.R", local = TRUE)
+source("shinyreact.R", local = TRUE)
 
 ui <- barePage(
   title = "Hello Shiny React",

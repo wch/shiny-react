@@ -27,13 +27,13 @@ hello-world-app/
 │   └── styles.css          # CSS styling
 ├── r/                      # R Shiny backend
 │   ├── app.R              # Main R Shiny application
-│   ├── utils.R            # R utility functions (barePage, renderObject)
+│   ├── shinyreact.R       # R functions for shiny-react
 │   └── www/               # Built JavaScript/CSS output (auto-generated)
 │       ├── main.js        # Compiled React code for R backend
 │       └── main.css       # Compiled CSS for R backend
 └── py/                     # Python Shiny backend
     ├── app.py             # Main Python Shiny application
-    ├── utils.py           # Python utility functions (page_bare, render_object)
+    ├── shinyreact.py      # Python functions for shiny-react
     └── www/               # Built JavaScript/CSS output (auto-generated)
         ├── main.js        # Compiled React code for Python backend
         └── main.css       # Compiled CSS for Python backend
@@ -48,7 +48,7 @@ hello-world-app/
 
 ### Backend (Shiny)
 - **`r/app.R`** or **`py/app.py`**: Main Shiny server application
-- **`r/utils.R`** or **`py/utils.py`**: Utility functions for bare page setup and custom renderers
+- **`r/shinyreact.R`** or **`py/shinyreact.py`**: Utility functions for bare page setup and custom renderers
 - **`r/www/`** or **`py/www/`**: Auto-generated build output (JavaScript and CSS bundles)
 
 ## Build Commands
@@ -173,8 +173,8 @@ def server(input, output, session):
 4. **Update styling** in `styles.css` if needed
 
 ### Modifying Backend Logic
-- **R**: Edit `r/app.R` for server logic, `r/utils.R` for utilities
-- **Python**: Edit `py/app.py` for server logic, `py/utils.py` for utilities
+- **R**: Edit `r/app.R` for server logic, `r/shinyreact.R` for utilities
+- **Python**: Edit `py/app.py` for server logic, `py/shinyreact.py` for utilities
 - **No rebuild needed** for backend changes (Shiny auto-reloads if configured)
 
 ## Architecture Details
@@ -597,7 +597,7 @@ def table_data():
 
 **R Backend - Custom renderObject**:
 ```r
-# In utils.R
+# In shinyreact.R
 renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
   func <- installExprFunction(expr, "func", env, quoted, label = "renderObject")
   createRenderFunction(
@@ -625,7 +625,7 @@ output$table_stats <- renderObject({
 
 **Python Backend - Custom render_object**:
 ```python
-# In utils.py
+# In shinyreact.py
 class render_object(Renderer[Jsonifiable]):
     """Reactively render arbitrary JSON object."""
     
@@ -997,7 +997,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 **Basic Server Structure**:
 ```r
 library(shiny)
-source("utils.R", local = TRUE)
+source("shinyreact.R", local = TRUE)
 
 # UI with bare page (no default Shiny styling)
 ui <- barePage(
@@ -1031,7 +1031,7 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
-**R Utility Functions (utils.R)**:
+**R Utility Functions (shinyreact.R)**:
 ```r
 # Bare page without default Shiny styling
 barePage <- function(..., title = NULL, lang = NULL) {
@@ -1061,7 +1061,7 @@ renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs 
 **Basic Server Structure**:
 ```python
 from shiny import App, Inputs, Outputs, Session, ui, render
-from utils import page_bare, render_object
+from shinyreact page_bare, render_object
 from pathlib import Path
 
 # UI with bare page
@@ -1097,7 +1097,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
 ```
 
-**Python Utility Functions (utils.py)**:
+**Python Utility Functions (shinyreact.py)**:
 ```python
 from shiny import ui
 from shiny.html_dependencies import shiny_deps

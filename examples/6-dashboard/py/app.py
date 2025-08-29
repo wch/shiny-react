@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, reactive
-from utils import page_bare, render_object
+from shinyreact page_bare, render_object
 from data import generate_sample_data, filter_data, calculate_metrics
 from pathlib import Path
 import pandas as pd

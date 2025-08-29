@@ -2,8 +2,8 @@
 
 This example demonstrates how to output complex data structures from Shiny applications using the shiny-react library.
 
-- In R, it uses a `renderObject()` function, implemented in the `utils.R` file.
-- In Python, it uses a `render_object()` function, implemented in the `utils.py` file.
+- In R, it uses a `renderObject()` function, implemented in the `shinyreact.R` file.
+- In Python, it uses a `render_object()` function, implemented in the `shinyreact.py` file.
 
 These functions send arbitrary data structures (which can be converted to JSON) to the frontend, where they are displayed using React components.
 
@@ -11,10 +11,10 @@ These functions send arbitrary data structures (which can be converted to JSON) 
 
 - **`r/`** - R Shiny application
   - `app.R` - Main R Shiny server application
-  - `utils.R` - R utility functions
+  - `shinyreact.R` - R utility functions
 - **`py/`** - Python Shiny application
   - `app.py` - Main Python Shiny server application
-  - `utils.py` - Python utility functions
+  - `shinyreact.py` - Python utility functions
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
   - `App.tsx` - Main App component that displays all examples

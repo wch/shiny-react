@@ -10,10 +10,10 @@ The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receiv
 
 - **`r/`** - R Shiny application
   - `app.R` - Main R Shiny server application
-  - `utils.R` - R utility functions
+  - `shinyreact.R` - R utility functions
 - **`py/`** - Python Shiny application
   - `app.py` - Main Python Shiny server application
-  - `utils.py` - Python utility functions
+  - `shinyreact.py` - Python utility functions
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
   - `HelloWorldComponent.tsx` - Main React component using shiny-react hooks

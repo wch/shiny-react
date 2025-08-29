@@ -48,10 +48,10 @@ The server sends random log messages every 2 seconds with different types (info,
 
 - **`r/`** - R Shiny application
   - `app.R` - R Shiny server with reactive timer for log event simulation
-  - `utils.R` - R utility functions (barePage)
+  - `shinyreact.R` - R utility functions (barePage)
 - **`py/`** - Python Shiny application  
   - `app.py` - Python Shiny server with reactive timer for log event simulation
-  - `utils.py` - Python utility functions (page_bare)
+  - `shinyreact.py` - Python utility functions (page_bare)
 - **`srcts/`** - TypeScript/React source code
   - `main.tsx` - Entry point that renders the React app
   - `App.tsx` - Main React component with toast message handler

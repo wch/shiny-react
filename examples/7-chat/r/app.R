@@ -2,7 +2,7 @@ library(shiny)
 library(ellmer)
 dotenv::load_dot_env(".env")
 
-source("utils.R", local = TRUE)
+source("shinyreact.R", local = TRUE)
 # Initialize chat object - using OpenAI GPT-4o-mini by default
 # Users can set OPENAI_API_KEY environment variable or modify this
 chat <-
