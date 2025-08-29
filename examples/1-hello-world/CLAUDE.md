@@ -1378,4 +1378,342 @@ function PlotCard() {
 }
 ```
 
+## Advanced Example: AI Chat Application (examples/7-chat/)
+
+The AI Chat application (`examples/7-chat/`) demonstrates advanced Shiny-React patterns including streaming data, multi-modal input, theming systems, and LLM integration. It showcases how to build sophisticated, production-ready applications with Shiny-React.
+
+### Key Features Demonstrated
+
+**Multi-modal Communication**:
+```typescript
+interface ChatMessage {
+  text: string;
+  attachments: ImageAttachment[];
+}
+
+interface ImageAttachment {
+  name: string;
+  content: string; // base64 encoded data
+  type: string;    // MIME type
+  size: number;    // file size in bytes
+}
+
+// Send structured messages with text and image attachments
+const [currentMessage, setCurrentMessage] = useShinyInput<ChatMessage>(
+  "chat_input",
+  { text: "", attachments: [] },
+  { debounceMs: 0, priority: "event" }
+);
+```
+
+**Streaming Responses with Custom Message Handlers**:
+```typescript
+// Handle streaming messages from server
+useEffect(() => {
+  const handleStreamingMessage = (msg: { chunk: string; done: boolean }) => {
+    if (msg.done) {
+      setIsLoading(false);
+    } else {
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        const lastMessage = newMessages[newMessages.length - 1];
+        
+        if (lastMessage?.role === "assistant") {
+          // Append chunk to existing assistant message
+          lastMessage.content += msg.chunk;
+        } else {
+          // Create new assistant message if none exists
+          const newMessage = {
+            id: Date.now().toString(),
+            role: "assistant" as const,
+            content: msg.chunk,
+            timestamp: new Date(),
+          };
+          newMessages.push(newMessage);
+        }
+        return newMessages;
+      });
+    }
+  };
+
+  // Register custom message handler for streaming
+  const registerHandler = () => {
+    if (window.Shiny && window.Shiny.addCustomMessageHandler) {
+      window.Shiny.addCustomMessageHandler("chat_stream", handleStreamingMessage);
+    } else {
+      setTimeout(registerHandler, 100);
+    }
+  };
+  
+  registerHandler();
+}, []);
+```
+
+**Dynamic Theme System**:
+```typescript
+// Theme context with multiple theme variants
+export type ThemeName = "default" | "paper" | "cyberpunk" | "glassmorphism" | "terminal" | "discord";
+
+interface Theme {
+  name: ThemeName;
+  displayName: string;
+  description: string;
+  previewColor: string;
+}
+
+// Runtime theme switching
+const { currentTheme, setTheme } = useTheme();
+
+// Conditional styling based on current theme
+const themeClasses = cn(
+  "message-bubble",
+  currentTheme === "cyberpunk" && "bg-gradient-to-r from-cyan-500/20 to-pink-500/20",
+  currentTheme === "glassmorphism" && "bg-white/10 backdrop-blur-xl",
+  currentTheme === "terminal" && "bg-green-900/20 text-green-400 font-mono"
+);
+```
+
+**Advanced Input Handling with Drag-and-Drop**:
+```typescript
+// Image upload component with drag-and-drop support
+const [currentAttachments, setCurrentAttachments] = useState<ImageAttachment[]>([]);
+const [isDragOver, setIsDragOver] = useState(false);
+
+// Handle drag events for image upload
+const handleDragOver = (e: React.DragEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+const handleDrop = (e: React.DragEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+  setIsDragOver(false);
+  
+  const files = Array.from(e.dataTransfer.files);
+  const imageFiles = files.filter(file => file.type.startsWith('image/'));
+  
+  processImageFiles(imageFiles);
+};
+
+const processImageFiles = (files: File[]) => {
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      const attachment: ImageAttachment = {
+        name: file.name,
+        content: base64.split(',')[1], // Remove data:image/... prefix
+        type: file.type,
+        size: file.size
+      };
+      setCurrentAttachments(prev => [...prev, attachment]);
+    };
+    reader.readAsDataURL(file);
+  });
+};
+```
+
+### Backend Integration Patterns
+
+**R Backend with ellmer (LLM Integration)**:
+```r
+library(ellmer)
+
+# Initialize AI chat client
+chat <- tryCatch({
+  chat_openai(
+    "You are a helpful AI assistant. Be concise but informative in your responses.",
+    model = "gpt-4o-mini"
+  )
+}, error = function(e) {
+  message("Could not initialize OpenAI chat: ", e$message)
+  NULL
+})
+
+server <- function(input, output, session) {
+  # Handle incoming chat messages with structured data
+  observeEvent(input$chat_input, {
+    chat_data <- input$chat_input
+    user_message <- trimws(chat_data$text)
+    attachments <- chat_data$attachments
+    
+    if (nchar(user_message) > 0) {
+      # Process message with AI
+      if (!is.null(chat)) {
+        tryCatch({
+          # Handle text and image attachments
+          if (length(attachments) > 0) {
+            # Process multi-modal input
+            content_parts <- list(list(type = "text", text = user_message))
+            for (attachment in attachments) {
+              content_parts <- append(content_parts, list(list(
+                type = "image_url",
+                image_url = list(url = paste0("data:", attachment$type, ";base64,", attachment$content))
+              )))
+            }
+            ai_response <- chat$chat(content_parts)
+          } else {
+            # Text-only message
+            ai_response <- chat$chat(user_message)
+          }
+          
+          # Send response via custom message for streaming
+          session$sendCustomMessage("chat_stream", list(
+            chunk = ai_response,
+            done = TRUE
+          ))
+        }, error = function(e) {
+          session$sendCustomMessage("chat_stream", list(
+            chunk = paste("Error:", e$message),
+            done = TRUE
+          ))
+        })
+      } else {
+        # Demo response when no API available
+        demo_response <- paste("Demo response to:", user_message)
+        session$sendCustomMessage("chat_stream", list(
+          chunk = demo_response,
+          done = TRUE
+        ))
+      }
+    }
+  })
+}
+```
+
+**Python Backend with chatlas (LLM Integration)**:
+```python
+from chatlas import ChatOpenAI
+import base64
+import os
+
+# Initialize AI chat client
+try:
+    chat = ChatOpenAI(
+        model="gpt-4o-mini",
+        system_prompt="You are a helpful AI assistant. Be concise but informative in your responses.",
+    )
+except Exception as e:
+    print(f"Could not initialize OpenAI chat: {e}")
+    chat = None
+
+def server(input: Inputs, output: Outputs, session: Session):
+    @reactive.effect
+    @reactive.event(input.chat_input)
+    async def handle_chat_input():
+        chat_data = input.chat_input()
+        user_message = chat_data["text"].strip()
+        attachments = chat_data.get("attachments", [])
+        
+        if user_message:
+            try:
+                if chat:
+                    if attachments:
+                        # Handle multi-modal input
+                        content_parts = [{"type": "text", "text": user_message}]
+                        for attachment in attachments:
+                            content_parts.append({
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:{attachment['type']};base64,{attachment['content']}"
+                                }
+                            })
+                        ai_response = await chat.chat(content_parts)
+                    else:
+                        # Text-only message
+                        ai_response = await chat.chat(user_message)
+                    
+                    # Send response via custom message
+                    await session.send_custom_message("chat_stream", {
+                        "chunk": ai_response,
+                        "done": True
+                    })
+                else:
+                    # Demo response when no API available
+                    demo_response = f"Demo response to: {user_message}"
+                    await session.send_custom_message("chat_stream", {
+                        "chunk": demo_response,
+                        "done": True
+                    })
+            except Exception as e:
+                await session.send_custom_message("chat_stream", {
+                    "chunk": f"Error: {str(e)}",
+                    "done": True
+                })
+```
+
+### Advanced UI Patterns
+
+**shadcn/ui Integration**:
+The chat application demonstrates professional UI design using shadcn/ui components with custom theming:
+
+```typescript
+// Theme-aware message bubbles
+<div className={cn(
+  "message-bubble rounded-lg px-3 py-2",
+  message.role === "user"
+    ? "message-user bg-primary text-primary-foreground"
+    : "message-assistant bg-muted text-muted-foreground"
+)}>
+  {/* Message content with image attachments */}
+  <p className="text-sm whitespace-pre-wrap break-words">
+    {message.content}
+  </p>
+  
+  {/* Image attachment grid */}
+  {message.attachments && message.attachments.length > 0 && (
+    <div className={cn(
+      "grid gap-2 mb-2",
+      message.attachments.length === 1 ? "grid-cols-1 max-w-xs" : "grid-cols-2 max-w-sm"
+    )}>
+      {message.attachments.map((attachment, index) => (
+        <img
+          key={index}
+          src={`data:${attachment.type};base64,${attachment.content}`}
+          alt={attachment.name}
+          className="w-full h-auto max-h-48 object-contain rounded-lg"
+        />
+      ))}
+    </div>
+  )}
+</div>
+```
+
+**Real-time Typing Indicator**:
+```typescript
+// Animated typing indicator for loading states
+{message.content === "" && message.role === "assistant" && isLoading ? (
+  <div className="flex items-center gap-1">
+    <div className="typing-indicator"></div>
+    <div className="typing-indicator"></div>
+    <div className="typing-indicator"></div>
+  </div>
+) : (
+  // Regular message content
+)}
+```
+
+### Key Architectural Patterns
+
+**Separation of Concerns**:
+- `ChatInterface.tsx`: Main chat UI logic and message display
+- `ImageInput.tsx`: Specialized component for file uploads and input handling
+- `ThemeSwitcher.tsx`: Theme selection and switching logic
+- `ThemeContext.tsx`: Global theme state management
+
+**State Management**:
+- Local React state for UI interactions (typing, drag states)
+- Shiny-React hooks for server communication
+- Context API for global theme state
+- Custom message handlers for real-time streaming
+
+**Performance Optimizations**:
+- Debounced file processing for large image uploads
+- Efficient message list rendering with keys
+- Conditional rendering based on loading states
+- Memory-efficient base64 image handling
+
+The chat application serves as a comprehensive example of production-ready Shiny-React development, demonstrating advanced patterns that can be applied to complex applications requiring real-time communication, multi-modal input, and sophisticated UI design.
+
 This comprehensive documentation covers all aspects of Shiny-React development from basic concepts to advanced patterns and troubleshooting. Use it as a complete reference for building applications with React frontends and Shiny backends.

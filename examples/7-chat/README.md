@@ -6,15 +6,20 @@ A modern AI chat application built with Shiny-React, featuring:
 - **R Backend**: Shiny server with `ellmer` for LLM integration  
 - **Python Backend**: Shiny server with `chatlas` for LLM integration
 - **Modern UI**: Professional chat interface with message bubbles, avatars, and smooth scrolling
+- **Multi-modal**: Image upload and attachment support
+- **Theming**: Multiple beautiful themes with dynamic switching
 
 ## Features
 
 - 💬 Real-time bidirectional chat communication
-- 🎨 Modern UI with shadcn/ui components
+- 🖼️ **Image attachments**: Drag-and-drop image uploads with preview
+- 🎨 **Multiple themes**: 6 beautiful themes (Default, Paper, Cyberpunk, Glass, Terminal, Discord)
+- 🎛️ **Theme switcher**: Dynamic theme switching with live preview
 - 🔄 Message history and conversation state
 - ⚡ Fast response handling with loading states
 - 🎯 TypeScript for type safety
-- 🎭 Responsive design with light/dark theme support
+- 📱 Responsive design optimized for all screen sizes
+- ✨ Smooth animations and glassmorphism effects
 
 ## Prerequisites
 
@@ -27,7 +32,8 @@ install.packages(c("shiny", "ellmer"))
 ### For Python Backend  
 ```bash
 # Install required packages
-pip install shiny chatlas
+pip install -r py/requirements.txt
+# Or manually: pip install shiny chatlas python-dotenv
 ```
 
 ### API Keys
@@ -102,9 +108,12 @@ examples/7-chat/
 ├── components.json          # shadcn/ui configuration
 ├── srcts/                   # React TypeScript source
 │   ├── main.tsx            # App entry point
-│   ├── globals.css         # Tailwind + CSS variables
+│   ├── globals.css         # Tailwind + CSS variables + theme styles
 │   ├── components/
-│   │   └── ChatInterface.tsx   # Main chat component
+│   │   ├── ChatInterface.tsx   # Main chat component with image support
+│   │   └── ThemeSwitcher.tsx   # Theme selection dropdown
+│   ├── contexts/
+│   │   └── ThemeContext.tsx    # Theme management context
 │   ├── components/ui/      # shadcn/ui components
 │   │   ├── button.tsx
 │   │   ├── card.tsx
@@ -115,21 +124,48 @@ examples/7-chat/
 │       └── utils.ts        # Utility functions
 ├── r/                      # R Shiny backend
 │   ├── app.R              # Main R application with ellmer
-│   └── utils.R            # R utility functions
+│   ├── utils.R            # R utility functions
+│   └── www/               # Built assets (auto-generated)
 ├── py/                     # Python Shiny backend
 │   ├── app.py             # Main Python application with chatlas
-│   └── utils.py           # Python utility functions
+│   ├── utils.py           # Python utility functions
+│   ├── requirements.txt   # Python dependencies
+│   └── www/               # Built assets (auto-generated)
 └── README.md              # This file
 ```
 
 ## Customization
+
+### Themes and Appearance
+
+The application includes 6 built-in themes:
+
+- **Default**: Clean and minimal design
+- **Paper**: Notebook-inspired with ink aesthetics  
+- **Cyberpunk**: Neon colors and electric vibes
+- **Glass**: Frosted glass effects with transparency
+- **Terminal**: Retro computing green-on-black
+- **Discord**: Familiar Discord-like styling
+
+**Switch themes at runtime** using the theme picker in the top-right corner.
+
+**Add custom themes** by editing `srcts/contexts/ThemeContext.tsx` and `srcts/globals.css`.
+
+### Image Attachments
+
+The chat interface supports drag-and-drop image uploads:
+
+- **Supported formats**: PNG, JPEG, GIF, WebP
+- **Size limits**: Configurable in backend  
+- **Preview**: Images show in chat with thumbnails
+- **Multi-image**: Support for multiple attachments per message
 
 ### Changing AI Models
 
 **R (ellmer):**
 ```r
 # In r/app.R, modify the chat initialization:
-chat <- chat_openai("Your system prompt", model = "gpt-4")
+chat <- chat_openai("Your system prompt", model = "gpt-4o")
 
 # Or use other providers:
 chat <- chat_claude("Your system prompt")
@@ -140,18 +176,19 @@ chat <- chat_gemini("Your system prompt")
 ```python
 # In py/app.py, modify the chat initialization:
 chat = ChatOpenAI(
-    model="gpt-4",
+    model="gpt-4o-mini",
     system_prompt="Your system prompt"
 )
 
-# Or use other providers (when available in chatlas)
+# Other providers support coming to chatlas
 ```
 
 ### Customizing the UI
 
 - **Modify components**: Edit `srcts/components/ChatInterface.tsx`
-- **Change styling**: Update `srcts/globals.css` or component-specific styles
+- **Change themes**: Edit `srcts/contexts/ThemeContext.tsx` and `srcts/globals.css`
 - **Add new shadcn components**: Run `npx shadcn@latest add <component-name>`
+- **Custom styling**: All themes use CSS variables for easy customization
 
 ### Environment Variables
 
@@ -174,9 +211,23 @@ Both backends support these environment variables:
 rm -rf node_modules package-lock.json
 npm install
 
-# Clean and rebuild
+# Clean build artifacts and rebuild
 npm run clean
 npm run build
+
+# Check TypeScript errors
+npx tsc --noEmit
+```
+
+### Theme Issues
+If themes appear broken or don't switch properly:
+```bash
+# Rebuild with fresh Tailwind CSS
+npm run clean
+npm run build
+
+# Check if CSS variables are loading
+# Open DevTools → Elements → Check <html> element for theme classes
 ```
 
 ### Port Conflicts
