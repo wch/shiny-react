@@ -10,7 +10,6 @@ from datetime import datetime
 sample_data = pd.DataFrame(
     {
         "id": range(1, 9),
-        "name": ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"],
         "age": [25, 30, 35, 28, 32, 27, 29, 33],
         "score": [85.5, 92.1, 88.3, 88.7, 95.2, 81.9, 87.4, 90.6],
         "category": ["A", "B", "A", "C", "B", "A", "C", "B"],
@@ -42,24 +41,12 @@ def server(input: Inputs, output: Outputs, session: Session):
         text = input.user_text() if input.user_text() is not None else ""
         return len(text)
 
-    # Button event handling
-    @reactive.effect
-    @reactive.event(input.button_trigger)
-    def handle_button():
-        current_time = datetime.now()
-        print(f"Button clicked at: {current_time}")
-
     @render.text
     @reactive.event(input.button_trigger)
     def button_response():
         # React to button trigger
-        return f"Event received at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-
-    # Table data output
-    @render_object()
-    def table_data():
-        # Convert DataFrame to dict format for JSON
-        return sample_data.to_dict(orient="list")
+        now = datetime.now()
+        return f"Event received at: {now.strftime('%Y-%m-%d %H:%M:%S')}.{now.microsecond//10000:02d}"
 
     # Plot output
     @render.plot()

@@ -1,11 +1,11 @@
-import { SimpleApp } from "@/components/SimpleApp";
+import { App } from "@/components/App";
 import { createRoot } from "react-dom/client";
 import "./globals.css";
 
 const container = document.getElementById("root");
 if (container) {
   const root = createRoot(container);
-  root.render(<SimpleApp />);
+  root.render(<App />);
 } else {
   console.error("Could not find root element to mount React component.");
 }

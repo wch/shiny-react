@@ -4,19 +4,9 @@ source("utils.R", local = TRUE)
 # Generate sample data
 sample_data <- data.frame(
   id = 1:8,
-  name = c(
-    "Alice",
-    "Bob",
-    "Charlie",
-    "Diana",
-    "Eve",
-    "Frank",
-    "Grace",
-    "Henry"
-  ),
   age = c(25, 30, 35, 28, 32, 27, 29, 33),
   score = c(85.5, 92.1, 88.3, 88.7, 95.2, 81.9, 87.4, 90.6),
-  category = c("A", "B", "A", "C", "B", "A", "C", "B"),
+  category = c("A", "B", "A", "C", "B", "A", "C", "B")
 )
 
 ui <- barePage(
@@ -43,7 +33,7 @@ server <- function(input, output, session) {
   })
 
   output$button_response <- renderText({
-    paste("Event received at:", as.character(Sys.time()))
+    paste("Event received at:", as.character(Sys.time(), digits = 2))
   }) |>
     bindEvent(input$button_trigger) # Trigger on button events
 
