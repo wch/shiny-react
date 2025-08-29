@@ -128,7 +128,7 @@ function MyComponent() {
   const [inputValue, setInputValue] = useShinyInput<string>("my_input", "default");
   
   // Receive data from Shiny
-  const outputValue = useShinyOutput<string>("my_output", undefined);
+  const [outputValue, outputRecalculating] = useShinyOutput<string>("my_output", undefined);
 
   return (
     <div>
@@ -479,6 +479,118 @@ function App() {
     </div>
   );
 }
+```
+
+### Data Frame Serialization
+
+When working with data frames (tables) in Shiny-React applications, it's important to understand how they are serialized between the server and client.
+
+**Column-Major Format**: Data frames are serialized as JSON objects in **column-major format**, where each column becomes a property in the JSON object with an array of values:
+
+```json
+{
+  "mpg": [21, 21, 22.8, 21.4, 18.7, ...],
+  "cyl": [6, 6, 4, 6, 8, ...],
+  "disp": [160, 160, 108, 258, 360, ...],
+  "hp": [110, 110, 93, 110, 175, ...],
+  ...
+}
+```
+
+**Reading Data Frames in JavaScript**:
+```typescript
+// Receiving column-major data from server
+const [tableData] = useShinyOutput<Record<string, number[]> | undefined>(
+  "table_data", 
+  undefined
+);
+
+// Convert to row-major format for easier processing
+function convertToRows(columnData: Record<string, any[]>): any[] {
+  const columnNames = Object.keys(columnData);
+  const numRows = columnNames.length > 0 ? columnData[columnNames[0]].length : 0;
+  
+  return Array.from({ length: numRows }, (_, rowIndex) => {
+    const row: Record<string, any> = {};
+    columnNames.forEach(colName => {
+      row[colName] = columnData[colName][rowIndex];
+    });
+    return row;
+  });
+}
+
+// Usage in component
+function DataTableCard() {
+  const [tableData] = useShinyOutput<Record<string, number[]> | undefined>(
+    "table_data", 
+    undefined
+  );
+
+  // Extract column names and data
+  const columnNames = tableData ? Object.keys(tableData) : [];
+  const numRows = columnNames.length > 0 ? tableData![columnNames[0]].length : 0;
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {columnNames.map(colName => (
+            <th key={colName}>{colName.toUpperCase()}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {Array.from({ length: numRows }, (_, rowIndex) => (
+          <tr key={rowIndex}>
+            {columnNames.map(colName => {
+              const value = tableData?.[colName][rowIndex];
+              return (
+                <td key={colName}>
+                  {typeof value === "number" 
+                    ? Number.isInteger(value) ? value : value.toFixed(3)
+                    : value}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+**Server-Side Data Frame Handling**:
+
+*R Backend*:
+```r
+# Data frames are automatically converted to column-major JSON
+output$table_data <- renderObject({
+  req(input$table_rows)
+  # This will be converted to a JSON object in column-major format, as in:
+  # {
+  #   "mpg": [21, 21, 22.8, ...],
+  #   "cyl": [6, 6, 4, ...],
+  #   "disp": [160, 160, 108, ...],
+  #   ...
+  # }
+  mtcars[seq_len(input$table_rows), ]
+})
+```
+
+*Python Backend*:
+```python
+@render_object()
+def table_data():
+    num_rows = input.table_rows()
+    # This produces a JSON object in column-major format, as in:
+    # {
+    #   "mpg": [21, 21, 22.8, ...],
+    #   "cyl": [6, 6, 4, ...],
+    #   "disp": [160, 160, 108, ...],
+    #   ...
+    # }
+    return mtcars.head(num_rows).to_dict(orient="list")
 ```
 
 ### Custom Renderers for Complex Data

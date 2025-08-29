@@ -121,7 +121,7 @@ function MyComponent() {
   const [inputValue, setInputValue] = useShinyInput<string>("my_input", "default value");
 
   // Output values received from Shiny
-  const outputValue = useShinyOutput<string>("my_output", undefined);
+  const [outputValue, outputRecalculating] = useShinyOutput<string>("my_output", undefined);
 
   return (
     <div>

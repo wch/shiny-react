@@ -17,6 +17,13 @@ ui <- barePage(
 server <- function(input, output, session) {
   output$table_data <- renderObject({
     req(input$table_rows)
+    # This will be converted to a JSON object in column-major format, as in:
+    # {
+    #   "mpg": [21, 21, 22.8, ...],
+    #   "cyl": [6, 6, 4, ...],
+    #   "disp": [160, 160, 108, ...],
+    #   ...
+    # }
     mtcars[seq_len(input$table_rows), ]
   })
 

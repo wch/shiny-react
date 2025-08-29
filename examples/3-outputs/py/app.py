@@ -23,6 +23,13 @@ def server(input: Inputs, output: Outputs, session: Session):
     @render_object()
     def table_data():
         num_rows = input.table_rows()
+        # This produces a JSON object in column-major format, as in:
+        # {
+        #   "mpg": [21, 21, 22.8, ...],
+        #   "cyl": [6, 6, 4, ...],
+        #   "disp": [160, 160, 108, ...],
+        #   ...
+        # }
         return mtcars.head(num_rows).to_dict(orient="list")
 
     @render_object()
