@@ -2,7 +2,7 @@ from shiny import App, Inputs, Outputs, Session, ui, render, reactive
 from utils import page_bare, render_object
 from pathlib import Path
 from utils import load_dotenv
-from chatlas import ChatOpenAI
+from chatlas import ChatOpenAI, content_image_url
 
 load_dotenv()
 
@@ -27,13 +27,47 @@ def server(input: Inputs, output: Outputs, session: Session):
     @reactive.effect
     @reactive.event(input.chat_input)
     async def handle_chat_input():
-        if not input.chat_input() or not input.chat_input().strip():
+        message_data = input.chat_input()
+        if not message_data or not message_data["text"]:
             return
 
-        user_message = input.chat_input().strip()
-
         try:
-            stream = await chat.stream_async(user_message)
+            # Parse structured input (dict with text and attachments)
+            # Handle both string (backwards compatibility) and structured input
+            if isinstance(message_data, str):
+                user_text = message_data.strip()
+                attachments = []
+            elif isinstance(message_data, dict):
+                user_text = message_data.get("text", "").strip()
+                attachments = message_data.get("attachments", [])
+            else:
+                user_text = ""
+                attachments = []
+
+            # Build chat arguments
+            chat_args = []
+
+            # Add user text if present
+            if user_text:
+                chat_args.append(user_text)
+
+            # Add image attachments as content_image_url objects
+            if attachments:
+                for attachment in attachments:
+                    if attachment.get("content") and attachment.get("type"):
+                        # Create data URL from base64 content
+                        data_url = (
+                            f"data:{attachment['type']};base64,{attachment['content']}"
+                        )
+                        # Add image content to chat arguments
+                        chat_args.append(content_image_url(data_url))
+
+            # Ensure we have at least some content to send
+            if not chat_args:
+                chat_args = ["Please provide some content to analyze."]
+
+            # Create async streaming with all arguments
+            stream = await chat.stream_async(*chat_args)
             async for chunk in stream:
                 await send_chunk(chunk)
 
