@@ -102,6 +102,51 @@ shiny run py/app.py --port 8000
 
 Open your browser to `http://localhost:8000`
 
+## Quick Start with CLI Tool
+
+The easiest way to create a new Shiny-React application is using the included CLI tool:
+
+```bash
+npx shiny-react create-shiny-react-app my-app
+```
+
+The CLI will interactively prompt you to:
+1. **Choose from 7 example templates:**
+   - **Hello World** - Basic bidirectional communication
+   - **Input Components** - Comprehensive input showcase  
+   - **Output Components** - Data visualization demo
+   - **Server Messages** - Messaging patterns
+   - **shadcn/ui Components** - Modern UI components
+   - **Dashboard** - Full dashboard with charts
+   - **AI Chat** - LLM integration example
+
+2. **Optionally include CLAUDE.md** - Comprehensive documentation for LLM coding assistance
+
+After creation, simply:
+```bash
+cd my-app
+npm install
+npm run watch    # Start development with hot reload
+```
+
+Then in another terminal:
+```bash
+# For R backend
+R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
+
+# For Python backend  
+shiny run py/app.py --port 8000 --reload
+```
+
+Open `http://localhost:8000` in your browser.
+
+### Advanced Examples
+
+Several sophisticated examples demonstrate advanced patterns:
+
+- **[examples/5-shadcn/](examples/5-shadcn/)** - Modern UI with [shadcn/ui](https://ui.shadcn.com/) components and Tailwind CSS
+- **[examples/6-dashboard/](examples/6-dashboard/)** - Interactive dashboard with charts, tables, and filtering
+- **[examples/7-chat/](examples/7-chat/)** - AI chat application with multi-modal input, themes, and LLM integration
 
 ## Usage
 
