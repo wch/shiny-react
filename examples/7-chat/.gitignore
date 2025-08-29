@@ -1,0 +1,4 @@
+node_modules/
+r/www/
+py/www/
+.env

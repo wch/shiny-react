@@ -1,0 +1,44 @@
+{
+  "name": "shiny-react-chat",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI chat application using shiny-react, ellmer (R), chatlas (Python), and shadcn/ui",
+  "scripts": {
+    "build": "concurrently \"tsc --noEmit\" \"tsx build.ts\"",
+    "watch": "concurrently \"tsc --noEmit --watch\" \"tsx build.ts --watch\"",
+    "build-prod": "tsc --noEmit && tsx build.ts --production",
+    "clean": "rm -rf r/www py/www build"
+  },
+  "author": "Winston Chang",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.12",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.1",
+    "@types/react-dom": "^19.1.1",
+    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
+    "autoprefixer": "^10.4.16",
+    "chokidar": "^4.0.3",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.25.9",
+    "esbuild-plugin-tailwindcss": "^2.1.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.12",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@radix-ui/react-avatar": "^1.0.4",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-separator": "^1.0.3",
+    "@radix-ui/react-slot": "^1.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.542.0",
+    "shiny-react": "github:wch/shiny-react",
+    "tailwind-merge": "^3.3.1"
+  }
+}
