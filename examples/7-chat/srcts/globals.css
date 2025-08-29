@@ -2,6 +2,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* DEFAULT THEME */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -43,29 +44,144 @@
   --ring: oklch(0.985 0 0);
 }
 
+/* PAPER THEME */
+.theme-paper {
+  --background: #fdfcf8;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --primary: #1e40af;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1f2937;
+  --muted: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --border: #d1d5db;
+  --input: #ffffff;
+  --ring: #1e40af;
+}
+
+/* CYBERPUNK THEME */
+.theme-cyberpunk {
+  --background: #0c0c1d;
+  --foreground: #e0e6ff;
+  --card: #151529;
+  --card-foreground: #e0e6ff;
+  --primary: #ff0080;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a3e;
+  --secondary-foreground: #00d4ff;
+  --muted: #1e1e42;
+  --muted-foreground: #8892b0;
+  --border: #ff0080;
+  --input: #1a1a3e;
+  --ring: #00d4ff;
+}
+
+/* GLASSMORPHISM THEME */
+.theme-glassmorphism {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --foreground: #ffffff;
+  --card: rgba(255, 255, 255, 0.1);
+  --card-foreground: #ffffff;
+  --primary: rgba(59, 130, 246, 0.8);
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: rgba(255, 255, 255, 0.8);
+  --border: rgba(255, 255, 255, 0.2);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: rgba(59, 130, 246, 0.8);
+  --radius: 1.5rem;
+}
+
+/* TERMINAL THEME */
+.theme-terminal {
+  --background: #000000;
+  --foreground: #00ff00;
+  --card: #001100;
+  --card-foreground: #00ff00;
+  --primary: #00aa00;
+  --primary-foreground: #00ff00;
+  --secondary: #002200;
+  --secondary-foreground: #00cc00;
+  --muted: #001a00;
+  --muted-foreground: #00cc00;
+  --border: #004400;
+  --input: #001100;
+  --ring: #00ff00;
+}
+
+/* DISCORD THEME */
+.theme-discord {
+  --background: #36393f;
+  --foreground: #dcddde;
+  --card: #2f3136;
+  --card-foreground: #dcddde;
+  --primary: #5865f2;
+  --primary-foreground: #ffffff;
+  --secondary: #4f545c;
+  --secondary-foreground: #dcddde;
+  --muted: #40444b;
+  --muted-foreground: #b9bbbe;
+  --border: #202225;
+  --input: #40444b;
+  --ring: #5865f2;
+}
+
 @layer base {
   * {
     border-color: var(--border);
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  
+
   *:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
-  
+
   html {
     height: 100%;
   }
-  
+
   body {
     height: 100%;
-    background-color: var(--background);
+    background: var(--background);
     color: var(--foreground);
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: all 0.3s ease;
+  }
+
+  /* Theme-specific body styles */
+  .theme-paper body {
+    background:
+      linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 24px,
+        rgba(0, 100, 200, 0.1) 25px,
+        rgba(0, 100, 200, 0.1) 26px,
+        transparent 27px
+      ),
+      #fdfcf8;
+    background-size: 100% 25px;
+    background-attachment: fixed;
+  }
+
+  .theme-glassmorphism body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+  }
+
+  .theme-terminal body {
+    font-family: "Courier New", "Monaco", monospace;
   }
 }
 
@@ -86,25 +202,236 @@
   flex-shrink: 0;
   padding: 1rem;
   border-top: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
+/* Theme-specific chat enhancements */
+.theme-glassmorphism .chat-input-area {
+  background: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-glassmorphism [data-radix-scroll-area-viewport] > div {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Message bubble animations */
 .message-bubble {
   max-width: 70%;
   word-wrap: break-word;
+  animation: slideIn 0.3s ease-out;
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User message styles */
 .message-user {
   margin-left: auto;
   background: var(--primary);
   color: var(--primary-foreground);
+  position: relative;
 }
 
+/* Paper theme message bubbles */
+.theme-paper .message-user {
+  background: #ffffff;
+  border: 2px solid #1e40af;
+  border-radius: 18px 18px 4px 18px;
+  box-shadow:
+    2px 2px 4px rgba(30, 64, 175, 0.15),
+    inset 0 0 0 1px rgba(30, 64, 175, 0.1);
+  position: relative;
+  color: #1e40af;
+}
+
+.theme-paper .message-user::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1e40af;
+  opacity: 0.3;
+}
+
+.theme-paper .message-assistant {
+  background: #f9fafb;
+  border: 2px dashed #6b7280;
+  border-radius: 4px 18px 18px 18px;
+  box-shadow:
+    1px 1px 3px rgba(107, 114, 128, 0.2),
+    inset 0 0 0 1px rgba(107, 114, 128, 0.05);
+  position: relative;
+  color: #374151;
+}
+
+.theme-paper .message-assistant::before {
+  content: "✏️";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* Cyberpunk theme effects */
+.theme-cyberpunk .message-user {
+  background: linear-gradient(135deg, #ff0080, #8b5cf6);
+  box-shadow:
+    0 0 20px rgba(255, 0, 128, 0.4),
+    0 0 40px rgba(139, 92, 246, 0.2);
+  border: 1px solid #ff0080;
+  color: #ffffff;
+}
+
+.theme-cyberpunk .message-assistant {
+  background: linear-gradient(135deg, #1a1a3e, #2d2d5f);
+  border: 1px solid #00d4ff;
+  box-shadow:
+    0 0 15px rgba(0, 212, 255, 0.3),
+    0 0 30px rgba(0, 212, 255, 0.1);
+  color: #e0e6ff;
+}
+
+.theme-cyberpunk .message-bubble::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff0080, #00d4ff, #8b5cf6, #ff0080);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.2;
+  animation: cyberpunkGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes cyberpunkGlow {
+  0% {
+    opacity: 0.2;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    opacity: 0.2;
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Glassmorphism theme */
+.theme-glassmorphism .message-user {
+  background: rgba(59, 130, 246, 0.25);
+  backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.theme-glassmorphism .message-user::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%
+  );
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.theme-glassmorphism .message-assistant {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.theme-glassmorphism .message-assistant::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+/* Terminal theme */
+.theme-terminal .message-user {
+  background: #003300;
+  border: 1px solid #00ff00;
+  font-family: "Courier New", monospace;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.theme-terminal .message-assistant {
+  background: #001100;
+  border: 1px solid #00cc00;
+  font-family: "Courier New", monospace;
+  position: relative;
+}
+
+.theme-terminal .message-assistant::before {
+  content: "> ";
+  color: #00ff00;
+  font-weight: bold;
+}
+
+/* Discord theme */
+.theme-discord .message-user {
+  background: #5865f2;
+  border-radius: 18px;
+}
+
+.theme-discord .message-assistant {
+  background: #40444b;
+  border-radius: 18px;
+}
+
+/* Assistant message styles */
 .message-assistant {
   margin-right: auto;
   background: var(--muted);
   color: var(--muted-foreground);
 }
 
+/* Enhanced typing indicator */
 .typing-indicator {
   display: inline-block;
   width: 8px;
@@ -112,16 +439,15 @@
   border-radius: 50%;
   background: var(--muted-foreground);
   animation: typing 1.4s infinite ease-in-out;
+  margin: 0 1px;
 }
 
 .typing-indicator:nth-child(1) {
   animation-delay: -0.32s;
 }
-
 .typing-indicator:nth-child(2) {
   animation-delay: -0.16s;
 }
-
 .typing-indicator:nth-child(3) {
   animation-delay: 0s;
 }
@@ -137,4 +463,72 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* Theme-specific typing indicators */
+.theme-cyberpunk .typing-indicator {
+  background: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+}
+
+.theme-terminal .typing-indicator {
+  background: #00ff00;
+  box-shadow: 0 0 3px rgba(0, 255, 0, 0.8);
+}
+
+/* Card enhancements for themes */
+.theme-glassmorphism [data-card] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(30px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 1.5rem !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  position: relative;
+}
+
+.theme-glassmorphism [data-card]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  border-radius: 1.5rem;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.theme-cyberpunk [data-card] {
+  background: linear-gradient(135deg, #151529, #1a1a3e) !important;
+  border: 1px solid #ff0080 !important;
+  box-shadow:
+    0 0 25px rgba(255, 0, 128, 0.3),
+    0 0 50px rgba(0, 212, 255, 0.1);
+}
+
+.theme-terminal [data-card] {
+  background: #001100 !important;
+  border: 2px solid #004400 !important;
+  font-family: "Courier New", monospace;
+}
+
+.theme-discord [data-card] {
+  background: #2f3136 !important;
+  border: 1px solid #202225 !important;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }

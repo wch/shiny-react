@@ -1,8 +1,10 @@
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 import { Bot, Send, User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,6 +18,7 @@ interface Message {
 }
 
 function ChatInterface() {
+  const { currentTheme } = useTheme();
   const [currentMessage, setCurrentMessage] = useShinyInput<string>(
     "chat_input",
     "",
@@ -118,18 +121,42 @@ function ChatInterface() {
 
   return (
     <div className='chat-container'>
-      <Card className='h-full flex flex-col'>
-        <CardHeader className='flex-shrink-0'>
-          <CardTitle className='flex items-center gap-2'>
-            <Bot className='h-6 w-6' />
-            AI Chat - Shiny React
+      <Card className='h-full flex flex-col' data-card>
+        <CardHeader className='flex-shrink-0 border-b border-border/50'>
+          <CardTitle className='flex items-center justify-between gap-2'>
+            <div className='flex items-center gap-2'>
+              <Bot className='h-6 w-6' />
+              <span>AI Chat - Shiny React</span>
+              <div
+                className={cn(
+                  "text-xs px-2 py-1 rounded-full opacity-70",
+                  currentTheme === "paper" &&
+                    "bg-blue-50 border border-blue-200 text-blue-700",
+                  currentTheme === "cyberpunk" &&
+                    "bg-gradient-to-r from-cyan-500/20 to-pink-500/20 text-cyan-300",
+                  currentTheme === "glassmorphism" &&
+                    "bg-white/10 backdrop-blur",
+                  currentTheme === "terminal" &&
+                    "bg-green-900/20 text-green-400 font-mono",
+                  currentTheme === "discord" &&
+                    "bg-purple-600/20 text-purple-300",
+                  currentTheme === "default" && "bg-gray-100 text-gray-600"
+                )}
+              >
+                {currentTheme}
+              </div>
+            </div>
+            <ThemeSwitcher />
           </CardTitle>
         </CardHeader>
 
-        <CardContent className='flex-1 flex flex-col p-0'>
+        <CardContent className='flex-1 flex flex-col p-0 min-h-0'>
           {/* Messages Area */}
-          <ScrollArea ref={scrollAreaRef} className='flex-1 p-4'>
-            <div className='space-y-4'>
+          <ScrollArea
+            ref={scrollAreaRef}
+            className='flex-1 p-4 overflow-hidden'
+          >
+            <div className='max-w-4xl mx-auto space-y-4'>
               {messages.length === 0 && (
                 <div className='flex items-center justify-center h-32 text-muted-foreground'>
                   <div className='text-center'>
@@ -143,7 +170,7 @@ function ChatInterface() {
                 <div
                   key={message.id}
                   className={cn(
-                    "flex gap-3 max-w-[80%]",
+                    "flex gap-3 max-w-[65%]",
                     message.role === "user"
                       ? "ml-auto flex-row-reverse"
                       : "mr-auto"
@@ -167,10 +194,10 @@ function ChatInterface() {
 
                   <div
                     className={cn(
-                      "rounded-lg px-3 py-2 max-w-full",
+                      "message-bubble rounded-lg px-3 py-2 max-w-full",
                       message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
+                        ? "message-user bg-primary text-primary-foreground"
+                        : "message-assistant bg-muted text-muted-foreground"
                     )}
                   >
                     {message.content === "" &&
@@ -204,23 +231,25 @@ function ChatInterface() {
           </ScrollArea>
 
           {/* Input Area */}
-          <div className='chat-input-area'>
-            <div className='flex gap-2'>
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder='Type your message here...'
-                disabled={isLoading}
-                className='flex-1'
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim() || isLoading}
-                size='icon'
-              >
-                <Send className='h-4 w-4' />
-              </Button>
+          <div className='chat-input-area flex-shrink-0'>
+            <div className='max-w-4xl mx-auto'>
+              <div className='flex gap-2'>
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder='Type your message here...'
+                  disabled={isLoading}
+                  className='flex-1'
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!inputValue.trim() || isLoading}
+                  size='icon'
+                >
+                  <Send className='h-4 w-4' />
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>
