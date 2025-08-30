@@ -1,19 +1,19 @@
 import React from "react";
-import TextInputCard from "./TextInputCard";
-import NumberInputCard from "./NumberInputCard";
+import BatchFormCard from "./BatchFormCard";
+import ButtonInputCard from "./ButtonInputCard";
 import CheckboxInputCard from "./CheckboxInputCard";
+import DateInputCard from "./DateInputCard";
+import NumberInputCard from "./NumberInputCard";
 import RadioInputCard from "./RadioInputCard";
 import SelectInputCard from "./SelectInputCard";
 import SliderInputCard from "./SliderInputCard";
-import DateInputCard from "./DateInputCard";
-import ButtonInputCard from "./ButtonInputCard";
-import BatchFormCard from "./BatchFormCard";
+import TextInputCard from "./TextInputCard";
 
 function App() {
   return (
-    <div className="app-container">
+    <div className='app-container'>
       <h1>Shiny React Input Examples</h1>
-      <div className="cards-wrap">
+      <div className='cards-wrap'>
         <TextInputCard />
         <NumberInputCard />
         <CheckboxInputCard />
