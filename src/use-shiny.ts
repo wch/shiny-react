@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useCallback, useEffect, useState } from "react";
+import { type EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
+import { type ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 import { debounce } from "./utils";
-import { useState, useEffect, useCallback } from "react";
-import { EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
-import { ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -51,23 +53,24 @@ export function useShinyInput<T>(
   // first call. This all should be straightened out in the future.
 
   const [value, setValue] = useState<T>(defaultValue);
-
-  const [shinyInitialized, setShinyInitialized] = useState<boolean>(false);
+  const shinyInitialized = useShinyInitialized();
 
   useEffect(() => {
-    (async () => {
-      await window.Shiny.initializedPromise;
-      setShinyInitialized(true);
+    if (!shinyInitialized) {
+      return;
+    }
+    // Don't register and set value more than once.
+    if (id in window.Shiny.reactRegistry.inputs) {
+      return;
+    }
 
-      window.Shiny.reactRegistry.registerInput(id, setValue, {
-        debounceMs,
-        priority,
-      });
-      window.Shiny.reactRegistry.setInputValue(id, value);
-    })();
-
-    // TODO: Cleanup? This runs twice in dev mode
-  }, []); // Run only once on mount
+    window.Shiny.reactRegistry.registerInput(id, setValue, {
+      debounceMs,
+      priority,
+    });
+    window.Shiny.reactRegistry.setInputValue(id, value);
+    // TODO: Cleanup? in case id changes or something like that.
+  }, [id, shinyInitialized, debounceMs, priority, value]);
 
   const setValueWrapped = useCallback(
     (value: T) => {
@@ -110,14 +113,18 @@ export function useShinyOutput<T>(
 ): [T | undefined, boolean] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const [recalculating, setRecalculating] = useState<boolean>(false);
+  const shinyInitialized = useShinyInitialized();
 
   useEffect(() => {
+    if (!shinyInitialized) {
+      return;
+    }
     window.Shiny.reactRegistry.registerOutput(
       outputId,
       setValue,
       setRecalculating
     );
-  }, [outputId]);
+  }, [outputId, shinyInitialized]);
 
   return [value, recalculating];
 }
@@ -164,7 +171,6 @@ type InputMap = {
   [key: string]: {
     // Input ID
     id: string;
-    // setFoo functions for all React components which use this input ID
     setValueFns: Array<(value: any) => void>;
     // Possibly debounce Shiny input value setter
     shinySetInputValueDebounced: (
@@ -178,7 +184,6 @@ type OutputMap = {
   [key: string]: {
     // Output ID
     id: string;
-    // setFoo functions for all React components which use this output ID
     setValueFns: Array<(value: any) => void>;
     setRecalculatingFns: Array<(value: boolean) => void>;
   };
@@ -188,6 +193,7 @@ type OutputMap = {
 class ShinyReactRegistry {
   inputs: InputMap = {};
   outputs: OutputMap = {};
+  private bindAllScheduled = false;
 
   constructor() {
     window.Shiny.addCustomMessageHandler("shinyReactSetInputs", (msg: any) => {
@@ -206,7 +212,7 @@ class ShinyReactRegistry {
     opts: { priority?: EventPriority; debounceMs?: number } = {}
   ) {
     const { debounceMs = 100 } = opts;
-    let setInputValueOpts: { priority?: EventPriority } = {};
+    const setInputValueOpts: { priority?: EventPriority } = {};
     if (opts.priority) {
       setInputValueOpts.priority = opts.priority;
     }
@@ -282,3 +288,21 @@ declare global {
 }
 
 window.Shiny.reactRegistry = new ShinyReactRegistry();
+
+/**
+ * A React hook that tracks whether Shiny has been initialized.
+ *
+ * @returns A boolean indicating whether Shiny has been initialized.
+ */
+export function useShinyInitialized(): boolean {
+  const [shinyInitialized, setShinyInitialized] = useState<boolean>(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    window.Shiny.initializedPromise.then(() => {
+      setShinyInitialized(true);
+    });
+  }, []);
+
+  return shinyInitialized;
+}
