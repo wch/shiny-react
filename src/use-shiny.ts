@@ -250,11 +250,36 @@ class ShinyReactRegistry {
         setValueFns: [],
         setRecalculatingFns: [],
       };
+
+      this.scheduleBindAll();
     }
 
     // Do we need to dedupe?
     this.outputs[outputId].setValueFns.push(setValue);
     this.outputs[outputId].setRecalculatingFns.push(setRecalculating);
+  }
+
+  /**
+   * Schedules a Shiny binding operation to run after DOM updates are complete.
+   *
+   * Note: I'm not sure if this is 100% reliable. I believe we need to avoid
+   * overlapping calls to bindAll(), and am not sure if requestAnimationFrame()
+   * will provide perfect reliability for this.
+   */
+  private scheduleBindAll() {
+    if (this.bindAllScheduled) {
+      return;
+    }
+
+    this.bindAllScheduled = true;
+
+    // Use requestAnimationFrame to ensure DOM updates are complete
+    requestAnimationFrame(() => {
+      window.Shiny.unbindAll?.(document.body);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      window.Shiny.bindAll?.(document.body);
+      this.bindAllScheduled = false;
+    });
   }
 
   hasInput(inputId: string) {
