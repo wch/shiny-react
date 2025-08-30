@@ -119,6 +119,7 @@ function runTypeScript(watchMode = false): Promise<void> {
 
 async function main() {
   const buildmap = {
+    // Bundled ESM for Node.js environments
     esm: esbuild.context({
       entryPoints: ["src/index.ts"],
       outfile: "dist/index.mjs",
@@ -132,9 +133,24 @@ async function main() {
       metafile: metafile,
       plugins: [metafilePlugin, esbuildProblemMatcherPlugin],
     }),
+    // Unbundled ESM for bundlers (better tree-shaking)
+    esmModule: esbuild.context({
+      entryPoints: ["src/index.ts", "src/use-shiny.ts", "src/ImageOutput.tsx", "src/utils.ts"],
+      outdir: "dist",  // Use outdir instead of outfile for multiple files
+      bundle: false,  // Don't bundle - let downstream bundlers handle it
+      format: "esm",
+      minify: false,  // Don't minify - let downstream bundlers handle it
+      sourcemap: "linked",
+      sourcesContent: true,
+      // Note: external is not needed with bundle: false
+      logLevel: "silent",
+      metafile: metafile,
+      plugins: [metafilePlugin, esbuildProblemMatcherPlugin],
+    }),
+    // CJS for older Node.js environments
     cjs: esbuild.context({
       entryPoints: ["src/index.ts"],
-      outfile: "dist/index.js",
+      outfile: "dist/index.cjs",
       bundle: true,
       format: "cjs",
       minify: production,
