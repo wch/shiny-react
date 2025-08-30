@@ -1,5 +1,5 @@
-import { EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
-import { ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
+import { type EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
+import { type ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 /**
  * A React hook for managing a Shiny input value.
  *
@@ -77,12 +77,21 @@ type OutputMap = {
 declare class ShinyReactRegistry {
     inputs: InputMap;
     outputs: OutputMap;
+    private bindAllScheduled;
     constructor();
     registerInput(inputId: string, setValueFn: (value: any) => void, opts?: {
         priority?: EventPriority;
         debounceMs?: number;
     }): void;
     registerOutput(outputId: string, setValue: (value: any) => void, setRecalculating: (value: boolean) => void): void;
+    /**
+     * Schedules a Shiny binding operation to run after DOM updates are complete.
+     *
+     * Note: I'm not sure if this is 100% reliable. I believe we need to avoid
+     * overlapping calls to bindAll(), and am not sure if requestAnimationFrame()
+     * will provide perfect reliability for this.
+     */
+    private scheduleBindAll;
     hasInput(inputId: string): boolean;
     setInputValue(inputId: string, value: any, opts?: {
         priority?: EventPriority;
@@ -96,5 +105,11 @@ declare global {
         };
     }
 }
+/**
+ * A React hook that tracks whether Shiny has been initialized.
+ *
+ * @returns A boolean indicating whether Shiny has been initialized.
+ */
+export declare function useShinyInitialized(): boolean;
 export {};
 //# sourceMappingURL=use-shiny.d.ts.map

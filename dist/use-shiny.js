@@ -1,22 +1,5 @@
-// src/use-shiny.ts
 import { useCallback, useEffect, useState } from "react";
-
-// src/utils.ts
-function debounce(func, wait) {
-  let timeout = null;
-  return function(...args) {
-    const later = () => {
-      timeout = null;
-      func(...args);
-    };
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(later, wait);
-  };
-}
-
-// src/use-shiny.ts
+import { debounce } from "./utils";
 function useShinyInput(id, defaultValue, {
   debounceMs = 100,
   priority
@@ -63,7 +46,7 @@ function useShinyOutput(outputId, defaultValue = void 0) {
   }, [outputId, shinyInitialized]);
   return [value, recalculating];
 }
-var ReactOutputBinding = class extends window.Shiny.OutputBinding {
+class ReactOutputBinding extends window.Shiny.OutputBinding {
   find(scope) {
     return $(scope).find(".react-shiny-output");
   }
@@ -80,12 +63,12 @@ var ReactOutputBinding = class extends window.Shiny.OutputBinding {
       (fn) => fn(show)
     );
   }
-};
+}
 window.Shiny.outputBindings.register(
   new ReactOutputBinding(),
   "shiny.reactOutput"
 );
-var ShinyReactRegistry = class {
+class ShinyReactRegistry {
   inputs = {};
   outputs = {};
   bindAllScheduled = false;
@@ -165,7 +148,7 @@ var ShinyReactRegistry = class {
   hasOutput(outputId) {
     return this.outputs[outputId] !== void 0;
   }
-};
+}
 window.Shiny.reactRegistry = new ShinyReactRegistry();
 function useShinyInitialized() {
   const [shinyInitialized, setShinyInitialized] = useState(false);
@@ -176,86 +159,10 @@ function useShinyInitialized() {
   }, []);
   return shinyInitialized;
 }
-
-// src/ImageOutput.tsx
-import { useRef, useEffect as useEffect2, useState as useState2 } from "react";
-import { jsx } from "react/jsx-runtime";
-function ImageOutput({
-  id,
-  className
-}) {
-  const [imgWidth, setImgWidth] = useShinyInput(
-    ".clientdata_output_" + id + "_width",
-    null
-  );
-  const [imgHeight, setImgHeight] = useShinyInput(
-    ".clientdata_output_" + id + "_height",
-    null
-  );
-  const [imgHidden] = useShinyInput(
-    ".clientdata_output_" + id + "_hidden",
-    false
-  );
-  const [imgData, imgRecalculating] = useShinyOutput(id, void 0);
-  const imgRef = useRef(null);
-  const [imageVersion, setImageVersion] = useState2(0);
-  useEffect2(() => {
-    if (imgData) {
-      setImageVersion((prev) => prev + 1);
-    }
-  }, [imgData]);
-  const handleImageLoad = () => {
-    if (imgRef.current) {
-      const width = imgRef.current.clientWidth;
-      const height = imgRef.current.clientHeight;
-      console.log("Image loaded - Width:", width, "Height:", height);
-      setImgWidth(width);
-      setImgHeight(height);
-    }
-  };
-  useEffect2(() => {
-    console.log("Image dimensions changed");
-    const img = imgRef.current;
-    if (!img) return;
-    img.addEventListener("load", handleImageLoad);
-    const debouncedHandleResize = debounce(() => {
-      if (img && img.complete) {
-        handleImageLoad();
-      }
-    }, 400);
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target === img) {
-          debouncedHandleResize();
-        }
-      }
-    });
-    resizeObserver.observe(img);
-    return () => {
-      img.removeEventListener("load", handleImageLoad);
-      resizeObserver.disconnect();
-    };
-  }, [imgRef, imageVersion, setImgWidth, setImgHeight]);
-  return /* @__PURE__ */ jsx(
-    "img",
-    {
-      ref: imgRef,
-      src: imgData?.src,
-      alt: "",
-      className,
-      style: {
-        width: "100%",
-        height: "300px",
-        display: imgHidden ? "none" : "block",
-        opacity: imgRecalculating ? 0.4 : 1
-      },
-      onLoad: handleImageLoad
-    }
-  );
-}
 export {
-  ImageOutput,
+  ReactOutputBinding,
+  useShinyInitialized,
   useShinyInput,
   useShinyOutput
 };
-//# sourceMappingURL=index.mjs.map
+//# sourceMappingURL=use-shiny.js.map

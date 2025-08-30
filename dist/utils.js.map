@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/utils.ts"],
+  "sourcesContent": ["/**\n * Creates a debounced function that delays invoking func until after wait milliseconds have elapsed\n * since the last time the debounced function was invoked.\n *\n * @param func The function to debounce\n * @param wait The number of milliseconds to delay\n * @returns A debounced version of the function\n */\n// eslint-disable-next-line @typescript-eslint/no-explicit-any\nexport function debounce<T extends (...args: any[]) => any>(\n  func: T,\n  wait: number\n): (...args: Parameters<T>) => void {\n  let timeout: ReturnType<typeof setTimeout> | null = null;\n\n  return function (...args: Parameters<T>) {\n    const later = () => {\n      timeout = null;\n      func(...args);\n    };\n\n    if (timeout !== null) {\n      clearTimeout(timeout);\n    }\n\n    timeout = setTimeout(later, wait);\n  };\n}\n"],
+  "mappings": "AASO,SAAS,SACd,MACA,MACkC;AAClC,MAAI,UAAgD;AAEpD,SAAO,YAAa,MAAqB;AACvC,UAAM,QAAQ,MAAM;AAClB,gBAAU;AACV,WAAK,GAAG,IAAI;AAAA,IACd;AAEA,QAAI,YAAY,MAAM;AACpB,mBAAa,OAAO;AAAA,IACtB;AAEA,cAAU,WAAW,OAAO,IAAI;AAAA,EAClC;AACF;",
+  "names": []
+}

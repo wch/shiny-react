@@ -5,4 +5,4 @@ export {
   useShinyInput,
   useShinyOutput
 };
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.esm.js.map

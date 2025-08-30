@@ -1,5 +1,33 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
+  ImageOutput: () => ImageOutput,
+  useShinyInput: () => useShinyInput,
+  useShinyOutput: () => useShinyOutput
+});
+module.exports = __toCommonJS(index_exports);
+
 // src/use-shiny.ts
-import { useCallback, useEffect, useState } from "react";
+var import_react = require("react");
 
 // src/utils.ts
 function debounce(func, wait) {
@@ -21,9 +49,9 @@ function useShinyInput(id, defaultValue, {
   debounceMs = 100,
   priority
 } = {}) {
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = (0, import_react.useState)(defaultValue);
   const shinyInitialized = useShinyInitialized();
-  useEffect(() => {
+  (0, import_react.useEffect)(() => {
     if (!shinyInitialized) {
       return;
     }
@@ -36,7 +64,7 @@ function useShinyInput(id, defaultValue, {
     });
     window.Shiny.reactRegistry.setInputValue(id, value);
   }, [id, shinyInitialized, debounceMs, priority, value]);
-  const setValueWrapped = useCallback(
+  const setValueWrapped = (0, import_react.useCallback)(
     (value2) => {
       if (!shinyInitialized) {
         return;
@@ -48,10 +76,10 @@ function useShinyInput(id, defaultValue, {
   return [value, setValueWrapped];
 }
 function useShinyOutput(outputId, defaultValue = void 0) {
-  const [value, setValue] = useState(defaultValue);
-  const [recalculating, setRecalculating] = useState(false);
+  const [value, setValue] = (0, import_react.useState)(defaultValue);
+  const [recalculating, setRecalculating] = (0, import_react.useState)(false);
   const shinyInitialized = useShinyInitialized();
-  useEffect(() => {
+  (0, import_react.useEffect)(() => {
     if (!shinyInitialized) {
       return;
     }
@@ -168,8 +196,8 @@ var ShinyReactRegistry = class {
 };
 window.Shiny.reactRegistry = new ShinyReactRegistry();
 function useShinyInitialized() {
-  const [shinyInitialized, setShinyInitialized] = useState(false);
-  useEffect(() => {
+  const [shinyInitialized, setShinyInitialized] = (0, import_react.useState)(false);
+  (0, import_react.useEffect)(() => {
     window.Shiny.initializedPromise.then(() => {
       setShinyInitialized(true);
     });
@@ -178,8 +206,8 @@ function useShinyInitialized() {
 }
 
 // src/ImageOutput.tsx
-import { useRef, useEffect as useEffect2, useState as useState2 } from "react";
-import { jsx } from "react/jsx-runtime";
+var import_react2 = require("react");
+var import_jsx_runtime = require("react/jsx-runtime");
 function ImageOutput({
   id,
   className
@@ -197,9 +225,9 @@ function ImageOutput({
     false
   );
   const [imgData, imgRecalculating] = useShinyOutput(id, void 0);
-  const imgRef = useRef(null);
-  const [imageVersion, setImageVersion] = useState2(0);
-  useEffect2(() => {
+  const imgRef = (0, import_react2.useRef)(null);
+  const [imageVersion, setImageVersion] = (0, import_react2.useState)(0);
+  (0, import_react2.useEffect)(() => {
     if (imgData) {
       setImageVersion((prev) => prev + 1);
     }
@@ -213,7 +241,7 @@ function ImageOutput({
       setImgHeight(height);
     }
   };
-  useEffect2(() => {
+  (0, import_react2.useEffect)(() => {
     console.log("Image dimensions changed");
     const img = imgRef.current;
     if (!img) return;
@@ -236,7 +264,7 @@ function ImageOutput({
       resizeObserver.disconnect();
     };
   }, [imgRef, imageVersion, setImgWidth, setImgHeight]);
-  return /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
     "img",
     {
       ref: imgRef,
@@ -253,9 +281,4 @@ function ImageOutput({
     }
   );
 }
-export {
-  ImageOutput,
-  useShinyInput,
-  useShinyOutput
-};
-//# sourceMappingURL=index.mjs.map
+//# sourceMappingURL=index.cjs.map
