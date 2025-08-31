@@ -55,6 +55,21 @@ export default tseslint.config(
     },
   },
   {
+    // CommonJS Node.js scripts in bin/
+    files: ["bin/**/*.js"],
+    languageOptions: {
+      globals: globals.node,
+      ecmaVersion: 2022,
+      sourceType: "commonjs",
+    },
+    rules: {
+      // Disable TypeScript-specific rules for plain JS files
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
     // Browser/React TypeScript
     files: ["src/**/*.{ts,tsx}"],
     ...reactEslint.configs.flat.recommended,
