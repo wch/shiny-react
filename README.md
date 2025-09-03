@@ -7,10 +7,13 @@ The library enables React components to send data to and receive data from Shiny
 
 ## Installation
 
-Note that this library is not yet available on npm. It must be built from source for now.
-
+```bash
+npm install @posit/shiny-react
+```
 
 ## Building the Library
+
+If you want to build this from source, first clone the repository, then:
 
 ```bash
 # Install dependencies
