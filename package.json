@@ -1,6 +1,6 @@
 {
   "name": "shiny-react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React bindings for Shiny applications (R and Python)",
   "author": "Winston Chang",
   "license": "MIT",
