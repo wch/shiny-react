@@ -21,6 +21,7 @@
   "files": [
     "dist/",
     "examples/",
+    "templates/",
     "!**/__pycache__/"
   ],
   "scripts": {
