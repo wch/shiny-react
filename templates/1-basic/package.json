@@ -26,6 +26,6 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "shiny-react": "^0.0.6"
+    "@posit/shiny-react": "^0.0.6"
   }
 }
