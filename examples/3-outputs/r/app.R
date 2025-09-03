@@ -4,14 +4,6 @@ library(jsonlite)
 source("shinyreact.R", local = TRUE)
 mtcars <- read.csv("mtcars.csv")
 
-ui <- barePage(
-  title = "Hello Shiny React",
-  tags$head(
-    tags$script(src = "main.js", type = "module"),
-    tags$link(href = "main.css", rel = "stylesheet")
-  ),
-  tags$div(id = "root")
-)
 
 server <- function(input, output, session) {
   output$table_data <- renderObject({
@@ -61,4 +53,4 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui = ui, server = server)
+shinyApp(ui = page_react_app(title = "Outputs - Shiny React"), server = server)

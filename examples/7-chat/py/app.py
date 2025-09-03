@@ -1,7 +1,7 @@
-from shiny import App, Inputs, Outputs, Session, ui, render, reactive
-from shinyreact import page_bare, render_object
+from shiny import App, Inputs, Outputs, Session, reactive
+from shinyreact import page_react_app
 from pathlib import Path
-from shinyreact load_dotenv
+from shinyreact import load_dotenv
 from chatlas import ChatOpenAI, content_image_url
 
 load_dotenv()
@@ -10,15 +10,6 @@ load_dotenv()
 chat = ChatOpenAI(
     model="gpt-4o-mini",
     system_prompt="You are a helpful AI assistant. Be concise but informative in your responses.",
-)
-
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),
-    title="AI Chat - Shiny React",
 )
 
 
@@ -85,4 +76,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         await session.send_custom_message("chat_stream", {"chunk": chunk, "done": done})
 
 
-app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
+app = App(
+    page_react_app(title="AI Chat - Shiny React"),
+    server,
+    static_assets=str(Path(__file__).parent / "www"),
+)

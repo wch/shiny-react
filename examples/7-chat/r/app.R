@@ -11,15 +11,6 @@ chat <-
     model = "gpt-4o-mini"
   )
 
-ui <- barePage(
-  title = "AI Chat - Shiny React",
-  tags$head(
-    tags$script(src = "main.js", type = "module"),
-    tags$link(href = "main.css", rel = "stylesheet")
-  ),
-  tags$div(id = "root")
-)
-
 
 server <- function(input, output, session) {
   observeEvent(input$chat_input, {
@@ -118,4 +109,7 @@ server <- function(input, output, session) {
 }
 
 
-shinyApp(ui = ui, server = server)
+shinyApp(
+  ui = page_react_app(title = "AI Chat - Shiny React"),
+  server = server,
+)

@@ -1,15 +1,6 @@
-from shiny import App, Inputs, Outputs, Session, ui, render
-from shinyreact import page_bare
+from shiny import App, Inputs, Outputs, Session, render
+from shinyreact import page_react_app
 from pathlib import Path
-
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),
-    title="Hello Shiny React",
-)
 
 
 def server(input: Inputs, output: Outputs, session: Session):
@@ -18,4 +9,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         return input.txtin().upper()
 
 
-app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
+app = App(
+    page_react_app(title="Hello Shiny React"),
+    server,
+    static_assets=str(Path(__file__).parent / "www"),
+)

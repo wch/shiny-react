@@ -1,20 +1,10 @@
 from shiny import App, Inputs, Outputs, Session, ui, reactive
-from shinyreact import page_bare, render_object
+from shinyreact import page_react_app, render_object
 from data import generate_sample_data, filter_data, calculate_metrics
 from pathlib import Path
-import pandas as pd
 
 # Generate sample data once when app starts
 sample_data = generate_sample_data()
-
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),
-    title="Shiny React Dashboard",
-)
 
 
 def server(input: Inputs, output: Outputs, session: Session):
@@ -88,4 +78,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         return {"columns": columns_data, "total_rows": len(data["products"])}
 
 
-app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
+app = App(
+    page_react_app(title="Dashboard - Shiny React"),
+    server,
+    static_assets=str(Path(__file__).parent / "www"),
+)

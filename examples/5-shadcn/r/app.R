@@ -9,14 +9,6 @@ sample_data <- data.frame(
   category = c("A", "B", "A", "C", "B", "A", "C", "B")
 )
 
-ui <- barePage(
-  title = "Shiny + shadcn/ui Example",
-  tags$head(
-    tags$script(src = "main.js", type = "module"),
-    tags$link(href = "main.css", rel = "stylesheet")
-  ),
-  tags$div(id = "root")
-)
 
 server <- function(input, output, session) {
   # Process text input
@@ -62,4 +54,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui = ui, server = server)
+shinyApp(
+  ui = page_react_app(title = "Shiny + shadcn/ui Example"),
+  server = server
+)

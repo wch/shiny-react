@@ -1,5 +1,7 @@
-from shiny import App, Inputs, Outputs, Session, ui, render, reactive
-from shinyreact import page_bare, render_object
+from __future__ import annotations
+
+from shiny import App, Inputs, Outputs, Session, render, reactive
+from shinyreact import page_react_app
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,15 +18,6 @@ sample_data = pd.DataFrame(
     }
 )
 
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),
-    title="Shiny + shadcn/ui Example",
-)
-
 
 def server(input: Inputs, output: Outputs, session: Session):
 
@@ -39,7 +32,7 @@ def server(input: Inputs, output: Outputs, session: Session):
     @render.text
     def text_length():
         text = input.user_text() if input.user_text() is not None else ""
-        return len(text)
+        return str(len(text))
 
     @render.text
     @reactive.event(input.button_trigger)
@@ -70,4 +63,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         return fig
 
 
-app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
+app = App(
+    page_react_app(title="Shiny + shadcn/ui Example"),
+    server,
+    static_assets=str(Path(__file__).parent / "www"),
+)

@@ -1,16 +1,7 @@
-from shiny import App, Inputs, Outputs, Session, ui, reactive
-from shinyreact import page_bare
+from shiny import App, Inputs, Outputs, Session, reactive
+from shinyreact import page_react_app
 from pathlib import Path
 import random
-
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),
-    title="Hello Shiny React",
-)
 
 
 def server(input: Inputs, output: Outputs, session: Session):
@@ -34,4 +25,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         await session.send_custom_message("logEvent", log_event)
 
 
-app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
+app = App(
+    page_react_app(title="Server-to-client messages - Shiny React"),
+    server,
+    static_assets=str(Path(__file__).parent / "www"),
+)

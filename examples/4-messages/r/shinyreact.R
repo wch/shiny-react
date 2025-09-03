@@ -10,6 +10,25 @@ barePage <- function(..., title = NULL, lang = NULL) {
   ui
 }
 
+page_react_app <- function(
+  ...,
+  title = NULL,
+  js_file = "main.js",
+  css_file = "main.css",
+  lang = "en"
+) {
+  barePage(
+    title = title,
+    tags$head(
+      if (!is.null(js_file)) tags$script(src = js_file, type = "module"),
+      if (!is.null(css_file)) tags$link(href = css_file, rel = "stylesheet")
+    ),
+    tags$div(id = "root"),
+    ...
+  )
+}
+
+
 #' Reactively render arbitrary JSON object data.
 #'
 #' This is a generic renderer that can be used to render any Jsonifiable data.

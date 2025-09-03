@@ -5,14 +5,6 @@ source("data.R", local = TRUE)
 # Generate sample data once when app starts
 sample_data <- generate_sample_data()
 
-ui <- barePage(
-  title = "Shiny React Dashboard",
-  tags$head(
-    tags$script(src = "main.js", type = "module"),
-    tags$link(href = "main.css", rel = "stylesheet")
-  ),
-  tags$div(id = "root")
-)
 
 server <- function(input, output, session) {
   # Reactive data filtering
@@ -184,4 +176,7 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui = ui, server = server)
+shinyApp(
+  ui = page_react_app(title = "Shiny React Dashboard"),
+  server = server,
+)
