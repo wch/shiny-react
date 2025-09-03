@@ -1,8 +1,8 @@
 {
-  "name": "shiny-react-hello-world",
-  "version": "1.0.0",
+  "name": "shiny-react-template-basic",
+  "version": "0.0.1",
   "type": "module",
-  "description": "Hello World app using shiny-react",
+  "description": "Basic shiny-react template web app",
   "scripts": {
     "build": "concurrently \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
     "watch": "concurrently \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch\"",
@@ -28,6 +28,6 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "shiny-react": "^0.0.3"
+    "shiny-react": "^0.0.5"
   }
 }
