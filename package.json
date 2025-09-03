@@ -1,5 +1,5 @@
 {
-  "name": "shiny-react",
+  "name": "@posit/shiny-react",
   "version": "0.0.5",
   "description": "React bindings for Shiny applications (R and Python)",
   "author": "Winston Chang",
@@ -34,9 +34,9 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@posit/shiny": "^1.11.1",
     "@types/node": "^24.3.0",
     "@types/react-dom": "^19.1.7",
-    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "esbuild": "^0.25.9",

@@ -12,11 +12,11 @@
   "author": "Winston Chang",
   "license": "MIT",
   "devDependencies": {
+    "@posit/shiny": "^1.11.1",
     "@tailwindcss/vite": "^4.1.12",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.1",
     "@types/react-dom": "^19.1.1",
-    "@types/rstudio-shiny": "git+https://git@github.com/rstudio/shiny.git#v1.11.1",
     "autoprefixer": "^10.4.16",
     "chokidar": "^4.0.3",
     "concurrently": "^9.2.1",
