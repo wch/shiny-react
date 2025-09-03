@@ -258,26 +258,26 @@ Note that some other code is needed on the back end to create the complete Shiny
 Each Shiny-React application includes utility files that provide essential functions for React integration:
 
 **shinyreact.R** (R backend):
-- `barePage()` - Creates a bare HTML page without default Shiny styling, suitable for React applications
-- `renderObject()` - Custom renderer for sending arbitrary JSON data to React components
+- `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications
+- `render_object()` - Custom renderer for sending arbitrary JSON data to React components
 
 **shinyreact.py** (Python backend):
 - `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications  
-- `render_object` - Custom renderer for sending arbitrary JSON data to React components
+- `@render_object` - Custom renderer for sending arbitrary JSON data to React components
 
-### Sending Arbitrary JSON with renderObject/render_object
+### Sending Arbitrary JSON with `render_object`
 
-The `renderObject()` (R) and `render_object` (Python) functions allow you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
+`render_object` allows you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
 
 **R Usage:**
 ```r
 # Send a data frame (automatically converted to column-major JSON format)
-output$table_data <- renderObject({
+output$table_data <- render_object({
   mtcars[1:input$num_rows, ]
 })
 
 # Send custom JSON objects
-output$statistics <- renderObject({
+output$statistics <- render_object({
   list(
     mean = mean(mtcars$mpg),
     median = median(mtcars$mpg),
@@ -289,7 +289,7 @@ output$statistics <- renderObject({
 
 **Python Usage:**
 ```python
-# Send a data frame (converted to column-major JSON format)
+# Send a data frame (explicitly converted to column-major JSON format)
 @render_object
 def table_data():
     num_rows = input.table_rows()

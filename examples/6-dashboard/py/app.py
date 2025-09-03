@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, reactive
-from shinyreact import page_react_app, render_object
+from shinyreact import page_react, render_object
 from data import generate_sample_data, filter_data, calculate_metrics
 from pathlib import Path
 
@@ -79,7 +79,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
 
 app = App(
-    page_react_app(title="Dashboard - Shiny React"),
+    page_react(title="Dashboard - Shiny React"),
     server,
     static_assets=str(Path(__file__).parent / "www"),
 )

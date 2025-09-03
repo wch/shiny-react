@@ -8,4 +8,4 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui = page_react_app(title = "Hello Shiny React"), server = server)
+shinyApp(ui = page_react(title = "Hello Shiny React"), server = server)

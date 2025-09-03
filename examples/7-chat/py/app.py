@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, reactive
-from shinyreact import page_react_app
+from shinyreact import page_react
 from pathlib import Path
 from shinyreact import load_dotenv
 from chatlas import ChatOpenAI, content_image_url
@@ -77,7 +77,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
 
 app = App(
-    page_react_app(title="AI Chat - Shiny React"),
+    page_react(title="AI Chat - Shiny React"),
     server,
     static_assets=str(Path(__file__).parent / "www"),
 )

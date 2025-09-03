@@ -1,6 +1,6 @@
 library(shiny)
 
-barePage <- function(..., title = NULL, lang = NULL) {
+page_bare <- function(..., title = NULL, lang = NULL) {
   ui <- list(
     shiny:::jqueryDependency(),
     if (!is.null(title)) tags$head(tags$title(title)),
@@ -10,14 +10,14 @@ barePage <- function(..., title = NULL, lang = NULL) {
   ui
 }
 
-page_react_app <- function(
+page_react <- function(
   ...,
   title = NULL,
   js_file = "main.js",
   css_file = "main.css",
   lang = "en"
 ) {
-  barePage(
+  page_bare(
     title = title,
     tags$head(
       if (!is.null(js_file)) tags$script(src = js_file, type = "module"),
@@ -34,14 +34,20 @@ page_react_app <- function(
 #' This is a generic renderer that can be used to render any Jsonifiable data.
 #' It sends the data to the client-side and let the client-side code handle the
 #' rendering.
-renderObject <- function(
+render_object <- function(
   expr,
   env = parent.frame(),
   quoted = FALSE,
   outputArgs = list(),
   sep = " "
 ) {
-  func <- installExprFunction(expr, "func", env, quoted, label = "renderObject")
+  func <- installExprFunction(
+    expr,
+    "func",
+    env,
+    quoted,
+    label = "render_object"
+  )
 
   createRenderFunction(
     func,

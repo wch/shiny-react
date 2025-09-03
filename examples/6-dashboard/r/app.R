@@ -40,7 +40,7 @@ server <- function(input, output, session) {
   })
 
   # Metrics output
-  output$metrics_data <- renderObject({
+  output$metrics_data <- render_object({
     tryCatch(
       {
         data <- filtered_data()
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
   })
 
   # Chart data output
-  output$chart_data <- renderObject({
+  output$chart_data <- render_object({
     tryCatch(
       {
         data <- filtered_data()
@@ -144,7 +144,7 @@ server <- function(input, output, session) {
   })
 
   # Table data output
-  output$table_data <- renderObject({
+  output$table_data <- render_object({
     tryCatch(
       {
         data <- filtered_data()
@@ -177,6 +177,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(
-  ui = page_react_app(title = "Shiny React Dashboard"),
+  ui = page_react(title = "Shiny React Dashboard"),
   server = server,
 )

@@ -110,6 +110,6 @@ server <- function(input, output, session) {
 
 
 shinyApp(
-  ui = page_react_app(title = "AI Chat - Shiny React"),
+  ui = page_react(title = "AI Chat - Shiny React"),
   server = server,
 )

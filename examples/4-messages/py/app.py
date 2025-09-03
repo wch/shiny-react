@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, reactive
-from shinyreact import page_react_app
+from shinyreact import page_react
 from pathlib import Path
 import random
 
@@ -26,7 +26,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
 
 app = App(
-    page_react_app(title="Server-to-client messages - Shiny React"),
+    page_react(title="Server-to-client messages - Shiny React"),
     server,
     static_assets=str(Path(__file__).parent / "www"),
 )

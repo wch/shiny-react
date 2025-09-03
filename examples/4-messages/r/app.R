@@ -31,6 +31,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(
-  ui = page_react_app(title = "Server-to-client messages - Shiny React"),
+  ui = page_react(title = "Server-to-client messages - Shiny React"),
   server = server
 )

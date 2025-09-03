@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from shiny import App, Inputs, Outputs, Session, render
-from shinyreact import page_react_app, render_object
+from shinyreact import page_react, render_object
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -69,7 +69,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
 
 app = App(
-    page_react_app(title="Outputs - Shiny React"),
+    page_react(title="Outputs - Shiny React"),
     server,
     static_assets=str(Path(__file__).parent / "www"),
 )

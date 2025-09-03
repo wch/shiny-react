@@ -30,7 +30,7 @@ server <- function(input, output, session) {
     bindEvent(input$button_trigger) # Trigger on button events
 
   # Table data output
-  output$table_data <- renderObject({
+  output$table_data <- render_object({
     sample_data
   })
 
@@ -55,6 +55,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(
-  ui = page_react_app(title = "Shiny + shadcn/ui Example"),
+  ui = page_react(title = "Shiny + shadcn/ui Example"),
   server = server
 )

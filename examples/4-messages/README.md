@@ -48,7 +48,7 @@ The server sends random log messages every 2 seconds with different types (info,
 
 - **`r/`** - R Shiny application
   - `app.R` - R Shiny server with reactive timer for log event simulation
-  - `shinyreact.R` - R utility functions (barePage)
+  - `shinyreact.R` - R utility functions (page_bare)
 - **`py/`** - Python Shiny application  
   - `app.py` - Python Shiny server with reactive timer for log event simulation
   - `shinyreact.py` - Python utility functions (page_bare)

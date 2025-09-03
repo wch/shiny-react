@@ -15,7 +15,7 @@ def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") ->
     )
 
 
-def page_react_app(
+def page_react(
     *args: ui.TagChild,
     title: str | None = None,
     js_file: str | None = "main.js",
