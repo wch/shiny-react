@@ -1,0 +1,46 @@
+body {
+  font-family: sans-serif;
+}
+
+.card {
+  width: 400px;
+  max-width: 90vw;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+label {
+  margin-bottom: 8px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #2563eb;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 20px 0;
+}
+
+.output-content {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #049b81;
+}
