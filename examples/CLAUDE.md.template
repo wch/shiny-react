@@ -565,7 +565,7 @@ function DataTableCard() {
 *R Backend*:
 ```r
 # Data frames are automatically converted to column-major JSON
-output$table_data <- renderObject({
+output$table_data <- render_object({
   req(input$table_rows)
   # This will be converted to a JSON object in column-major format, as in:
   # {
@@ -595,11 +595,11 @@ def table_data():
 
 ### Custom Renderers for Complex Data
 
-**R Backend - Custom renderObject**:
+**R Backend - Custom render_object**:
 ```r
 # In shinyreact.R
-renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
-  func <- installExprFunction(expr, "func", env, quoted, label = "renderObject")
+render_object <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
+  func <- installExprFunction(expr, "func", env, quoted, label = "render_object")
   createRenderFunction(
     func,
     function(value, session, name, ...) {
@@ -611,7 +611,7 @@ renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs 
 }
 
 # In app.R
-output$table_stats <- renderObject({
+output$table_stats <- render_object({
   mtcars_subset <- mtcars[seq_len(input$table_rows), ]
   list(
     colname = "mpg",
@@ -1000,7 +1000,7 @@ library(shiny)
 source("shinyreact.R", local = TRUE)
 
 # UI with bare page (no default Shiny styling)
-ui <- barePage(
+ui <- page_bare(
   title = "My Shiny React App",
   tags$head(
     tags$script(src = "main.js", type = "module"),
@@ -1015,8 +1015,8 @@ server <- function(input, output, session) {
     toupper(input$txtin)
   })
 
-  # Complex data output using renderObject
-  output$table_data <- renderObject({
+  # Complex data output using render_object
+  output$table_data <- render_object({
     req(input$table_rows)  # Ensure input exists
     mtcars[seq_len(input$table_rows), ]
   })
@@ -1034,7 +1034,7 @@ shinyApp(ui = ui, server = server)
 **R Utility Functions (shinyreact.R)**:
 ```r
 # Bare page without default Shiny styling
-barePage <- function(..., title = NULL, lang = NULL) {
+page_bare <- function(..., title = NULL, lang = NULL) {
   ui <- list(
     shiny:::jqueryDependency(),
     if (!is.null(title)) tags$head(tags$title(title)),
@@ -1045,8 +1045,8 @@ barePage <- function(..., title = NULL, lang = NULL) {
 }
 
 # Custom renderer for arbitrary JSON data
-renderObject <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
-  func <- installExprFunction(expr, "func", env, quoted, label = "renderObject")
+render_object <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs = list()) {
+  func <- installExprFunction(expr, "func", env, quoted, label = "render_object")
   createRenderFunction(
     func,
     function(value, session, name, ...) { value },
