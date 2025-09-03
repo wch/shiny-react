@@ -1,5 +1,5 @@
+import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 import React from "react";
-import { useShinyInput, useShinyOutput } from "shiny-react";
 import InputOutputCard from "./InputOutputCard";
 
 function TextInputCard() {

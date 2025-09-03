@@ -1,5 +1,5 @@
+import { useShinyOutput } from "@posit/shiny-react";
 import React from "react";
-import { useShinyOutput } from "shiny-react";
 
 interface ImageOutputProps {
   id: string;
@@ -19,8 +19,8 @@ function ImageOutput({ id, alt, className }: ImageOutputProps) {
   }
 
   return (
-    <img 
-      src={imageSrc} 
+    <img
+      src={imageSrc}
       alt={alt || `Plot output ${id}`}
       className={className}
     />

@@ -1,5 +1,5 @@
+import { useShinyOutput } from "@posit/shiny-react";
 import React from "react";
-import { useShinyOutput } from "shiny-react";
 import Card from "./Card";
 
 function DataTableCard() {
@@ -16,14 +16,14 @@ function DataTableCard() {
     columnNames.length > 0 && tableData ? tableData[columnNames[0]].length : 0;
 
   return (
-    <Card title="Table Data">
-      <div className="output-section">
+    <Card title='Table Data'>
+      <div className='output-section'>
         <h3>{numRows} rows from mtcars dataset</h3>
         <div
-          className="table-container"
+          className='table-container'
           style={{ "--max-rows": 8 } as React.CSSProperties}
         >
-          <table className="data-table">
+          <table className='data-table'>
             <thead>
               <tr>
                 {columnNames.map((colName) => (

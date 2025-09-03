@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 import React from "react";
-import { useShinyInput, useShinyOutput } from "shiny-react";
 
 export function TextInputCard() {
   const [inputText, setInputText] = useShinyInput<string>("user_text", "");

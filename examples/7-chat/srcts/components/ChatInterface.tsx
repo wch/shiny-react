@@ -4,11 +4,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTheme } from "@/contexts/ThemeContext";
+import { ImageAttachment } from "@/hooks/useImageUpload";
 import { cn } from "@/lib/utils";
+import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 import { Bot, User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { useShinyInput, useShinyOutput } from "shiny-react";
-import { ImageAttachment } from "@/hooks/useImageUpload";
 
 interface ChatMessage {
   text: string;
@@ -33,7 +33,9 @@ function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [currentAttachments, setCurrentAttachments] = useState<ImageAttachment[]>([]);
+  const [currentAttachments, setCurrentAttachments] = useState<
+    ImageAttachment[]
+  >([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -290,7 +292,7 @@ function ChatInterface() {
                 onSend={handleSendMessage}
                 onKeyPress={handleKeyPress}
                 isLoading={isLoading}
-                placeholder="Type your message here..."
+                placeholder='Type your message here...'
               />
             </div>
           </div>

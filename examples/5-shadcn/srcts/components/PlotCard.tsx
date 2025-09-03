@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageOutput } from "@posit/shiny-react";
 import React from "react";
-import { ImageOutput } from "shiny-react";
 
 export function PlotCard() {
   return (

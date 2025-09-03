@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useShinyOutput } from "@posit/shiny-react";
 import { BarChart3, TrendingUp } from "lucide-react";
 import React from "react";
 import {
@@ -13,7 +14,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useShinyOutput } from "shiny-react";
 
 interface ChartDataPoint {
   date: string;
@@ -67,12 +67,16 @@ export function Charts() {
               })
             )
           : [],
-        category_performance: Array.isArray(chartColumnsData.category_performance?.category)
+        category_performance: Array.isArray(
+          chartColumnsData.category_performance?.category
+        )
           ? chartColumnsData.category_performance.category.map(
               (category: string, index: number) => ({
                 category,
-                sales: chartColumnsData.category_performance.sales?.[index] || 0,
-                revenue: chartColumnsData.category_performance.revenue?.[index] || 0,
+                sales:
+                  chartColumnsData.category_performance.sales?.[index] || 0,
+                revenue:
+                  chartColumnsData.category_performance.revenue?.[index] || 0,
               })
             )
           : [],

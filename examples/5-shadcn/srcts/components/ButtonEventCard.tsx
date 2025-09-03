@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 import React from "react";
-import { useShinyInput, useShinyOutput } from "shiny-react";
 
 export function ButtonEventCard() {
   const [buttonTrigger, setButtonTrigger] = useShinyInput<{}>(
@@ -25,18 +25,12 @@ export function ButtonEventCard() {
           <p className='text-sm text-muted-foreground mb-2'>
             Click to trigger server event:
           </p>
-          <Button
-            onClick={handleClick}
-            variant='default'
-            className='w-full'
-          >
+          <Button onClick={handleClick} variant='default' className='w-full'>
             Send Event
           </Button>
         </div>
         <div>
-          <p className='text-sm text-muted-foreground mb-2'>
-            Server response:
-          </p>
+          <p className='text-sm text-muted-foreground mb-2'>Server response:</p>
           <div className='bg-muted p-3 rounded-md'>
             <pre className='text-sm'>
               {buttonResponse || "Click button to see response"}

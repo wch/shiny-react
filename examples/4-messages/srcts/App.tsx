@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+/// <reference types="@posit/shiny" />
+
+import React, { useEffect, useState } from "react";
 
 interface ToastMessage {
   id: number;
@@ -32,11 +34,11 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container">
+    <div className='app-container'>
       <h1>Event Message Demo</h1>
-      <div className="card">
+      <div className='card'>
         <h2>Toast messages from server</h2>
-        <div className="toast-container">
+        <div className='toast-container'>
           {toasts.map((toast) => (
             <div key={toast.id} className={`toast toast-${toast.type}`}>
               {toast.message}

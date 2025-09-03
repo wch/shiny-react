@@ -1,7 +1,5 @@
-import React from "react";
-import { useShinyOutput } from "shiny-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -11,7 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useShinyOutput } from "@posit/shiny-react";
 import { ArrowUpDown, Package } from "lucide-react";
+import React from "react";
 
 interface TableRowData {
   id: string;
@@ -39,11 +39,17 @@ interface TableData {
 }
 
 export function DataTable() {
-  const [tableData, isLoading] = useShinyOutput<TableData | undefined>("table_data", undefined);
+  const [tableData, isLoading] = useShinyOutput<TableData | undefined>(
+    "table_data",
+    undefined
+  );
 
   // Get column names and number of rows from the column-major data
   const columnNames = tableData?.columns ? Object.keys(tableData.columns) : [];
-  const numRows = tableData?.columns && columnNames.length > 0 ? tableData.columns[columnNames[0] as keyof TableColumns].length : 0;
+  const numRows =
+    tableData?.columns && columnNames.length > 0
+      ? tableData.columns[columnNames[0] as keyof TableColumns].length
+      : 0;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -86,73 +92,86 @@ export function DataTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg flex items-center">
-          <Package className="mr-2 h-5 w-5" />
+        <CardTitle className='text-lg flex items-center'>
+          <Package className='mr-2 h-5 w-5' />
           Top Products
         </CardTitle>
       </CardHeader>
       <CardContent>
         {!tableData || isLoading ? (
-          <div className="space-y-4">
+          <div className='space-y-4'>
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center space-x-4">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-6 w-16" />
+              <div key={i} className='flex items-center space-x-4'>
+                <Skeleton className='h-4 w-24' />
+                <Skeleton className='h-4 w-16' />
+                <Skeleton className='h-4 w-20' />
+                <Skeleton className='h-4 w-24' />
+                <Skeleton className='h-6 w-16' />
               </div>
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="cursor-pointer hover:bg-muted/50">
-                    <div className="flex items-center space-x-2">
+                  <TableHead className='cursor-pointer hover:bg-muted/50'>
+                    <div className='flex items-center space-x-2'>
                       <span>Product</span>
-                      <ArrowUpDown className="h-4 w-4" />
+                      <ArrowUpDown className='h-4 w-4' />
                     </div>
                   </TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Sales</TableHead>
-                  <TableHead className="text-right">Revenue</TableHead>
-                  <TableHead className="text-right">Growth</TableHead>
+                  <TableHead className='text-right'>Sales</TableHead>
+                  <TableHead className='text-right'>Revenue</TableHead>
+                  <TableHead className='text-right'>Growth</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {Array.from({ length: numRows }, (_, rowIndex) => {
-                  const rowId = tableData?.columns.id[rowIndex] || `row-${rowIndex}`;
+                  const rowId =
+                    tableData?.columns.id[rowIndex] || `row-${rowIndex}`;
                   return (
                     <TableRow key={rowId}>
-                      <TableCell className="font-medium">
+                      <TableCell className='font-medium'>
                         {tableData?.columns.product[rowIndex]}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">
+                        <Badge variant='outline'>
                           {tableData?.columns.category[rowIndex]}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className='text-right'>
                         {tableData?.columns.sales[rowIndex]?.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(tableData?.columns.revenue[rowIndex] || 0)}
+                      <TableCell className='text-right'>
+                        {formatCurrency(
+                          tableData?.columns.revenue[rowIndex] || 0
+                        )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className='text-right'>
                         <span
                           className={`${
-                            (tableData?.columns.growth[rowIndex] || 0) >= 0 ? "text-green-600" : "text-red-600"
+                            (tableData?.columns.growth[rowIndex] || 0) >= 0
+                              ? "text-green-600"
+                              : "text-red-600"
                           } font-medium`}
                         >
-                          {formatPercentage(tableData?.columns.growth[rowIndex] || 0)}
+                          {formatPercentage(
+                            tableData?.columns.growth[rowIndex] || 0
+                          )}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getStatusColor(tableData?.columns.status[rowIndex] || "")}>
-                          {getStatusLabel(tableData?.columns.status[rowIndex] || "")}
+                        <Badge
+                          variant={getStatusColor(
+                            tableData?.columns.status[rowIndex] || ""
+                          )}
+                        >
+                          {getStatusLabel(
+                            tableData?.columns.status[rowIndex] || ""
+                          )}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -160,9 +179,9 @@ export function DataTable() {
                 })}
               </TableBody>
             </Table>
-            
+
             {tableData.total_rows > numRows && (
-              <div className="text-center text-sm text-muted-foreground pt-4 border-t">
+              <div className='text-center text-sm text-muted-foreground pt-4 border-t'>
                 Showing {numRows} of {tableData.total_rows} products
               </div>
             )}
