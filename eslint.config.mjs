@@ -45,28 +45,26 @@ export default tseslint.config(
     ignores: ["dist", "**/*.d.ts"],
   },
   {
-    // Build scripts config - these are run by nodejs.
-    files: ["build.ts", "eslint.config.mjs"],
+    // JavaScript scripts - these are run by nodejs.
+    files: ["eslint.config.mjs"],
     languageOptions: {
       globals: globals.node,
     },
     rules: {
+      ...commonRules,
       "@typescript-eslint/no-require-imports": "off",
     },
   },
   {
-    // CommonJS Node.js scripts in bin/
-    files: ["bin/**/*.js"],
+    // TypeScript scripts - these are run by nodejs.
+    files: ["build.ts"],
     languageOptions: {
+      ...commonTsConfig,
       globals: globals.node,
-      ecmaVersion: 2022,
-      sourceType: "commonjs",
     },
     rules: {
-      // Disable TypeScript-specific rules for plain JS files
+      ...commonRules,
       "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-var-requires": "off",
-      "@typescript-eslint/no-unused-vars": "off",
     },
   },
   {

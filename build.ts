@@ -1,6 +1,6 @@
+import { spawn } from "child_process";
 import * as esbuild from "esbuild";
 import * as fs from "fs";
-import { spawn } from "child_process";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
@@ -135,11 +135,16 @@ async function main() {
     }),
     // Unbundled ESM for bundlers (better tree-shaking)
     esmModule: esbuild.context({
-      entryPoints: ["src/index.ts", "src/use-shiny.ts", "src/ImageOutput.tsx", "src/utils.ts"],
-      outdir: "dist",  // Use outdir instead of outfile for multiple files
-      bundle: false,  // Don't bundle - let downstream bundlers handle it
+      entryPoints: [
+        "src/index.ts",
+        "src/use-shiny.ts",
+        "src/ImageOutput.tsx",
+        "src/utils.ts",
+      ],
+      outdir: "dist", // Use outdir instead of outfile for multiple files
+      bundle: false, // Don't bundle - let downstream bundlers handle it
       format: "esm",
-      minify: false,  // Don't minify - let downstream bundlers handle it
+      minify: false, // Don't minify - let downstream bundlers handle it
       sourcemap: "linked",
       sourcesContent: true,
       // Note: external is not needed with bundle: false
@@ -181,7 +186,7 @@ async function main() {
   }
 
   // Start esbuild
-  Object.values(buildmap).forEach((build) =>
+  Object.values(buildmap).forEach((build) => {
     build
       .then(async (context) => {
         if (watch) {
@@ -194,8 +199,8 @@ async function main() {
       .catch((e) => {
         console.error(e);
         process.exit(1);
-      })
-  );
+      });
+  });
 }
 
 main().catch((e) => {

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "target": "es2022",
     "module": "es2022",
     "moduleResolution": "node",
@@ -25,6 +25,6 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "build.ts", "eslint.config.mjs"],
   "exclude": ["bin/**/*", "node_modules", "dist"]
 }
