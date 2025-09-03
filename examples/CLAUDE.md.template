@@ -119,9 +119,20 @@ React Component <──[useShinyOutput]── Shiny Server
 
 ### Code Examples
 
+#### TypeScript Global Types
+
+If you need to access `window.Shiny` directly in your components, add a triple-slash directive at the top of your file to import the global type definitions:
+
+```typescript
+/// <reference types="@posit/shiny" />
+```
+
+This provides TypeScript with the global `Window.Shiny` interface without importing any runtime code or triggering ESLint unused import warnings.
+
 #### React Component Pattern
 ```typescript
-import { useShinyInput, useShinyOutput } from "shiny-react";
+/// <reference types="@posit/shiny" />
+import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
 
 function MyComponent() {
   // Send data to Shiny (like useState but syncs with server)
@@ -390,7 +401,7 @@ function ImageOutput({
 
 **Usage**:
 ```typescript
-import { ImageOutput } from "shiny-react";
+import { ImageOutput } from "@posit/shiny-react";
 
 function PlotCard() {
   return (
@@ -1294,7 +1305,7 @@ const [stats] = useShinyOutput<TableStats>("table_stats", undefined);
 **Import Errors**:
 ```typescript
 // Correct imports for shiny-react
-import { useShinyInput, useShinyOutput, ImageOutput } from "shiny-react";
+import { useShinyInput, useShinyOutput, ImageOutput } from "@posit/shiny-react";
 
 // Verify package.json has correct dependency
 // "dependencies": { "shiny-react": "file:../path/to/shiny-react" }
