@@ -20,13 +20,9 @@
   },
   "files": [
     "dist/",
-    "bin/",
     "examples/",
     "!**/__pycache__/"
   ],
-  "bin": {
-    "create-shiny-react-app": "./bin/create-shiny-react-app.js"
-  },
   "scripts": {
     "build": "tsx build.ts",
     "watch": "tsx build.ts --watch",
