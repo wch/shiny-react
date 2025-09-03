@@ -20,7 +20,7 @@ app_ui = page_bare(
 
 def server(input: Inputs, output: Outputs, session: Session):
 
-    @render_object()
+    @render_object
     def table_data():
         num_rows = input.table_rows()
         # This produces a JSON object in column-major format, as in:
@@ -32,7 +32,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         # }
         return mtcars.head(num_rows).to_dict(orient="list")
 
-    @render_object()
+    @render_object
     def table_stats():
         num_rows = input.table_rows()
         mtcars_subset = mtcars.head(num_rows)

@@ -3,7 +3,7 @@
 This example demonstrates how to output complex data structures from Shiny applications using the shiny-react library.
 
 - In R, it uses a `renderObject()` function, implemented in the `shinyreact.R` file.
-- In Python, it uses a `render_object()` function, implemented in the `shinyreact.py` file.
+- In Python, it uses a `render_object` function, implemented in the `shinyreact.py` file.
 
 These functions send arbitrary data structures (which can be converted to JSON) to the frontend, where they are displayed using React components.
 
@@ -97,7 +97,7 @@ Each card displays a different output type while remaining synchronized through 
 
 ### Backend Implementation
 - **R**: Uses `renderObject()` for JSON data and `renderPlot()` for plot generation
-- **Python**: Uses `render_object()` for JSON data and `render.plot()` with matplotlib for plots  
+- **Python**: Uses `render_object` for JSON data and `render.plot()` with matplotlib for plots  
 - Both backends calculate mpg statistics (mean, median, min, max) for the range visualization
 - Plot generation creates MPG vs Weight scatter plots with trend lines
 

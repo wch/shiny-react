@@ -40,13 +40,13 @@ def server(input: Inputs, output: Outputs, session: Session):
             selected_categories=selected_categories,
         )
 
-    @render_object()
+    @render_object
     def metrics_data():
         """Calculate and return metrics"""
         data = filtered_data()
         return calculate_metrics(data)
 
-    @render_object()
+    @render_object
     def chart_data():
         """Return chart data in column-major format"""
         data = filtered_data()
@@ -60,7 +60,7 @@ def server(input: Inputs, output: Outputs, session: Session):
             "category_performance": category_performance_columns,
         }
 
-    @render_object()
+    @render_object
     def table_data():
         """Return table data in column-major format"""
         data = filtered_data()

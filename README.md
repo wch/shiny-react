@@ -263,11 +263,11 @@ Each Shiny-React application includes utility files that provide essential funct
 
 **shinyreact.py** (Python backend):
 - `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications  
-- `render_object()` - Custom renderer for sending arbitrary JSON data to React components
+- `render_object` - Custom renderer for sending arbitrary JSON data to React components
 
 ### Sending Arbitrary JSON with renderObject/render_object
 
-The `renderObject()` (R) and `render_object()` (Python) functions allow you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
+The `renderObject()` (R) and `render_object` (Python) functions allow you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
 
 **R Usage:**
 ```r
@@ -290,13 +290,13 @@ output$statistics <- renderObject({
 **Python Usage:**
 ```python
 # Send a data frame (converted to column-major JSON format)
-@render_object()
+@render_object
 def table_data():
     num_rows = input.table_rows()
     return mtcars.head(num_rows).to_dict(orient="list")
 
 # Send custom JSON objects
-@render_object()
+@render_object
 def statistics():
     return {
         "mean": float(mtcars["mpg"].mean()),
