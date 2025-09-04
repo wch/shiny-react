@@ -20,11 +20,11 @@
     "@types/react-dom": "^19.1.9",
     "concurrently": "^9.0.1",
     "esbuild": "^0.25.9",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.6"
+    "@posit/shiny-react": "^0.0.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   }
 }
