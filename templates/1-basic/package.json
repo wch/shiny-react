@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "shiny-react-template-basic",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "description": "Basic shiny-react template web app",
   "scripts": {
