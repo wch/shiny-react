@@ -1010,15 +1010,8 @@ def server(input: Inputs, output: Outputs, session: Session):
 library(shiny)
 source("shinyreact.R", local = TRUE)
 
-# UI with bare page (no default Shiny styling)
-ui <- page_bare(
-  title = "My Shiny React App",
-  tags$head(
-    tags$script(src = "main.js", type = "module"),
-    tags$link(href = "main.css", rel = "stylesheet")
-  ),
-  tags$div(id = "root")  # React mount point
-)
+# Using the page_react() convenience function (recommended)
+ui <- page_react(title = "My Shiny React App")
 
 server <- function(input, output, session) {
   # Text output - simple transformation
@@ -1044,7 +1037,26 @@ shinyApp(ui = ui, server = server)
 
 **R Utility Functions (shinyreact.R)**:
 ```r
-# Bare page without default Shiny styling
+# Convenience function for React apps (recommended)
+page_react <- function(
+  ...,
+  title = NULL,
+  js_file = "main.js",
+  css_file = "main.css",
+  lang = "en"
+) {
+  page_bare(
+    title = title,
+    tags$head(
+      if (!is.null(js_file)) tags$script(src = js_file, type = "module"),
+      if (!is.null(css_file)) tags$link(href = css_file, rel = "stylesheet")
+    ),
+    tags$div(id = "root"),
+    ...
+  )
+}
+
+# Base function for custom layouts (advanced)
 page_bare <- function(..., title = NULL, lang = NULL) {
   ui <- list(
     shiny:::jqueryDependency(),
@@ -1072,18 +1084,11 @@ render_object <- function(expr, env = parent.frame(), quoted = FALSE, outputArgs
 **Basic Server Structure**:
 ```python
 from shiny import App, Inputs, Outputs, Session, ui, render
-from shinyreact import page_bare, render_object
+from shinyreact import page_react, render_object
 from pathlib import Path
 
-# UI with bare page
-app_ui = page_bare(
-    ui.head_content(
-        ui.tags.script(src="main.js", type="module"),
-        ui.tags.link(href="main.css", rel="stylesheet"),
-    ),
-    ui.div(id="root"),  # React mount point
-    title="My Shiny React App",
-)
+# Using the page_react() convenience function (recommended)
+app_ui = page_react(title="My Shiny React App")
 
 def server(input: Inputs, output: Outputs, session: Session):
     # Text output - simple transformation
@@ -1110,12 +1115,38 @@ app = App(app_ui, server, static_assets=str(Path(__file__).parent / "www"))
 
 **Python Utility Functions (shinyreact.py)**:
 ```python
+from __future__ import annotations
+
 from shiny import ui
 from shiny.html_dependencies import shiny_deps
 from shiny.types import Jsonifiable
-from shiny.render.renderer import Renderer
+from shiny.render.renderer import Renderer, ValueFn
+from typing import Any, Optional
 
-# Bare page without default Shiny styling
+# Convenience function for React apps (recommended)
+def page_react(
+    *args: ui.TagChild,
+    title: str | None = None,
+    js_file: str | None = "main.js",
+    css_file: str | None = "main.css",
+    lang: str = "en",
+) -> ui.Tag:
+    head_items: list[ui.TagChild] = []
+
+    if js_file:
+        head_items.append(ui.tags.script(src=js_file, type="module"))
+    if css_file:
+        head_items.append(ui.tags.link(href=css_file, rel="stylesheet"))
+
+    return page_bare(
+        ui.head_content(*head_items),
+        ui.div(id="root"),
+        *args,
+        title=title,
+        lang=lang,
+    )
+
+# Base function for custom layouts (advanced)
 def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") -> ui.Tag:
     return ui.tags.html(
         ui.tags.head(ui.tags.title(title)),
@@ -1125,12 +1156,21 @@ def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") ->
 
 # Custom renderer for arbitrary JSON data
 class render_object(Renderer[Jsonifiable]):
-    """Reactively render arbitrary JSON object."""
+    """
+    Reactively render arbitrary JSON object.
 
-    def __init__(self, _fn: Optional[ValueFn[str]] = None) -> None:
+    This is a generic renderer that can be used to render any Jsonifiable data.
+    It sends the data to the client-side and let the client-side code handle the
+    rendering.
+    """
+
+    def __init__(
+        self,
+        _fn: Optional[ValueFn[Any]] = None,
+    ) -> None:
         super().__init__(_fn)
 
-    async def transform(self, value: str) -> Jsonifiable:
+    async def transform(self, value: Jsonifiable) -> Jsonifiable:
         return value
 ```
 
