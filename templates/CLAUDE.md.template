@@ -23,7 +23,7 @@ hello-world-app/
 ├── CLAUDE.md               # This file - instructions for LLM coding agents
 ├── srcts/                  # React TypeScript source code
 │   ├── main.tsx            # React app entry point
-│   ├── HelloWorldComponent.tsx  # Main component using shiny-react hooks
+│   ├── *.tsx               # React components using shiny-react hooks
 │   └── styles.css          # CSS styling
 ├── r/                      # R Shiny backend
 │   ├── app.R               # Main R Shiny application
@@ -43,7 +43,7 @@ hello-world-app/
 
 ### Frontend (React/TypeScript)
 - **`srcts/main.tsx`**: Entry point that mounts the React app to the DOM
-- **`srcts/HelloWorldComponent.tsx`**: Main component demonstrating shiny-react hooks
+- **`srcts/*.tsx`**: React components using shiny-react hooks
 - **`srcts/styles.css`**: Application styling
 
 ### Backend (Shiny)
