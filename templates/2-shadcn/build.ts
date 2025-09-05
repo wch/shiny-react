@@ -7,43 +7,36 @@ const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
 const metafile = process.argv.includes("--metafile");
 
+const buildOptions: esbuild.BuildOptions = {
+  entryPoints: ["srcts/main.tsx"],
+  bundle: true,
+  format: "esm",
+  minify: production,
+  sourcemap: production ? undefined : "linked",
+  sourcesContent: true,
+  alias: {
+    react: "react",
+  },
+  logLevel: "info",
+  metafile: metafile,
+  plugins: [tailwindPlugin()],
+};
+
 async function main() {
   const buildmap: Record<string, Promise<esbuild.BuildContext>> = {};
 
   // Only add build context if the directory exists
   if (existsSync("r")) {
     buildmap.r = esbuild.context({
-      entryPoints: ["srcts/main.tsx"],
+      ...buildOptions,
       outfile: "r/www/main.js",
-      bundle: true,
-      format: "esm",
-      minify: production,
-      sourcemap: production ? undefined : "linked",
-      sourcesContent: true,
-      alias: {
-        react: "react",
-      },
-      logLevel: "info",
-      metafile: metafile,
-      plugins: [tailwindPlugin()],
     });
   }
 
   if (existsSync("py")) {
     buildmap.py = esbuild.context({
-      entryPoints: ["srcts/main.tsx"],
+      ...buildOptions,
       outfile: "py/www/main.js",
-      bundle: true,
-      format: "esm",
-      minify: production,
-      sourcemap: production ? undefined : "linked",
-      sourcesContent: true,
-      alias: {
-        react: "react",
-      },
-      logLevel: "info",
-      metafile: metafile,
-      plugins: [tailwindPlugin()],
     });
 
     if (Object.keys(buildmap).length === 0) {
