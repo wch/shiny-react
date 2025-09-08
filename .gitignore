@@ -3,5 +3,4 @@ node_modules/
 __pycache__/
 *.py[cod]
 .DS_Store
-templates/*/package-lock.json
 examples/*/package-lock.json
