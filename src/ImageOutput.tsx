@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useShinyInput, useShinyOutput } from "./use-shiny";
 import { debounce } from "./utils";
 
@@ -123,7 +123,7 @@ export function ImageOutput({
     <img
       ref={imgRef}
       src={imgData?.src}
-      alt=""
+      alt=''
       className={className}
       style={{
         width: "100%",

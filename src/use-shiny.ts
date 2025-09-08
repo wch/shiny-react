@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
+import { type ShinyClass } from "@posit/shiny/srcts/types/src/shiny";
 import { useCallback, useEffect, useState } from "react";
-import { type EventPriority } from "rstudio-shiny/srcts/types/src/inputPolicies";
-import { type ShinyClass } from "rstudio-shiny/srcts/types/src/shiny";
 import { debounce } from "./utils";
 
 /**
