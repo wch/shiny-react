@@ -25,6 +25,13 @@
     "strict": true,
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "build.ts", "eslint.config.mjs"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "examples/**/*.ts",
+    "examples/**/*.tsx",
+    "build.ts",
+    "eslint.config.mjs"
+  ],
   "exclude": ["bin/**/*", "node_modules", "dist"]
 }

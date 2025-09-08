@@ -11,11 +11,11 @@ const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
 const commonRules = {
-  "@typescript-eslint/naming-convention": "warn",
   curly: ["warn", "multi-line"],
   eqeqeq: "warn",
   "no-throw-literal": "warn",
   semi: "warn",
+  "@typescript-eslint/naming-convention": "off",
   "@typescript-eslint/no-empty-object-type": "off",
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/consistent-type-imports": "warn",
@@ -48,7 +48,9 @@ export default tseslint.config(
     // JavaScript scripts - these are run by nodejs.
     files: ["eslint.config.mjs"],
     languageOptions: {
+      ...commonTsConfig,
       globals: globals.node,
+      "@typescript-eslint/naming-convention": "off",
     },
     rules: {
       ...commonRules,
@@ -69,7 +71,7 @@ export default tseslint.config(
   },
   {
     // Browser/React TypeScript
-    files: ["src/**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}", "examples/**/*.{ts,tsx}"],
     ...reactEslint.configs.flat.recommended,
     ...reactEslint.configs.flat["jsx-runtime"],
     plugins: {
