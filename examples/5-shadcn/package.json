@@ -4,8 +4,8 @@
   "type": "module",
   "description": "Interactive dashboard example using shiny-react and shadcn/ui",
   "scripts": {
-    "build": "concurrently \"tsc --noEmit\" \"tsx build.ts\"",
-    "watch": "concurrently \"tsc --noEmit --watch\" \"tsx build.ts --watch\"",
+    "build": "concurrently -c auto \"tsc --noEmit\" \"tsx build.ts\"",
+    "watch": "concurrently -c auto \"tsc --noEmit --watch --preserveWatchOutput\" \"tsx build.ts --watch\"",
     "build-prod": "tsc --noEmit && tsx build.ts --production",
     "clean": "rm -rf r/www py/www build"
   },
