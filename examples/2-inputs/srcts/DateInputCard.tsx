@@ -7,7 +7,7 @@ function DateInputCard() {
   const today = new Date().toISOString().split("T")[0];
 
   const [dateIn, setDateIn] = useShinyInput<string>("datein", today);
-  const dateOut = useShinyOutput<string>("dateout", undefined);
+  const [dateOut, _] = useShinyOutput<string>("dateout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDateIn(event.target.value);

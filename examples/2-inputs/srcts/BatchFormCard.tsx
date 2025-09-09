@@ -27,7 +27,7 @@ function BatchFormCard() {
       priority: "event",
     }
   );
-  const batchOutput = useShinyOutput<string>("batchout", "");
+  const [batchOutput, _] = useShinyOutput<string>("batchout", "");
 
   const handleFeatureChange = (feature: keyof typeof features) => {
     setFeatures((prev) => ({

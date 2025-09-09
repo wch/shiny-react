@@ -4,9 +4,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ImageAttachment } from "@/hooks/useImageUpload";
+import { type ImageAttachment } from "@/hooks/useImageUpload";
 import { cn } from "@/lib/utils";
-import { useShinyInput, useShinyOutput } from "@posit/shiny-react";
+import { useShinyInput } from "@posit/shiny-react";
 import { Bot, User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 

@@ -11,7 +11,7 @@ interface TableStats {
 }
 
 function StatisticsCard() {
-  const [tableStats] = useShinyOutput<TableStats | undefined>(
+  const [tableStats, isRecalculating] = useShinyOutput<TableStats | undefined>(
     "table_stats",
     undefined
   );

@@ -6,8 +6,14 @@ import React from "react";
 
 export function TextInputCard() {
   const [inputText, setInputText] = useShinyInput<string>("user_text", "");
-  const [processedText] = useShinyOutput<string>("processed_text", "");
-  const [textLength] = useShinyOutput<number>("text_length", 0);
+  const [processedText, processedTextRecalculating] = useShinyOutput<string>(
+    "processed_text",
+    ""
+  );
+  const [textLength, textLengthRecalculating] = useShinyOutput<number>(
+    "text_length",
+    0
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.value);

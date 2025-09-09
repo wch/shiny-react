@@ -7,7 +7,7 @@ function SliderInputCard() {
   const [sliderIn, setSliderIn] = useShinyInput<number>("sliderin", 50, {
     debounceMs: 0,
   });
-  const sliderOut = useShinyOutput<number>("sliderout", undefined);
+  const [sliderOut, _] = useShinyOutput<number>("sliderout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSliderIn(Number(event.target.value));

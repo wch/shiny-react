@@ -4,7 +4,7 @@ import InputOutputCard from "./InputOutputCard";
 
 function RadioInputCard() {
   const [radioIn, setRadioIn] = useShinyInput<string>("radioin", "option1");
-  const radioOut = useShinyOutput<string>("radioout", undefined);
+  const [radioOut, _] = useShinyOutput<string>("radioout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRadioIn(event.target.value);

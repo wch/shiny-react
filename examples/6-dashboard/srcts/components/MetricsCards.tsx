@@ -28,10 +28,9 @@ interface MetricsData {
 }
 
 export function MetricsCards() {
-  const [metricsData] = useShinyOutput<MetricsData | undefined>(
-    "metrics_data",
-    undefined
-  );
+  const [metricsData, metricsDataRecalculating] = useShinyOutput<
+    MetricsData | undefined
+  >("metrics_data", undefined);
 
   if (!metricsData) {
     return (

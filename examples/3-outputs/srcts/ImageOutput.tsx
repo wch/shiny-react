@@ -8,7 +8,10 @@ interface ImageOutputProps {
 }
 
 function ImageOutput({ id, alt, className }: ImageOutputProps) {
-  const [imageSrc] = useShinyOutput<string | undefined>(id, undefined);
+  const [imageSrc, isRecalculating] = useShinyOutput<string | undefined>(
+    id,
+    undefined
+  );
 
   if (!imageSrc) {
     return (

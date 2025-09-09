@@ -7,7 +7,7 @@ function CheckboxInputCard() {
     "checkboxin",
     false
   );
-  const checkboxOut = useShinyOutput<boolean>("checkboxout", undefined);
+  const [checkboxOut, _] = useShinyOutput<boolean>("checkboxout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckboxIn(event.target.checked);

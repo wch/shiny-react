@@ -4,7 +4,7 @@ import InputOutputCard from "./InputOutputCard";
 
 function SelectInputCard() {
   const [selectIn, setSelectIn] = useShinyInput<string>("selectin", "apple");
-  const selectOut = useShinyOutput<string>("selectout", undefined);
+  const [selectOut, _] = useShinyOutput<string>("selectout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectIn(event.target.value);

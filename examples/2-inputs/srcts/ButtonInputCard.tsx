@@ -16,7 +16,7 @@ function ButtonInputCard() {
       priority: "event",
     }
   );
-  const buttonOut = useShinyOutput<string>("buttonout", undefined);
+  const [buttonOut, _] = useShinyOutput<string>("buttonout", undefined);
 
   const handleButtonClick = () => {
     setButtonIn({});

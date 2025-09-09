@@ -3,10 +3,9 @@ import React from "react";
 import Card from "./Card";
 
 function DataTableCard() {
-  const [tableData] = useShinyOutput<Record<string, number[]> | undefined>(
-    "table_data",
-    undefined
-  );
+  const [tableData, isRecalculating] = useShinyOutput<
+    Record<string, number[]> | undefined
+  >("table_data", undefined);
 
   // Get column names from the data
   const columnNames = tableData ? Object.keys(tableData) : [];

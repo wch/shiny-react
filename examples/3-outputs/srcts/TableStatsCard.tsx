@@ -12,14 +12,12 @@ interface TableStats {
 
 function TableStatsCard() {
   const [rowCount, setRowCount] = useShinyInput<number>("table_rows", 5);
-  const [tableData] = useShinyOutput<Record<string, number[]> | undefined>(
-    "table_data",
-    undefined
-  );
-  const [tableStats] = useShinyOutput<TableStats | undefined>(
-    "table_stats",
-    undefined
-  );
+  const [tableData, tableDataRecalculating] = useShinyOutput<
+    Record<string, number[]> | undefined
+  >("table_data", undefined);
+  const [tableStats, tableStatsRecalculating] = useShinyOutput<
+    TableStats | undefined
+  >("table_stats", undefined);
 
   // Get column names from the data
   const columnNames = tableData ? Object.keys(tableData) : [];

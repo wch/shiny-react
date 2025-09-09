@@ -9,7 +9,7 @@ export function ButtonEventCard() {
     {},
     { priority: "event" }
   );
-  const [buttonResponse] = useShinyOutput<string>("button_response", "");
+  const [buttonResponse, _] = useShinyOutput<string>("button_response", "");
 
   const handleClick = () => {
     setButtonTrigger({});

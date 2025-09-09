@@ -4,7 +4,7 @@ import InputOutputCard from "./InputOutputCard";
 
 function NumberInputCard() {
   const [numberIn, setNumberIn] = useShinyInput<number>("numberin", 42);
-  const numberOut = useShinyOutput<number>("numberout", undefined);
+  const [numberOut, _] = useShinyOutput<number>("numberout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumberIn(Number(event.target.value));
