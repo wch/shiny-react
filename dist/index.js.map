@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../src/index.ts"],
-  "sourcesContent": ["// Main exports for shiny-react JavaScript library\nexport { useShinyInput, useShinyOutput } from \"./use-shiny\";\nexport { ImageOutput } from \"./ImageOutput\";\n\n// Re-export types if needed\nexport type { ReactOutputBinding } from \"./use-shiny\";\n"],
-  "mappings": "AACA,SAAS,eAAe,sBAAsB;AAC9C,SAAS,mBAAmB;",
-  "names": []
-}

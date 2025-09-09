@@ -1,6 +1,6 @@
 node_modules/
-
 __pycache__/
+dist/
 *.py[cod]
 .DS_Store
 examples/*/package-lock.json
