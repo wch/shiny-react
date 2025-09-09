@@ -3,6 +3,7 @@ import BatchFormCard from "./BatchFormCard";
 import ButtonInputCard from "./ButtonInputCard";
 import CheckboxInputCard from "./CheckboxInputCard";
 import DateInputCard from "./DateInputCard";
+import FileInputCard from "./FileInputCard";
 import NumberInputCard from "./NumberInputCard";
 import RadioInputCard from "./RadioInputCard";
 import SelectInputCard from "./SelectInputCard";
@@ -22,6 +23,7 @@ function App() {
         <SliderInputCard />
         <DateInputCard />
         <ButtonInputCard />
+        <FileInputCard />
         <BatchFormCard />
       </div>
     </div>

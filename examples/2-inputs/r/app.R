@@ -41,6 +41,14 @@ server <- function(input, output, session) {
     num_button_clicks
   })
 
+  output$fileout <- renderText({
+    jsonlite::toJSON(
+      input$filein,
+      auto_unbox = TRUE,
+      pretty = TRUE
+    )
+  })
+
   output$batchout <- renderText({
     data <- input$batchdata
     if (is.null(data)) {

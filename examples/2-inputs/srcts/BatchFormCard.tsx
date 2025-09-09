@@ -110,7 +110,7 @@ function BatchFormCard() {
     </div>
   );
 
-  const outputElement = <pre className='batch-form-output'>{batchOutput}</pre>;
+  const outputElement = <pre className='code-output'>{batchOutput}</pre>;
 
   return (
     <InputOutputCard

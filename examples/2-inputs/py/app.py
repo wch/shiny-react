@@ -1,6 +1,8 @@
+import json
+import datetime
+from pathlib import Path
 from shiny import App, Inputs, Outputs, Session, render
 from shinyreact import page_react
-from pathlib import Path
 
 
 def server(input: Inputs, output: Outputs, session: Session):
@@ -44,10 +46,11 @@ def server(input: Inputs, output: Outputs, session: Session):
         return str(num_button_clicks)
 
     @render.text()
-    def batchout():
-        import json
-        import datetime
+    def fileout():
+        return json.dumps(input.filein(), indent=2)
 
+    @render.text()
+    def batchout():
         data = input.batchdata()
         if data is None:
             return "No data submitted yet."
