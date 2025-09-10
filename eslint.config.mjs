@@ -50,19 +50,6 @@ export default tseslint.config(
     languageOptions: {
       ...commonTsConfig,
       globals: globals.node,
-      "@typescript-eslint/naming-convention": "off",
-    },
-    rules: {
-      ...commonRules,
-      "@typescript-eslint/no-require-imports": "off",
-    },
-  },
-  {
-    // TypeScript scripts - these are run by nodejs.
-    files: ["build.ts"],
-    languageOptions: {
-      ...commonTsConfig,
-      globals: globals.node,
     },
     rules: {
       ...commonRules,
