@@ -4,7 +4,7 @@ source("shinyreact.R", local = TRUE)
 
 
 server <- function(input, output, session) {
-  output$txtout <- renderText({
+  output$txtout <- render_json({
     toupper(input$txtin)
   })
 

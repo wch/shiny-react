@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from shiny import App, Inputs, Outputs, Session, render, reactive
-from shinyreact import page_react
+from shinyreact import page_react, render_json
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ sample_data = pd.DataFrame(
 
 def server(input: Inputs, output: Outputs, session: Session):
 
-    @render.text
+    @render_json
     def processed_text():
         text = input.user_text() if input.user_text() is not None else ""
         if text == "":
@@ -29,12 +29,12 @@ def server(input: Inputs, output: Outputs, session: Session):
         # Simple text processing - uppercase and reverse
         return "".join(reversed(text.upper()))
 
-    @render.text
+    @render_json
     def text_length():
         text = input.user_text() if input.user_text() is not None else ""
         return str(len(text))
 
-    @render.text
+    @render_json
     @reactive.event(input.button_trigger)
     def button_response():
         # React to button trigger

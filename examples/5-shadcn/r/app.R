@@ -12,25 +12,25 @@ sample_data <- data.frame(
 
 server <- function(input, output, session) {
   # Process text input
-  output$processed_text <- renderText({
+  output$processed_text <- render_json({
     text <- input$user_text %||% ""
     reversed_text <- paste(rev(strsplit(text, "")[[1]]), collapse = "")
     toupper(reversed_text)
   })
 
   # Calculate text length
-  output$text_length <- renderText({
+  output$text_length <- render_json({
     text <- input$user_text %||% ""
     nchar(text)
   })
 
-  output$button_response <- renderText({
+  output$button_response <- render_json({
     paste("Event received at:", as.character(Sys.time(), digits = 2))
   }) |>
     bindEvent(input$button_trigger) # Trigger on button events
 
   # Table data output
-  output$table_data <- render_object({
+  output$table_data <- render_json({
     sample_data
   })
 

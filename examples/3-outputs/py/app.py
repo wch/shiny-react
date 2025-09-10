@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from shiny import App, Inputs, Outputs, Session, render
-from shinyreact import page_react, render_object
+from shinyreact import page_react, render_json
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ mtcars = pd.read_csv(Path(__file__).parent / "mtcars.csv")
 
 def server(input: Inputs, output: Outputs, session: Session):
 
-    @render_object
+    @render_json
     def table_data():
         num_rows = input.table_rows()
         # This produces a JSON object in column-major format, as in:
@@ -24,7 +24,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         # }
         return mtcars.head(num_rows).to_dict(orient="list")
 
-    @render_object
+    @render_json
     def table_stats():
         num_rows = input.table_rows()
         mtcars_subset = mtcars.head(num_rows)

@@ -32,9 +32,8 @@ page_react <- function(
 #' Reactively render arbitrary JSON object data.
 #'
 #' This is a generic renderer that can be used to render any Jsonifiable data.
-#' It sends the data to the client-side and let the client-side code handle the
-#' rendering.
-render_object <- function(
+#' The data goes through shiny:::toJSON() before being sent to the client.
+render_json <- function(
   expr,
   env = parent.frame(),
   quoted = FALSE,
@@ -46,7 +45,7 @@ render_object <- function(
     "func",
     env,
     quoted,
-    label = "render_object"
+    label = "render_json"
   )
 
   createRenderFunction(

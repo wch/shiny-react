@@ -40,7 +40,7 @@ server <- function(input, output, session) {
   })
 
   # Metrics output
-  output$metrics_data <- render_object({
+  output$metrics_data <- render_json({
     tryCatch(
       {
         data <- filtered_data()
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
   })
 
   # Chart data output
-  output$chart_data <- render_object({
+  output$chart_data <- render_json({
     tryCatch(
       {
         data <- filtered_data()
@@ -144,7 +144,7 @@ server <- function(input, output, session) {
   })
 
   # Table data output
-  output$table_data <- render_object({
+  output$table_data <- render_json({
     tryCatch(
       {
         data <- filtered_data()

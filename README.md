@@ -236,7 +236,7 @@ Here is a corresponding Shiny server function for the back end, written in R:
 
 ```r
 function(input, output, session) {
-  output$my_output <- renderText({
+  output$my_output <- render_json({
     toupper(input$my_input)
   })
 }
@@ -246,7 +246,7 @@ And the same thing in Python:
 
 ```python
 def server(input, output, session):
-    @render.text()
+    @render_json
     def my_output():
         return input.my_input().upper()
 ```
@@ -262,25 +262,25 @@ Each Shiny-React application includes utility files that provide essential funct
 
 **shinyreact.R** (R backend):
 - `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications
-- `render_object()` - Custom renderer for sending arbitrary JSON data to React components
+- `render_json()` - Custom renderer for sending arbitrary JSON data to React components
 
 **shinyreact.py** (Python backend):
 - `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications  
-- `@render_object` - Custom renderer for sending arbitrary JSON data to React components
+- `@render_json` - Custom renderer for sending arbitrary JSON data to React components
 
-### Sending Arbitrary JSON with `render_object`
+### Sending Arbitrary JSON with `render_json`
 
-`render_object` allows you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
+`render_json` allows you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
 
 **R Usage:**
 ```r
 # Send a data frame (automatically converted to column-major JSON format)
-output$table_data <- render_object({
+output$table_data <- render_json({
   mtcars[1:input$num_rows, ]
 })
 
 # Send custom JSON objects
-output$statistics <- render_object({
+output$statistics <- render_json({
   list(
     mean = mean(mtcars$mpg),
     median = median(mtcars$mpg),
@@ -293,13 +293,13 @@ output$statistics <- render_object({
 **Python Usage:**
 ```python
 # Send a data frame (explicitly converted to column-major JSON format)
-@render_object
+@render_json
 def table_data():
     num_rows = input.table_rows()
     return mtcars.head(num_rows).to_dict(orient="list")
 
 # Send custom JSON objects
-@render_object
+@render_json
 def statistics():
     return {
         "mean": float(mtcars["mpg"].mean()),
@@ -352,13 +352,13 @@ Back end:
 - **Output values** are set by reactive functions, which automatically re-execute when their reactive inputs change. These output values are then sent to the front end.
   - In R, an output value can be set with:
     ```r
-    output$my_output <- renderText({
+    output$my_output <- render_json({
       toupper(input$my_input)
     })
     ```
   - In Python, an output value can be set with:
     ```python
-    @render.text()
+    @render_json
     def my_output():
         return input.my_input().upper()
     ```

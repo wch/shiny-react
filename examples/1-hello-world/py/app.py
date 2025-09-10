@@ -1,10 +1,10 @@
-from shiny import App, Inputs, Outputs, Session, render
-from shinyreact import page_react
+from shiny import App, Inputs, Outputs, Session
+from shinyreact import page_react, render_json
 from pathlib import Path
 
 
 def server(input: Inputs, output: Outputs, session: Session):
-    @render.text()
+    @render_json
     def txtout():
         return input.txtin().upper()
 

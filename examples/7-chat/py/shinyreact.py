@@ -41,7 +41,7 @@ def page_react(
     )
 
 
-class render_object(Renderer[Jsonifiable]):
+class render_json(Renderer[Jsonifiable]):
     """
     Reactively render arbitrary JSON object.
 

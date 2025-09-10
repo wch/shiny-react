@@ -90,7 +90,9 @@ function FileInputCard() {
       </div>
     </div>
   );
-  const outputElement = <pre className='code-output'>{fileout}</pre>;
+  const outputElement = (
+    <pre className='code-output'>{JSON.stringify(fileout, null, 2)}</pre>
+  );
 
   return (
     <InputOutputCard

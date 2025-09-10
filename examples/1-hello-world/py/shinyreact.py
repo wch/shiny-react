@@ -39,13 +39,12 @@ def page_react(
     )
 
 
-class render_object(Renderer[Jsonifiable]):
+class render_json(Renderer[Jsonifiable]):
     """
-    Reactively render arbitrary JSON object.
+    Reactively render arbitrary JSON object data.
 
     This is a generic renderer that can be used to render any Jsonifiable data.
-    It sends the data to the client-side and let the client-side code handle the
-    rendering.
+    The data goes through shiny:::toJSON() before being sent to the client.
 
     Returns
     -------

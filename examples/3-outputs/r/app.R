@@ -6,7 +6,7 @@ mtcars <- read.csv("mtcars.csv")
 
 
 server <- function(input, output, session) {
-  output$table_data <- render_object({
+  output$table_data <- render_json({
     req(input$table_rows)
     # This will be converted to a JSON object in column-major format, as in:
     # {
@@ -18,7 +18,7 @@ server <- function(input, output, session) {
     mtcars[seq_len(input$table_rows), ]
   })
 
-  output$table_stats <- render_object({
+  output$table_stats <- render_json({
     req(input$table_rows)
     mtcars_subset <- mtcars[seq_len(input$table_rows), ]
 

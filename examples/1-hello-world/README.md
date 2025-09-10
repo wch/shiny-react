@@ -4,7 +4,7 @@ This is a simple example demonstrating how to use the shiny-react library to cre
 
 The front end is implemented with React and TypeScript. There are two versions of the Shiny back end: one is implemented with R, and the other with Python.
 
-The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receive values from the Shiny back end. The back end is a Shiny application that uses `renderText` (in R) or `render.text` (in Python) to render the output values. In this example, the Shiny back end simply capitalizes the input value and sends it back to the front end.
+The front end uses `useShinyInput` and `useShinyOutput` hooks to send and receive values from the Shiny back end. The back end is a Shiny application that uses `render_json` to send the output values to the front end as JSON. In this example, the Shiny back end simply capitalizes the input value and sends it back to the front end.
 
 ## Directory Structure
 

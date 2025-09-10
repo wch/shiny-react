@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, ui, reactive
-from shinyreact import page_react, render_object
+from shinyreact import page_react, render_json
 from data import generate_sample_data, filter_data, calculate_metrics
 from pathlib import Path
 
@@ -30,13 +30,13 @@ def server(input: Inputs, output: Outputs, session: Session):
             selected_categories=selected_categories,
         )
 
-    @render_object
+    @render_json
     def metrics_data():
         """Calculate and return metrics"""
         data = filtered_data()
         return calculate_metrics(data)
 
-    @render_object
+    @render_json
     def chart_data():
         """Return chart data in column-major format"""
         data = filtered_data()
@@ -50,7 +50,7 @@ def server(input: Inputs, output: Outputs, session: Session):
             "category_performance": category_performance_columns,
         }
 
-    @render_object
+    @render_json
     def table_data():
         """Return table data in column-major format"""
         data = filtered_data()

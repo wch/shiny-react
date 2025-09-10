@@ -3,36 +3,36 @@ library(shiny)
 source("shinyreact.R", local = TRUE)
 
 server <- function(input, output, session) {
-  output$txtout <- renderText({
+  output$txtout <- render_json({
     toupper(input$txtin)
   })
 
-  output$numberout <- renderText({
+  output$numberout <- render_json({
     input$numberin
   })
 
-  output$checkboxout <- renderText({
+  output$checkboxout <- render_json({
     input$checkboxin
   })
 
-  output$radioout <- renderText({
+  output$radioout <- render_json({
     input$radioin
   })
 
-  output$selectout <- renderText({
+  output$selectout <- render_json({
     input$selectin
   })
 
-  output$sliderout <- renderText({
+  output$sliderout <- render_json({
     input$sliderin
   })
 
-  output$dateout <- renderText({
+  output$dateout <- render_json({
     input$datein
   })
 
   num_button_clicks <- 0
-  output$buttonout <- renderText({
+  output$buttonout <- render_json({
     # Take a reactive dependency on the button, and ignore starting null value
     if (is.null(input$buttonin)) {
       return()
@@ -41,25 +41,17 @@ server <- function(input, output, session) {
     num_button_clicks
   })
 
-  output$fileout <- renderText({
-    jsonlite::toJSON(
-      input$filein,
-      auto_unbox = TRUE,
-      pretty = TRUE
-    )
+  output$fileout <- render_json({
+    input$filein
   })
 
-  output$batchout <- renderText({
+  output$batchout <- render_json({
     data <- input$batchdata
     if (is.null(data)) {
       return("No data submitted yet.")
     }
     data$receivedAt <- as.character(Sys.time())
-    jsonlite::toJSON(
-      data,
-      auto_unbox = TRUE,
-      pretty = TRUE
-    )
+    data
   })
 }
 
