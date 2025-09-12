@@ -47,7 +47,7 @@ npm run watch
 
 The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simple example demonstrating basic Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
 
-**[Run in Shinylive: R](https://wch.github.io/shiny-react/1-hello-world-r.html) | [Python](https://wch.github.io/shiny-react/1-hello-world-python.html)**
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/1-hello-world-r.html) | [Python](https://wch.github.io/shiny-react/1-hello-world-python.html)**
 
 ![Hello World Example](docs/1-hello-world.jpeg)
 
@@ -55,7 +55,7 @@ The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simp
 
 The [examples/2-inputs/](examples/2-inputs/) directory showcases various input components and their integration with Shiny. This comprehensive example demonstrates:
 
-**[Run in Shinylive: R](https://wch.github.io/shiny-react/2-inputs-r.html) | [Python](https://wch.github.io/shiny-react/2-inputs-python.html)**
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/2-inputs-r.html) | [Python](https://wch.github.io/shiny-react/2-inputs-python.html)**
 
 - **Text Input** - Basic text input with server-side transformation
 - **Number Input** - Numeric input with range constraints
