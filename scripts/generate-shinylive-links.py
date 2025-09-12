@@ -491,7 +491,8 @@ a[target="_blank"]::after {
 
     <div class="footer">
         <p>
-            Built with <a href="https://github.com/posit-dev/shiny-react" target="_blank">shiny-react</a> •
+            Built with <a href="https://github.com/posit-dev/shiny-react" target="_blank">shiny-react</a>
+            <br>
             Apps powered by <a href="https://shiny.posit.co/">Shiny for R</a>, <a href="https://shiny.posit.co/py/">Shiny for Python</a>, and <a href="https://shinylive.io/" target="_blank">Shinylive</a>
         </p>
     </div>
