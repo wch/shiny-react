@@ -298,8 +298,15 @@ h1 {
 
 .apps-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: minmax(460px, 500px);
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+@media (max-width: 500px) {
+    .apps-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .app-card {
@@ -335,18 +342,22 @@ h1 {
 .links {
     display: flex;
     gap: 0.75rem;
-    flex-wrap: wrap;
+    flex-direction: row;
 }
 
 .link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.875rem;
     transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .link-r {
@@ -391,13 +402,6 @@ h1 {
     padding-top: 2rem;
     border-top: 1px solid #e2e8f0;
     color: #64748b;
-}
-
-.updated {
-    font-size: 0.875rem;
-    color: #64748b;
-    text-align: center;
-    margin-top: 2rem;
 }
 
 /* Indicator for external links that will open in a new window. */
@@ -455,6 +459,9 @@ a[target="_blank"]::after {
         html += """
             <div class="links">
 """
+        # Add GitHub source code link for all apps
+        github_url = f"https://github.com/wch/shiny-react/tree/main/examples/{app_id}"
+        html += f'                <a href="{github_url}" class="link link-source" target="_blank">Source Code</a>\n'
 
         if deploy_to_shinylive and r_url:
             html += f'                <a href="{app_id}-r.html" class="link link-r" target="_blank">R Version</a>\n'
@@ -476,10 +483,6 @@ a[target="_blank"]::after {
         #     )
         #     html += f'                <span class="link link-disabled">Python Version{disabled_reason}</span>\n'
 
-        # Add GitHub source code link for all apps
-        github_url = f"https://github.com/wch/shiny-react/tree/main/examples/{app_id}"
-        html += f'                <a href="{github_url}" class="link link-source" target="_blank">Source Code</a>\n'
-
         html += """            </div>
         </div>
 """
@@ -488,19 +491,10 @@ a[target="_blank"]::after {
 
     <div class="footer">
         <p>
-            Built with <a href="https://github.com/posit-dev/shiny-react" target="_blank">@posit/shiny-react</a> •
-            Powered by <a href="https://shinylive.io/" target="_blank">Shinylive</a>
+            Built with <a href="https://github.com/posit-dev/shiny-react" target="_blank">shiny-react</a> •
+            Apps powered by <a href="https://shiny.posit.co/">Shiny for R</a>, <a href="https://shiny.posit.co/py/">Shiny for Python</a>, and <a href="https://shinylive.io/" target="_blank">Shinylive</a>
         </p>
     </div>
-
-    <div class="updated">
-        Last updated: <span id="update-time"></span>
-    </div>
-
-    <script>
-        // Set current timestamp
-        document.getElementById('update-time').textContent = new Date().toLocaleString();
-    </script>
 </body>
 </html>"""
 
