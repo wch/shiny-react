@@ -55,8 +55,6 @@ The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simp
 
 The [examples/2-inputs/](examples/2-inputs/) directory showcases various input components and their integration with Shiny. This comprehensive example demonstrates:
 
-**View app in Shinylive: [R](https://wch.github.io/shiny-react/2-inputs-r.html) | [Python](https://wch.github.io/shiny-react/2-inputs-python.html)**
-
 - **Text Input** - Basic text input with server-side transformation
 - **Number Input** - Numeric input with range constraints
 - **Checkbox Input** - Boolean checkbox for true/false values
@@ -67,6 +65,8 @@ The [examples/2-inputs/](examples/2-inputs/) directory showcases various input c
 - **Button Input** - Click counter demonstrating event handling
 
 Each component follows consistent patterns and demonstrates real-time bidirectional communication between React and Shiny.
+
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/2-inputs-r.html) | [Python](https://wch.github.io/shiny-react/2-inputs-python.html)**
 
 ![Input Component Examples](docs/2-inputs.jpeg)
 
@@ -82,21 +82,19 @@ The [examples/3-outputs/](examples/3-outputs/) directory demonstrates outputs th
 
 The [examples/4-messages/](examples/4-messages/) directory showcases advanced server-to-client communication patterns using custom message handlers. This example demonstrates how Shiny servers can proactively send messages to React components for real-time notifications, status updates, and other server-initiated events.
 
-**View app in Shinylive: [R](https://wch.github.io/shiny-react/4-messages-r.html) | [Python](https://wch.github.io/shiny-react/4-messages-python.html)**
-
 Key features demonstrated:
 - **Custom Message Handlers** - Registering handlers for specific message types
 - **Server-Initiated Communication** - Messages sent from server without user input
 - **Real-time Updates** - Live notifications and status changes
 - **Toast Notifications** - User-friendly message display system
 
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/4-messages-r.html) | [Python](https://wch.github.io/shiny-react/4-messages-python.html)**
+
 ![Server Messages Example](docs/4-messages.jpeg)
 
 ### Modern UI with shadcn/ui Components
 
 The [examples/5-shadcn/](examples/5-shadcn/) directory demonstrates building modern, professional UIs using [shadcn/ui](https://ui.shadcn.com/) components with Tailwind CSS. This example shows how to integrate popular React component libraries with Shiny-React applications.
-
-**View app in Shinylive: [R](https://wch.github.io/shiny-react/5-shadcn-r.html) | [Python](https://wch.github.io/shiny-react/5-shadcn-python.html)**
 
 Key features demonstrated:
 - **shadcn/ui Components** - Professional, accessible UI components
@@ -105,13 +103,13 @@ Key features demonstrated:
 - **Theme System** - Customizable design tokens and styling
 - **TypeScript Integration** - Full type safety with component props
 
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/5-shadcn-r.html) | [Python](https://wch.github.io/shiny-react/5-shadcn-python.html)**
+
 ![shadcn/ui Example](docs/5-shadcn.jpeg)
 
 ### Interactive Dashboard
 
 The [examples/6-dashboard/](examples/6-dashboard/) directory presents a comprehensive dashboard application with charts, tables, and interactive data visualization. This sophisticated example demonstrates how to build data-driven applications with Shiny-React.
-
-**View app in Shinylive: [R](https://wch.github.io/shiny-react/6-dashboard-r.html) | [Python](https://wch.github.io/shiny-react/6-dashboard-python.html)**
 
 Key features demonstrated:
 - **Interactive Charts** - Dynamic data visualization with filtering
@@ -120,6 +118,8 @@ Key features demonstrated:
 - **Real-time Data** - Live updates from server calculations
 - **Responsive Design** - Modern dashboard layout with shadcn/ui components
 - **Advanced State Management** - Complex data flow patterns
+
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/6-dashboard-r.html) | [Python](https://wch.github.io/shiny-react/6-dashboard-python.html)**
 
 ![Dashboard Example](docs/6-dashboard.jpeg)
 
