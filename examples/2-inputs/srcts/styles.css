@@ -53,21 +53,13 @@ body::before {
 }
 
 .app-container {
-  max-width: 1400px;
+  max-width: 1200px;
   width: 100%;
 }
 
 .app-container > h1 {
   text-align: center;
   margin-bottom: 3rem;
-}
-
-.cards-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: center;
-  max-width: 100%;
 }
 
 @media (max-width: 520px) {
@@ -81,9 +73,18 @@ body::before {
   }
 }
 
+.cards-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0 24px;
+  justify-content: center;
+  max-width: 100%;
+}
+
 .card {
-  width: 600px;
-  margin: 0 auto;
+  flex: 1 1 300px;
+  max-width: 620px;
   background: rgba(255, 255, 255, 0.95);
   -webkit-backdrop-filter: blur(20px); /* Safari support */
   backdrop-filter: blur(20px);

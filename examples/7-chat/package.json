@@ -37,5 +37,11 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
     "tailwind-merge": "^3.3.1"
+  },
+  "exampleMetadata": {
+    "title": "AI Chat",
+    "description": "AI chat application with LLM integration",
+    "deployToShinylive": false,
+    "comment": "Not available to run in Shinylive because it requires packages that don't work in webR/Pyodide, and it needs an API key for LLM"
   }
 }

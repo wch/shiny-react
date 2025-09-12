@@ -4,3 +4,4 @@ dist/
 *.py[cod]
 .DS_Store
 examples/*/package-lock.json
+shinylive-pages/

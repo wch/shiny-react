@@ -1,5 +1,7 @@
 # AI Chat Example
 
+**Note: This example very experimental. In the future, it will benefit from better integration with Ellmer (R) and Chatlas (Python).**
+
 A modern AI chat application built with Shiny-React, featuring:
 
 - **Frontend**: React with shadcn/ui components and Tailwind CSS

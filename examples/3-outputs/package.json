@@ -6,10 +6,10 @@
   "scripts": {
     "build": "concurrently -c auto \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
     "watch": "concurrently -c auto \"npm run watch-r\" \"npm run watch-py\" \"tsc --noEmit --watch --preserveWatchOutput\"",
-    "build-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --alias:react=react",
-    "watch-r": "esbuild srcts/main.tsx --bundle --outfile=r/www/main.js --format=esm --alias:react=react --watch",
-    "build-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --alias:react=react",
-    "watch-py": "esbuild srcts/main.tsx --bundle --outfile=py/www/main.js --format=esm --alias:react=react --watch",
+    "build-r": "esbuild srcts/main.tsx --bundle --minify --outfile=r/www/main.js --format=esm --alias:react=react",
+    "watch-r": "esbuild srcts/main.tsx --bundle --minify --outfile=r/www/main.js --format=esm --alias:react=react --watch",
+    "build-py": "esbuild srcts/main.tsx --bundle --minify --outfile=py/www/main.js --format=esm --alias:react=react",
+    "watch-py": "esbuild srcts/main.tsx --bundle --minify --outfile=py/www/main.js --format=esm --alias:react=react --watch",
     "clean": "rm -rf r/www py/www"
   },
   "author": "Winston Chang",
@@ -27,5 +27,11 @@
   },
   "dependencies": {
     "@posit/shiny-react": "^0.0.6"
+  },
+  "exampleMetadata": {
+    "title": "Output Components",
+    "description": "Data visualization and output rendering examples",
+    "deployToShinylive": true,
+    "comment": ""
   }
 }
