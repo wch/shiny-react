@@ -5,6 +5,33 @@ React bindings library for Shiny applications, providing TypeScript/JavaScript h
 
 The library enables React components to send data to and receive data from Shiny server functions through custom hooks and output bindings.
 
+## Quick Start
+
+The easiest way to create a new Shiny-React application is to use [`create-shiny-react-app`](https://www.npmjs.com/package/create-shiny-react-app) to create a new app from a template:
+
+```bash
+# Create a new app in myapp/
+npx create-shiny-react-app myapp
+# You will be asked which template and which backend (R or Python) to use
+
+cd myapp
+npm install
+npm run dev  # Builds frontend and starts Shiny app
+```
+
+The `npm run dev` command will build the frontend and start the Shiny app automatically with hot-reload. By default it will use port 8000.
+
+Open http://localhost:8000 in your browser to see your app.
+
+
+You can change the port by setting the `PORT` environment variable:
+
+```bash
+PORT=8001 npm run dev
+```
+
+
+
 ## Installation
 
 ```bash
@@ -174,45 +201,6 @@ shiny run py/app.py --port 8000
 ```
 
 Open your browser to `http://localhost:8000`
-
-## Quick Start with CLI Tool
-
-The easiest way to create a new Shiny-React application is using the included CLI tool:
-
-```bash
-npx shiny-react create-shiny-react-app my-app
-```
-
-The CLI will interactively prompt you to:
-1. **Choose from 7 example templates:**
-   - **Hello World** - Basic bidirectional communication
-   - **Input Components** - Comprehensive input showcase  
-   - **Output Components** - Data visualization demo
-   - **Server Messages** - Messaging patterns
-   - **shadcn/ui Components** - Modern UI components
-   - **Dashboard** - Full dashboard with charts
-   - **AI Chat** - LLM integration example
-
-2. **Optionally include CLAUDE.md** - Comprehensive documentation for LLM coding assistance
-
-After creation, simply:
-```bash
-cd my-app
-npm install
-npm run watch    # Start development with hot reload
-```
-
-Then in another terminal:
-```bash
-# For R backend
-R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
-
-# For Python backend  
-shiny run py/app.py --port 8000 --reload
-```
-
-Open `http://localhost:8000` in your browser.
-
 
 ## Usage
 
