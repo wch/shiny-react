@@ -47,11 +47,15 @@ npm run watch
 
 The [examples/1-hello-world/](examples/1-hello-world/) directory contains a simple example demonstrating basic Shiny-React usage with both R and Python Shiny applications. The Shiny back end simply capitalizes the input value and sends it back to the front end.
 
+**[Run in Shinylive: R](https://wch.github.io/shiny-react/1-hello-world-r.html) | [Python](https://wch.github.io/shiny-react/1-hello-world-python.html)**
+
 ![Hello World Example](docs/1-hello-world.jpeg)
 
 ### Input Component Examples
 
 The [examples/2-inputs/](examples/2-inputs/) directory showcases various input components and their integration with Shiny. This comprehensive example demonstrates:
+
+**[Run in Shinylive: R](https://wch.github.io/shiny-react/2-inputs-r.html) | [Python](https://wch.github.io/shiny-react/2-inputs-python.html)**
 
 - **Text Input** - Basic text input with server-side transformation
 - **Number Input** - Numeric input with range constraints
@@ -70,11 +74,15 @@ Each component follows consistent patterns and demonstrates real-time bidirectio
 
 The [examples/3-outputs/](examples/3-outputs/) directory demonstrates outputs that consist of arbitrary JSON data, as well as plot outputs.
 
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/3-outputs-r.html) | [Python](https://wch.github.io/shiny-react/3-outputs-python.html)**
+
 ![Output Examples](docs/3-outputs.jpeg)
 
 ### Server-to-Client Messages Example
 
 The [examples/4-messages/](examples/4-messages/) directory showcases advanced server-to-client communication patterns using custom message handlers. This example demonstrates how Shiny servers can proactively send messages to React components for real-time notifications, status updates, and other server-initiated events.
+
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/4-messages-r.html) | [Python](https://wch.github.io/shiny-react/4-messages-python.html)**
 
 Key features demonstrated:
 - **Custom Message Handlers** - Registering handlers for specific message types
@@ -87,6 +95,8 @@ Key features demonstrated:
 ### Modern UI with shadcn/ui Components
 
 The [examples/5-shadcn/](examples/5-shadcn/) directory demonstrates building modern, professional UIs using [shadcn/ui](https://ui.shadcn.com/) components with Tailwind CSS. This example shows how to integrate popular React component libraries with Shiny-React applications.
+
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/5-shadcn-r.html) | [Python](https://wch.github.io/shiny-react/5-shadcn-python.html)**
 
 Key features demonstrated:
 - **shadcn/ui Components** - Professional, accessible UI components
@@ -101,6 +111,8 @@ Key features demonstrated:
 
 The [examples/6-dashboard/](examples/6-dashboard/) directory presents a comprehensive dashboard application with charts, tables, and interactive data visualization. This sophisticated example demonstrates how to build data-driven applications with Shiny-React.
 
+**View app in Shinylive: [R](https://wch.github.io/shiny-react/6-dashboard-r.html) | [Python](https://wch.github.io/shiny-react/6-dashboard-python.html)**
+
 Key features demonstrated:
 - **Interactive Charts** - Dynamic data visualization with filtering
 - **Data Tables** - Sortable, filterable tabular data display
@@ -114,6 +126,8 @@ Key features demonstrated:
 ### AI Chat Application
 
 The [examples/7-chat/](examples/7-chat/) directory showcases an advanced AI chat application with multi-modal input support, dynamic theming, and LLM integration. This production-ready example demonstrates sophisticated patterns for building modern conversational interfaces.
+
+> **Note:** This example is not available to run in Shinylive because it requires packages that don't work in webR/Pyodide, and it needs an API key for LLM services. It must be run with regular Shiny instead of Shinylive.
 
 Key features demonstrated:
 - **Multi-modal Input** - Text and image attachments support
