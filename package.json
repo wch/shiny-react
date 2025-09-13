@@ -4,6 +4,7 @@
   "description": "React bindings for Shiny applications (R and Python)",
   "author": "Winston Chang",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wch/shiny-react.git"

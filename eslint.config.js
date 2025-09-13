@@ -1,7 +1,7 @@
-import eslint from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import reactEslint from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import path from "path";
 import tseslint from "typescript-eslint";
@@ -23,32 +23,15 @@ const commonRules = {
   "@typescript-eslint/no-misused-promises": "error",
 };
 
-const commonTsConfig = {
-  parser: tsParser,
-  ecmaVersion: 2022,
-  sourceType: "module",
-  parserOptions: {
-    tsconfigRootDir: __dirname,
-    ecmaVersion: 2022,
-    sourceType: "module",
-    project: "./tsconfig.json",
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-};
-
-export default tseslint.config(
-  eslint.configs.recommended,
+export default defineConfig([
   ...tseslint.configs.recommended,
   {
     ignores: ["dist", "**/*.d.ts"],
   },
   {
     // JavaScript scripts - these are run by nodejs.
-    files: ["eslint.config.mjs"],
+    files: ["eslint.config.js"],
     languageOptions: {
-      ...commonTsConfig,
       globals: globals.node,
     },
     rules: {
@@ -66,11 +49,16 @@ export default tseslint.config(
       "react-hooks": reactHooks,
     },
     languageOptions: {
-      ...commonTsConfig,
+      parser: tsParser,
+      ecmaVersion: 2022,
+      sourceType: "module",
       globals: globals.browser,
       parserOptions: {
-        ...commonTsConfig.parserOptions,
+        tsconfigRootDir: __dirname,
         project: "tsconfig.json",
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     settings: {
@@ -90,5 +78,5 @@ export default tseslint.config(
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
     },
-  }
-);
+  },
+]);
