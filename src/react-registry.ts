@@ -36,17 +36,6 @@ export class ShinyReactRegistry {
   outputs: OutputMap = {};
   private bindAllScheduled = false;
 
-  constructor() {
-    window.Shiny.addCustomMessageHandler("shinyReactSetInputs", (msg: any) => {
-      for (const [inputId, value] of Object.entries(msg)) {
-        if (this.inputs[inputId]) {
-          // TODO: Don't use debounced version
-          this.setInputValue(inputId, value);
-        }
-      }
-    });
-  }
-
   registerInput(
     inputId: string,
     setValueFn: (value: any) => void,
