@@ -107,10 +107,10 @@ The [examples/3-outputs/](examples/3-outputs/) directory demonstrates outputs th
 
 ### Server-to-Client Messages Example
 
-The [examples/4-messages/](examples/4-messages/) directory showcases advanced server-to-client communication patterns using custom message handlers. This example demonstrates how Shiny servers can proactively send messages to React components for real-time notifications, status updates, and other server-initiated events.
+The [examples/4-messages/](examples/4-messages/) directory showcases advanced server-to-client communication patterns using message handlers. This example demonstrates how Shiny servers can proactively send messages to React components for real-time notifications, status updates, and other server-initiated events.
 
 Key features demonstrated:
-- **Custom Message Handlers** - Registering handlers for specific message types
+- **Message Handlers** - Registering handlers for specific message types
 - **Server-Initiated Communication** - Messages sent from server without user input
 - **Real-time Updates** - Live notifications and status changes
 - **Toast Notifications** - User-friendly message display system

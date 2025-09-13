@@ -1,5 +1,5 @@
 from shiny import App, Inputs, Outputs, Session, reactive
-from shinyreact import page_react
+from shinyreact import page_react, post_message
 from pathlib import Path
 import random
 
@@ -7,14 +7,12 @@ import random
 def server(input: Inputs, output: Outputs, session: Session):
     # Simulate log events
     log_messages = [
-        {"message": "User logged in", "type": "info"},
-        {"message": "File saved successfully", "type": "success"},
-        {"message": "Low disk space warning", "type": "warning"},
-        {"message": "Connection failed", "type": "error"},
-        {"message": "Backup completed", "type": "success"},
-        {"message": "Processing data...", "type": "info"},
-        {"message": "Invalid input detected", "type": "error"},
-        {"message": "Cache cleared", "type": "info"},
+        {"text": "User logged in", "category": "info"},
+        {"text": "File saved successfully", "category": "success"},
+        {"text": "Low disk space warning", "category": "warning"},
+        {"text": "Backup completed", "category": "success"},
+        {"text": "Processing data...", "category": "info"},
+        {"text": "Cache cleared", "category": "info"},
     ]
 
     @reactive.effect
@@ -22,7 +20,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         # Timer that triggers every 2 seconds
         reactive.invalidate_later(2)
         log_event = random.choice(log_messages)
-        await session.send_custom_message("logEvent", log_event)
+        await post_message(session, "logEvent", log_event)
 
 
 app = App(

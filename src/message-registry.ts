@@ -42,7 +42,7 @@ class ShinyMessageRegistry {
    * @param messageType The type/name of the message to listen for
    * @param handler The function to call when a message of this type is received
    */
-  addMessageHandler(messageType: string, handler: (data: any) => void) {
+  addHandler(messageType: string, handler: (data: any) => void) {
     this.init(); // Ensure registry is initialized
 
     if (!this.messageHandlers.has(messageType)) {
@@ -57,7 +57,7 @@ class ShinyMessageRegistry {
    * @param messageType The type/name of the message
    * @param handler The handler function to remove
    */
-  removeMessageHandler(messageType: string, handler: (data: any) => void) {
+  removeHandler(messageType: string, handler: (data: any) => void) {
     const handlers = this.messageHandlers.get(messageType);
     if (handlers) {
       handlers.delete(handler);

@@ -8,8 +8,9 @@ type ErrorsMessageValue = {
   type?: string[];
 };
 
-type InputMap = {
-  [key: string]: {
+type InputMap = Map<
+  string,
+  {
     // Input ID
     id: string;
     setValueFns: Array<(value: any) => void>;
@@ -18,22 +19,23 @@ type InputMap = {
       value: any,
       opts?: { priority?: EventPriority }
     ) => void;
-  };
-};
+  }
+>;
 
-type OutputMap = {
-  [key: string]: {
+type OutputMap = Map<
+  string,
+  {
     // Output ID
     id: string;
     setValueFns: Array<(value: any) => void>;
     setRecalculatingFns: Array<(value: boolean) => void>;
-  };
-};
+  }
+>;
 
 // TODO: Use weakmap?
 export class ShinyReactRegistry {
-  inputs: InputMap = {};
-  outputs: OutputMap = {};
+  inputs: InputMap = new Map();
+  outputs: OutputMap = new Map();
   private bindAllScheduled = false;
 
   registerInput(
@@ -47,16 +49,16 @@ export class ShinyReactRegistry {
       setInputValueOpts.priority = opts.priority;
     }
 
-    if (!this.inputs[inputId]) {
-      this.inputs[inputId] = {
+    if (!this.inputs.has(inputId)) {
+      this.inputs.set(inputId, {
         id: inputId,
         setValueFns: [],
         shinySetInputValueDebounced: debounce((value: any) => {
           window.Shiny.setInputValue!(inputId, value, setInputValueOpts);
         }, debounceMs),
-      };
+      });
     }
-    this.inputs[inputId].setValueFns.push(setValueFn);
+    this.inputs.get(inputId)!.setValueFns.push(setValueFn);
   }
 
   registerOutput(
@@ -64,7 +66,7 @@ export class ShinyReactRegistry {
     setValue: (value: any) => void,
     setRecalculating: (value: boolean) => void
   ) {
-    if (!this.outputs[outputId]) {
+    if (!this.outputs.has(outputId)) {
       // Need to create a dummy div element with the ID, so that we have
       // something to bind to.
       const div = document.createElement("div");
@@ -75,18 +77,18 @@ export class ShinyReactRegistry {
       div.style.visibility = "hidden";
       document.body.appendChild(div);
 
-      this.outputs[outputId] = {
+      this.outputs.set(outputId, {
         id: outputId,
         setValueFns: [],
         setRecalculatingFns: [],
-      };
+      });
 
       this.scheduleBindAll();
     }
 
     // Do we need to dedupe?
-    this.outputs[outputId].setValueFns.push(setValue);
-    this.outputs[outputId].setRecalculatingFns.push(setRecalculating);
+    this.outputs.get(outputId)!.setValueFns.push(setValue);
+    this.outputs.get(outputId)!.setRecalculatingFns.push(setRecalculating);
   }
 
   /**
@@ -113,7 +115,7 @@ export class ShinyReactRegistry {
   }
 
   hasInput(inputId: string) {
-    return this.inputs[inputId] !== undefined;
+    return this.inputs.has(inputId);
   }
 
   setInputValue(
@@ -121,16 +123,16 @@ export class ShinyReactRegistry {
     value: any,
     opts?: { priority?: EventPriority }
   ) {
-    if (!this.inputs[inputId]) {
+    if (!this.inputs.has(inputId)) {
       console.error(`Input ${inputId} not found`);
       return;
     }
-    this.inputs[inputId].shinySetInputValueDebounced(value, opts);
-    this.inputs[inputId].setValueFns.forEach((fn) => fn(value));
+    this.inputs.get(inputId)!.shinySetInputValueDebounced(value, opts);
+    this.inputs.get(inputId)!.setValueFns.forEach((fn) => fn(value));
   }
 
   hasOutput(outputId: string) {
-    return this.outputs[outputId] !== undefined;
+    return this.outputs.has(outputId);
   }
 }
 
@@ -142,9 +144,13 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
   }
 
   override renderValue(el: HTMLElement, data: any): void {
-    window.Shiny.reactRegistry.outputs[el.id].setValueFns.forEach((fn) =>
-      fn(data)
-    );
+    if (!window.Shiny.reactRegistry.outputs.has(el.id)) {
+      console.error(`Output ${el.id} not found`);
+      return;
+    }
+    window.Shiny.reactRegistry.outputs
+      .get(el.id)!
+      .setValueFns.forEach((fn) => fn(data));
   }
 
   override renderError(el: HTMLElement, err: ErrorsMessageValue): void {
@@ -153,9 +159,13 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
 
   override showProgress(el: HTMLElement, show: boolean): void {
     // console.log(`Progress for ${el.id}: ${show}`);
-    window.Shiny.reactRegistry.outputs[el.id].setRecalculatingFns.forEach(
-      (fn) => fn(show)
-    );
+    if (!window.Shiny.reactRegistry.outputs.has(el.id)) {
+      console.error(`Output ${el.id} not found`);
+      return;
+    }
+    window.Shiny.reactRegistry.outputs
+      .get(el.id)!
+      .setRecalculatingFns.forEach((fn) => fn(show));
   }
 }
 

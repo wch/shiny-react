@@ -1,6 +1,5 @@
-/// <reference types="@posit/shiny" />
-
-import React, { useEffect, useState } from "react";
+import { useShinyMessageHandler } from "@posit/shiny-react";
+import React, { useState } from "react";
 
 interface ToastMessage {
   id: number;
@@ -11,27 +10,26 @@ interface ToastMessage {
 function App() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  useEffect(() => {
-    console.log("useEffect");
-    const handleLogEvent = (msg: { message: string; type: string }) => {
-      console.log("Received log event:", msg);
+  // Handle log events from the server using useShinyMessage hook
+  useShinyMessageHandler(
+    "logEvent",
+    (msg: { text: string; category: string }) => {
+      console.log("Received log event message:", msg);
       const newToast: ToastMessage = {
         id: Date.now(),
-        message: msg.message,
-        type: msg.type,
+        message: msg.text,
+        type: msg.category,
       };
+      console.log(newToast);
 
       setToasts((prev) => [...prev, newToast]);
 
+      // Remove toast after 6 seconds
       setTimeout(() => {
         setToasts((prev) => prev.filter((toast) => toast.id !== newToast.id));
       }, 6000);
-    };
-
-    // Register the custom message handler. When this is called more than once
-    // for a given message type, only the most recent handler will be used.
-    window.Shiny.addCustomMessageHandler("logEvent", handleLogEvent);
-  }, []);
+    }
+  );
 
   return (
     <div className='app-container'>

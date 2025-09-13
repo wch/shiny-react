@@ -13,10 +13,10 @@ The application displays toast notifications that appear in real-time as the ser
 ## How it Works
 
 ### Frontend (React/TypeScript)
-The React app registers a custom message handler using `window.Shiny.addCustomMessageHandler()`:
+The React app registers a custom message handler using the `useShinyMessageHandler` hook:
 
 ```typescript
-window.Shiny.addCustomMessageHandler("logEvent", (msg) => {
+useShinyMessageHandler("logEvent", (msg) => {
   // Display toast notification with message and type
 });
 ```
@@ -30,7 +30,7 @@ Both R and Python backends use reactive timers to simulate logging events:
 ```r
 observe({
   invalidateLater(2000)
-  session$sendCustomMessage("logEvent", log_event)
+  post_message(session, "logEvent", log_event)
 })
 ```
 
@@ -39,7 +39,7 @@ observe({
 @reactive.effect
 async def _():
     reactive.invalidate_later(2)
-    await session.send_custom_message("logEvent", log_event)
+    await post_message(session, "logEvent", log_event)
 ```
 
 The server sends random log messages every 2 seconds with different types (info, success, warning, error), each displayed as a color-coded toast notification.
@@ -108,7 +108,7 @@ The toasts automatically disappear after 6 seconds, showing the ephemeral nature
 ## Key Concepts Demonstrated
 
 - **One-way messaging**: Server pushes events to client without client request
-- **Custom message handlers**: React components can listen for specific message types
+- **Message handlers**: React components can listen for specific message types using `useShinyMessageHandler`
 - **Reactive timers**: Server generates events on a schedule using `invalidateLater()` (R) or `reactive.invalidate_later()` (Python)
 - **Event-driven UI**: Visual updates triggered by server events, not user interactions
 - **Fire-and-forget communication**: No acknowledgment or response required from client

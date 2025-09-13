@@ -12,7 +12,7 @@ server <- function(input, output, session) {
   })
 
   output$checkboxout <- render_json({
-    input$checkboxin
+    as.character(input$checkboxin)
   })
 
   output$radioout <- render_json({

@@ -59,3 +59,22 @@ render_json <- function(
     outputArgs
   )
 }
+
+#' Send a custom message to the client
+#'
+#' A convenience function for sending custom messages from the Shiny server to
+#' React components using useShinyMessageHandler() hook. This wraps messages in a
+#' standard format and sends them via the "shinyReactMessage" channel.
+#'
+#' @param session The Shiny session object
+#' @param type The message type (should match messageType in useShinyMessageHandler)
+#' @param data The data to send to the client
+post_message <- function(session, type, data) {
+  session$sendCustomMessage(
+    "shinyReactMessage",
+    list(
+      type = type,
+      data = data
+    )
+  )
+}

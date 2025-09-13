@@ -15,7 +15,6 @@
   "author": "Winston Chang",
   "license": "MIT",
   "devDependencies": {
-    "@posit/shiny": "^1.11.1",
     "@types/react": "^19.1.7",
     "@types/react-dom": "^19.1.7",
     "concurrently": "^9.0.1",
@@ -28,7 +27,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.6"
+    "@posit/shiny-react": "file:../.."
   },
   "exampleMetadata": {
     "title": "Server Messages",

@@ -2,7 +2,8 @@
 
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useCallback, useEffect, useState } from "react";
-import "./shiny-message"; // Initialize message registry
+import "./message-registry"; // Initialize message registry
+import "./react-registry"; // Initialize react registry
 
 /**
  * A React hook for managing a Shiny input value.
@@ -132,25 +133,21 @@ export function useShinyOutput<T>(
 // TODO: Also get error value?
 
 /**
- * A React hook for handling custom messages from the Shiny server.
+ * A React hook for handling messages from the Shiny server.
  *
- * This hook registers a custom message handler with Shiny that will be called
- * when the server sends a custom message of the specified type using
- * `session$sendCustomMessage()` (R) or `session.send_custom_message()`
- * (Python).
+ * This hook registers a message handler with Shiny that will be called when the
+ * server sends a message of the specified type using `post_message()` (which is
+ * a wrapper for `session.send_custom_message()` with extra functionality.)
  *
  * The hook waits for Shiny to initialize before registering the handler and
  * properly manages the handler lifecycle, re-registering when dependencies
  * change.
  *
- * Note: Shiny's addCustomMessageHandler replaces any existing handler for the
- * same message type, so only the most recent handler will be active.
- *
  * @param messageType The type/name of the custom message to listen for.
  * @param handler The function to call when a message of this type is received.
  * The handler receives the message data as its parameter.
  */
-export function useShinyMessage<T = any>(
+export function useShinyMessageHandler<T = any>(
   messageType: string,
   handler: (data: T) => void
 ): void {
@@ -162,12 +159,12 @@ export function useShinyMessage<T = any>(
     }
 
     // Register the message handler with our dedicated message registry
-    window.Shiny.messageRegistry.addMessageHandler(messageType, handler);
+    window.Shiny.messageRegistry.addHandler(messageType, handler);
 
     // Cleanup function that removes the handler when component unmounts
     // or when messageType/handler changes
     return () => {
-      window.Shiny.messageRegistry.removeMessageHandler(messageType, handler);
+      window.Shiny.messageRegistry.removeHandler(messageType, handler);
     };
   }, [shinyInitialized, messageType, handler]);
 }

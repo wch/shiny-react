@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from shiny import ui
+from typing import Any, Mapping, Optional, Sequence, Union
+
+from shiny import Session, ui
 from shiny.html_dependencies import shiny_deps
-from shiny.types import Jsonifiable
 from shiny.render.renderer import Renderer, ValueFn
-from typing import Any, Optional
-import os
-from pathlib import Path
+from shiny.types import Jsonifiable
 
 
 def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") -> ui.Tag:
@@ -66,22 +65,39 @@ class render_json(Renderer[Jsonifiable]):
         return value
 
 
-app_dir = Path(__file__).parent
-env_file = app_dir / ".env"
+# This is like Jsonifiable, but where Jsonifiable uses Dict, List, and Tuple,
+# this replaces those with Mapping and Sequence. Because Dict and List are
+# invariant, it can cause problems when a parameter is specified as Jsonifiable;
+# the replacements are covariant, which solves these problems.
+JsonifiableIn = Union[
+    str,
+    int,
+    float,
+    bool,
+    None,
+    Sequence["JsonifiableIn"],
+    "JsonifiableMapping",
+]
+
+JsonifiableMapping = Mapping[str, JsonifiableIn]
 
 
-def load_dotenv(dotenv_path: os.PathLike[str] = env_file, **kwargs: Any) -> None:
-    """Load environment variables from .env file."""
-    try:
-        import dotenv
+async def post_message(session: Session, type: str, data: JsonifiableIn):
+    """
+    Send a custom message to the client.
 
-        dotenv.load_dotenv(dotenv_path=dotenv_path, **kwargs)
-    except ImportError:
-        import warnings
+    A convenience function for sending custom messages from the Shiny server to
+    React components using useShinyMessageHandler() hook. This wraps messages in
+    a standard format and sends them via the "shinyReactMessage" channel.
 
-        warnings.warn(
-            "Could not import `dotenv`. If you want to use `.env` files to "
-            "load environment variables, please install it using "
-            "`pip install python-dotenv`.",
-            stacklevel=2,
-        )
+    Parameters
+    ----------
+    session
+        The Shiny session object
+    type
+        The message type (should match the messageType in
+        useShinyMessageHandler)
+    data
+        The data to send to the client
+    """
+    await session.send_custom_message("shinyReactMessage", {"type": type, "data": data})

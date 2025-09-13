@@ -10,14 +10,12 @@ server <- function(input, output, session) {
 
   # Simulate log events
   log_messages <- list(
-    list(message = "User logged in", type = "info"),
-    list(message = "File saved successfully", type = "success"),
-    list(message = "Low disk space warning", type = "warning"),
-    list(message = "Connection failed", type = "error"),
-    list(message = "Backup completed", type = "success"),
-    list(message = "Processing data...", type = "info"),
-    list(message = "Invalid input detected", type = "error"),
-    list(message = "Cache cleared", type = "info")
+    list(text = "User logged in", category = "info"),
+    list(text = "File saved successfully", category = "success"),
+    list(text = "Low disk space warning", category = "warning"),
+    list(text = "Backup completed", category = "success"),
+    list(text = "Processing data...", category = "info"),
+    list(text = "Cache cleared", category = "info")
   )
 
   # Timer that triggers every 2 seconds
@@ -26,7 +24,7 @@ server <- function(input, output, session) {
 
     # Send a random log message
     log_event <- log_messages[[sample(seq_along(log_messages), 1)]]
-    session$sendCustomMessage("logEvent", log_event)
+    post_message(session, "logEvent", log_event)
   })
 }
 

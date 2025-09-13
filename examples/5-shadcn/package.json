@@ -28,7 +28,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.6",
+    "@posit/shiny-react": "file:../..",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.1",

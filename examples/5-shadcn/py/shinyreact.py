@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from shiny import ui
+from shiny import ui, Session
 from shiny.html_dependencies import shiny_deps
 from shiny.types import Jsonifiable
 from shiny.render.renderer import Renderer, ValueFn
-from typing import Any, Optional
+from typing import Any, Mapping, Optional, Sequence, Union
 
 
 def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") -> ui.Tag:
@@ -62,3 +62,41 @@ class render_json(Renderer[Jsonifiable]):
 
     async def transform(self, value: Jsonifiable) -> Jsonifiable:
         return value
+
+
+# This is like Jsonifiable, but where Jsonifiable uses Dict, List, and Tuple,
+# this replaces those with Mapping and Sequence. Because Dict and List are
+# invariant, it can cause problems when a parameter is specified as Jsonifiable;
+# the replacements are covariant, which solves these problems.
+JsonifiableIn = Union[
+    str,
+    int,
+    float,
+    bool,
+    None,
+    Sequence["JsonifiableIn"],
+    "JsonifiableMapping",
+]
+
+JsonifiableMapping = Mapping[str, JsonifiableIn]
+
+
+async def post_message(session: Session, type: str, data: JsonifiableIn):
+    """
+    Send a custom message to the client.
+
+    A convenience function for sending custom messages from the Shiny server to
+    React components using useShinyMessageHandler() hook. This wraps messages in
+    a standard format and sends them via the "shinyReactMessage" channel.
+
+    Parameters
+    ----------
+    session
+        The Shiny session object
+    type
+        The message type (should match the messageType in
+        useShinyMessageHandler)
+    data
+        The data to send to the client
+    """
+    await session.send_custom_message("shinyReactMessage", {"type": type, "data": data})

@@ -25,7 +25,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@posit/shiny-react": "^0.0.6"
+    "@posit/shiny-react": "file:../.."
   },
   "exampleMetadata": {
     "title": "Input Components",

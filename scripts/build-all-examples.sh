@@ -15,6 +15,17 @@ echo "Found example directories: $EXAMPLE_DIRS"
 
 START_DIR="$(pwd)"
 
+# Build shiny-react package first, because it's a dependency for all examples
+echo "Building shiny-react package..."
+if [ -f package-lock.json ]; then
+  npm ci
+else
+  npm install
+fi
+
+npm run build
+
+# Build all examples
 for dir in $EXAMPLE_DIRS; do
   echo "Building $dir..."
   cd "$dir"
