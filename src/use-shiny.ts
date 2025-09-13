@@ -129,8 +129,13 @@ export function useShinyOutput<T>(
   return [value, recalculating];
 }
 
-// TODO: Implement useShinyOutputValue and useShinyOutputRecalculating
 // TODO: Also get error value?
+//
+// TODO: Use reference counter; when last reference to a particular output is
+// removed, disable the output and/or remove the DOM element. And maybe remove
+// from registry?
+
+// TODO: (possible) Implement useShinyOutputValue and useShinyOutputRecalculating
 
 /**
  * A React hook for handling messages from the Shiny server.

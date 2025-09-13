@@ -86,7 +86,7 @@ export class ShinyReactRegistry {
       this.scheduleBindAll();
     }
 
-    // Do we need to dedupe?
+    // TODO: Do we need to dedupe?
     this.outputs.get(outputId)!.setValueFns.push(setValue);
     this.outputs.get(outputId)!.setRecalculatingFns.push(setRecalculating);
   }
