@@ -5,10 +5,8 @@ import Card from "./Card";
 function PlotCard() {
   return (
     <Card title='Plot output'>
-      <div className='plot-section'>
-        <div className='plot-container'>
-          <ImageOutput id='plot1' className='data-plot' />
-        </div>
+      <div className='plot-container'>
+        <ImageOutput id='plot1' className='data-plot' />
       </div>
     </Card>
   );

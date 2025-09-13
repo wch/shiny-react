@@ -1,12 +1,16 @@
 from __future__ import annotations
 
-from shiny import App, Inputs, Outputs, Session, render, reactive
-from shinyreact import page_react, render_json
+from datetime import datetime
 from pathlib import Path
-import pandas as pd
+
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime
+import pandas as pd
+from shiny import App, Inputs, Outputs, Session, reactive, render
+from shinyreact import page_react, render_json
+
+matplotlib.use("Agg")
 
 # Generate sample data
 sample_data = pd.DataFrame(

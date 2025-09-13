@@ -1,13 +1,13 @@
-import SliderCard from "./SliderCard";
 import DataTableCard from "./DataTableCard";
-import StatisticsCard from "./StatisticsCard";
 import PlotCard from "./PlotCard";
+import SliderCard from "./SliderCard";
+import StatisticsCard from "./StatisticsCard";
 
 function App() {
   return (
-    <div className="app-container">
+    <div className='app-container'>
       <h1>Shiny React Output Examples</h1>
-      <div className="cards-wrap">
+      <div className='cards-wrap'>
         <SliderCard />
         <StatisticsCard />
         <DataTableCard />

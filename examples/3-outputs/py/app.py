@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from shiny import App, Inputs, Outputs, Session, render
-from shinyreact import page_react, render_json
 from pathlib import Path
-import pandas as pd
+
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from shiny import App, Inputs, Outputs, Session, render
+from shinyreact import page_react, render_json
+
+matplotlib.use("Agg")
 
 mtcars = pd.read_csv(Path(__file__).parent / "mtcars.csv")
 

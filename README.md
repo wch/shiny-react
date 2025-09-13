@@ -58,6 +58,7 @@ npm run watch
 
 - **`useShinyInput<T>()`** - Hook to send data from React to Shiny server
 - **`useShinyOutput<T>()`** - Hook to receive data from Shiny server
+- **`ImageOutput`** - Component for displaying Shiny image outputs with dynamic sizing capabilities
 - **`ShinyReactRegistry`** - Global registry managing input/output mappings and debounced updates
 - **`ReactOutputBinding`** - Custom Shiny output binding class for React components
 
