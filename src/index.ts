@@ -5,6 +5,7 @@ import { type ShinyReactRegistry } from "./react-registry";
 
 export { ImageOutput } from "./ImageOutput";
 export {
+  useShinyInitialized,
   useShinyInput,
   useShinyMessageHandler,
   useShinyOutput,
