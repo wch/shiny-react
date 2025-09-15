@@ -90,9 +90,9 @@ export type ImageData = {
  * @example
  * ```tsx
  * // With explicit dimensions
- * <ImageOutput id="myplot" width="400px" height="300px" />
-
-* // With CSS-controlled dimensions
+ * <ImageOutput id="myplot" width="100%" height="300px" />
+ *
+ * // With CSS-controlled dimensions
  * <ImageOutput id="myplot" className="output-image" />
  * ```
  *
