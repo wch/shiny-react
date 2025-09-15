@@ -19,7 +19,7 @@ npm install
 npm run dev  # Builds frontend and starts Shiny app
 ```
 
-The `npm run dev` command will build the frontend and start the Shiny app automatically with hot-reload. By default it will use port 8000.
+The `npm run dev` command will build the frontend and start the Shiny app, and will automatically rebuild the frontend and reload the app when files change. By default it will use port 8000.
 
 Open http://localhost:8000 in your browser to see your app.
 
@@ -31,43 +31,158 @@ PORT=8001 npm run dev
 ```
 
 
+## Using Shiny-React with a Node.js project
 
-## Installation
+To add shiny-react to an existing Node.js project, run:
 
 ```bash
 npm install @posit/shiny-react
 ```
 
-## Building the Library
+## Usage: basics
 
-If you want to build this from source, first clone the repository, then:
+With Shiny-React, the front end is written in React, while the back end is written with Shiny in R or Python.
 
-```bash
-# Install dependencies
-npm install
+The front end sends values to the back end using the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
 
-# Build the library
-npm run build
-# Or for development with watch mode
-npm run watch
+The back end sends data to the front end by setting Shiny output values just like in any other Shiny app. The front end reads output values with the `useShinyOutput` hook.
+
+Here is an example of a React component for the front end:
+
+```typescript
+import { useShinyInput, useShinyOutput } from 'shiny-react';
+
+function MyComponent() {
+  // Input values sent to Shiny
+  const [inputValue, setInputValue] = useShinyInput<string>("my_input", "default value");
+
+  // Output values received from Shiny
+  const [outputValue, outputRecalculating] = useShinyOutput<string>("my_output", undefined);
+
+  return (
+    <div>
+      <input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <div>{outputValue}</div>
+    </div>
+  );
+}
 ```
 
-## Architecture
+Here is a corresponding Shiny server function for the back end, written in R:
 
-### Core Components
+```r
+function(input, output, session) {
+  output$my_output <- render_json({
+    toupper(input$my_input)
+  })
+}
+```
 
-- **`useShinyInput<T>()`** - Hook to send data from React to Shiny server
-- **`useShinyOutput<T>()`** - Hook to receive data from Shiny server
-- **`ImageOutput`** - Component for displaying Shiny image outputs with dynamic sizing capabilities
-- **`ShinyReactRegistry`** - Global registry managing input/output mappings and debounced updates
-- **`ReactOutputBinding`** - Custom Shiny output binding class for React components
+And the same thing in Python:
 
-### Key Features
+```python
+def server(input, output, session):
+    @render_json
+    def my_output():
+        return input.my_input().upper()
+```
 
-1. **Promise-based Initialization**: Components wait for `window.Shiny.initializedPromise` before establishing connections
-2. **Debounced Updates**: Input changes are debounced (100ms) before sending to Shiny server
-3. **Dual Package Support**: Compatible with both CommonJS (`require()`) and ESM (`import`) module systems
-4. **TypeScript Support**: Full TypeScript declarations included
+
+## TypeScript/JavaScript API
+
+### React Hooks
+
+- **`useShinyInput<T>(id, defaultValue, options?)`** - Send data from React to Shiny server with debouncing and priority control
+- **`useShinyOutput<T>(outputId, defaultValue?)`** - Receive reactive data from Shiny server outputs
+- **`useShinyMessageHandler<T>(messageType, handler)`** - Handle custom messages sent from Shiny server with automatic cleanup
+- **`useShinyInitialized()`** - Hook to determine when Shiny has finished initializing
+
+### Components
+
+- **`ImageOutput`** - Display Shiny image/plot outputs with automatic sizing
+
+### Options
+
+Input options support debouncing (`debounceMs`) and event priority (`priority`) for fine-grained control over server communication timing.
+
+
+
+## R/Python API
+
+### shinyreact.R and shinyreact.py
+
+Each Shiny-React application includes a utility file that provides functions for React integration:
+
+**shinyreact.R** (R backend):
+- `page_react()` - Convenience function that creates a complete React page with JavaScript and CSS includes
+- `render_json()` - Custom renderer for sending arbitrary JSON data to React components
+- `post_message()` - Send messages to React components using `useShinyMessageHandler`
+
+**shinyreact.py** (Python backend):
+- `page_react()` - Convenience function that creates a complete React page with JavaScript and CSS includes
+- `@render_json` - Custom renderer for sending arbitrary JSON data to React components
+- `post_message()` - Send messages to React components using `useShinyMessageHandler`
+
+### Sending Arbitrary JSON with `render_json`
+
+`render_json` allows the R/Python code to send simple data types to the React frontend, such as strings and numbers. It also allows the R/Python code to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
+
+**R Usage:**
+```r
+# Send a data frame (automatically converted to column-major JSON format)
+output$table_data <- render_json({
+  mtcars[1:input$num_rows, ]
+})
+
+# Send custom JSON objects
+output$statistics <- render_json({
+  list(
+    mean = mean(mtcars$mpg),
+    median = median(mtcars$mpg),
+    min = min(mtcars$mpg),
+    max = max(mtcars$mpg)
+  )
+})
+```
+
+**Python Usage:**
+```python
+# Send a data frame (explicitly converted to column-major JSON format)
+@render_json
+def table_data():
+    num_rows = input.table_rows()
+    return mtcars.head(num_rows).to_dict(orient="list")
+
+# Send custom JSON objects
+@render_json
+def statistics():
+    return {
+        "mean": float(mtcars["mpg"].mean()),
+        "median": float(mtcars["mpg"].median()),
+        "min": float(mtcars["mpg"].min()),
+        "max": float(mtcars["mpg"].max())
+    }
+```
+
+**React Frontend:**
+```typescript
+// Receive complex data structures
+const [tableData] = useShinyOutput<Record<string, number[]>>("table_data", undefined);
+const [stats] = useShinyOutput<{mean: number; median: number; min: number; max: number}>("statistics", undefined);
+```
+
+**Data Frame Format:** Data frames are serialized in **column-major format** as JSON objects where each column becomes a property with an array of values:
+```json
+{
+  "mpg": [21, 21, 22.8, 21.4, ...],
+  "cyl": [6, 6, 4, 6, ...],
+  "disp": [160, 160, 108, 258, ...]
+}
+```
+
 
 ## Examples
 
@@ -168,226 +283,3 @@ Key features demonstrated:
 
 ![AI Chat Example](docs/7-chat.jpeg)
 
-### Running the Examples
-
-For any example, build the JavaScript and CSS for the React application:
-
-```bash
-# Choose any example directory:
-cd examples/1-hello-world        # Basic communication
-cd examples/2-inputs             # Input components
-cd examples/3-outputs            # Output components
-cd examples/4-messages           # Server messages
-cd examples/5-shadcn             # shadcn/ui components
-cd examples/6-dashboard          # Interactive dashboard
-cd examples/7-chat               # AI chat application
-
-# Install dependencies
-npm install
-
-# Build the React application
-npm run build
-# Or for development with watch mode
-npm run watch
-```
-
-In another terminal, run either the R or Python Shiny application:
-
-```bash
-# For R
-R -e "options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=8000)"
-
-# For Python
-shiny run py/app.py --port 8000
-```
-
-Open your browser to `http://localhost:8000`
-
-## Usage
-
-With Shiny-React, the front end is written in React, while the back end is written with Shiny in R or Python. 
-
-The front end sends values to the back end using the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
-
-The back end sends data to the front end by setting Shiny output values just like in any other Shiny app. The front end reads output values with the `useShinyOutput` hook.
-
-Here is an example of a React component for the front end:
-
-```typescript
-import { useShinyInput, useShinyOutput } from 'shiny-react';
-
-function MyComponent() {
-  // Input values sent to Shiny
-  const [inputValue, setInputValue] = useShinyInput<string>("my_input", "default value");
-
-  // Output values received from Shiny
-  const [outputValue, outputRecalculating] = useShinyOutput<string>("my_output", undefined);
-
-  return (
-    <div>
-      <input
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <div>{outputValue}</div>
-    </div>
-  );
-}
-```
-
-Here is a corresponding Shiny server function for the back end, written in R:
-
-```r
-function(input, output, session) {
-  output$my_output <- render_json({
-    toupper(input$my_input)
-  })
-}
-```
-
-And the same thing in Python:
-
-```python
-def server(input, output, session):
-    @render_json
-    def my_output():
-        return input.my_input().upper()
-```
-
-
-Note that some other code is needed on the back end to create the complete Shiny app, including utility functions provided in `shinyreact.R` and `shinyreact.py`. See the complete examples in [examples/1-hello-world/](examples/1-hello-world/) for more details.
-
-## Backend Utilities
-
-### shinyreact.R and shinyreact.py
-
-Each Shiny-React application includes utility files that provide essential functions for React integration:
-
-**shinyreact.R** (R backend):
-- `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications
-- `render_json()` - Custom renderer for sending arbitrary JSON data to React components
-
-**shinyreact.py** (Python backend):
-- `page_bare()` - Creates a bare HTML page without default Shiny styling, suitable for React applications  
-- `@render_json` - Custom renderer for sending arbitrary JSON data to React components
-
-### Sending Arbitrary JSON with `render_json`
-
-`render_json` allows you to send complex data structures and arbitrary JSON to React components, going beyond simple text or plot outputs.
-
-**R Usage:**
-```r
-# Send a data frame (automatically converted to column-major JSON format)
-output$table_data <- render_json({
-  mtcars[1:input$num_rows, ]
-})
-
-# Send custom JSON objects
-output$statistics <- render_json({
-  list(
-    mean = mean(mtcars$mpg),
-    median = median(mtcars$mpg),
-    min = min(mtcars$mpg),
-    max = max(mtcars$mpg)
-  )
-})
-```
-
-**Python Usage:**
-```python
-# Send a data frame (explicitly converted to column-major JSON format)
-@render_json
-def table_data():
-    num_rows = input.table_rows()
-    return mtcars.head(num_rows).to_dict(orient="list")
-
-# Send custom JSON objects
-@render_json
-def statistics():
-    return {
-        "mean": float(mtcars["mpg"].mean()),
-        "median": float(mtcars["mpg"].median()),
-        "min": float(mtcars["mpg"].min()),
-        "max": float(mtcars["mpg"].max())
-    }
-```
-
-**React Frontend:**
-```typescript
-// Receive complex data structures
-const [tableData] = useShinyOutput<Record<string, number[]>>("table_data", undefined);
-const [stats] = useShinyOutput<{mean: number; median: number; min: number; max: number}>("statistics", undefined);
-```
-
-**Data Frame Format:** Data frames are serialized in **column-major format** as JSON objects where each column becomes a property with an array of values:
-```json
-{
-  "mpg": [21, 21, 22.8, 21.4, ...],
-  "cyl": [6, 6, 4, 6, ...], 
-  "disp": [160, 160, 108, 258, ...]
-}
-```
-
-
-## Docs
-
-The concept behind Shiny-React is that it provides a way to write applications with a React front end and a Shiny back end. The front end uses React's reactivity, and the back end uses Shiny's reactivity. These are both forms of reactivity, but they have differences from each other.
-
-
-Front end:
-- Front end is written in React.
-- `useShinyInput` hook
-  - In order to send values to the Shiny back end, the front end can use the `useShinyInput` hook. This is similar to React's `useState` hook in that there is a state variable and a setter function, but the setter does an additional thing: it sends the value to the R/Python Shiny backend as a Shiny input value.
-  - When the `useShinyInput` hook is used, it returns a tuple of the state variable and the setter function.
-  - When the setter function is called, it both updates the state variable and sends the value to the Shiny back end as a Shiny input value. Values are deduplicated: if the value is identical to the previous value, then it does not send the value to the Shiny back end.
-  - From the perspective of the front end, `useShinyInput` can be thought of as extending a state variable all the way to the server. The server can read this state variable, but it cannot modify it. (If it were able to modify this state variable, then there could be race conditions and synchronization problems, because of the async nature of the communication.)
-- `useShinyOutput` hook
-  - The front end also has a `useShinyOutput` hook, which returns a tuple containing the value of the Shiny output variable, and a boolean indicating whether the server is currently recalculating this output.
-  - The Shiny output variable is set on the server; the front end can only read the value.
-
-
-Back end:
-- Back end is written in Shiny for R or Python.
-- Shiny's reactivity system can be thought of as a directed graph of reactive values and reactive functions.
-- Inputs values are received from the front end. They are **reactive values**, and so when they change, they cause re-execution of any reactive functions that depend on them.
-  - In R, an input value can be accessed with `input$my_input`, without parentheses.
-  - In Python, an input value can be accessed with `input.my_input()`, with parentheses.
-- **Output values** are set by reactive functions, which automatically re-execute when their reactive inputs change. These output values are then sent to the front end.
-  - In R, an output value can be set with:
-    ```r
-    output$my_output <- render_json({
-      toupper(input$my_input)
-    })
-    ```
-  - In Python, an output value can be set with:
-    ```python
-    @render_json
-    def my_output():
-        return input.my_input().upper()
-    ```
-- Shiny also has reactive functions that automatically re-execute when their reactive inputs change, and their return values can be used by other reactive functions. These re-execute whenever their reactive inputs change, and the most recent value is cached.
-  - In R, these are called **reactive expressions**, and are created with:
-    ```r
-    computed_value <- reactive({
-      toupper(input$my_input)
-    })
-    ```
-  - In Python, these are called **reactive calculations**, and are created with:
-    ```python
-    @reactive.calc
-    def computed_value():
-        return input.my_input().upper()
-    ```
-- Shiny also has reactive functions that are only used for **side effects** -- their return values are not used, but functions like these can be useful for doing things like writing data to disk, logging to the console, or sending network requests.
-  - In R, these are called **reactive observers**, and are created with:
-    ```r
-    observe({
-      write.csv(input$my_input, "data.csv")
-    })
-    ```
-  - In Python, these are called **reactive effects**, and are created with:
-    ```python
-    @reactive.effect
-    def _data_writer_effect():
-        write.csv(input.my_input(), "data.csv")
-    ```
