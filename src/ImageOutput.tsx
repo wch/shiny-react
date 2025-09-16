@@ -68,6 +68,9 @@ export type ImageData = {
  *    dimension change detection (default: 400ms). Controls how long to wait
  *    after a resize event before sending updated dimensions to Shiny. Higher
  *    values reduce server load but may delay updates.
+ * @param props.onRecalculating - Optional callback function that gets called
+ *    whenever the recalculation status changes. Receives a boolean indicating
+ *    whether the image is currently recalculating.
  *
  * @remarks
  * The component automatically:
@@ -75,7 +78,6 @@ export type ImageData = {
  *   clientData
  * - Updates Shiny when the image size changes (using ResizeObserver with
  *   debouncing)
- * - Shows a loading state (reduced opacity) when the image is recalculating
  * - Hides the image when Shiny sets the hidden state
  * - Handles image load events to ensure accurate dimension reporting
  *
@@ -132,12 +134,14 @@ export function ImageOutput({
   width,
   height,
   debounceMs = 400,
+  onRecalculating,
 }: {
   id: string;
   className?: string;
   width?: string;
   height?: string;
   debounceMs?: number;
+  onRecalculating?: (isRecalculating: boolean) => void;
 }) {
   const [imgWidth, setImgWidth] = useShinyInput<number | null>(
     ".clientdata_output_" + id + "_width",
@@ -167,6 +171,13 @@ export function ImageOutput({
       setImageVersion((prev) => prev + 1);
     }
   }, [imgData]);
+
+  // Notify parent component when recalculation status changes
+  useEffect(() => {
+    if (onRecalculating) {
+      onRecalculating(imgRecalculating);
+    }
+  }, [imgRecalculating, onRecalculating]);
 
   // Handle image load and dimension changes
   const handleImageLoad = () => {
@@ -220,7 +231,6 @@ export function ImageOutput({
         width: width,
         height: height,
         display: imgHidden ? "none" : "block",
-        opacity: imgRecalculating ? 0.4 : 1,
       }}
       onLoad={handleImageLoad}
     />
