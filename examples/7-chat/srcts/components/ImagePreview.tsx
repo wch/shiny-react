@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { ImageAttachment, useImageUpload } from "@/hooks/useImageUpload";
 import { X } from "lucide-react";
 import React from "react";
-import { ImageAttachment, useImageUpload } from "@/hooks/useImageUpload";
 
 interface ImagePreviewProps {
   attachments: ImageAttachment[];
@@ -11,12 +11,12 @@ interface ImagePreviewProps {
   columns?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
-export function ImagePreview({ 
-  attachments, 
-  onRemove, 
+export function ImagePreview({
+  attachments,
+  onRemove,
   isLoading = false,
   className = "",
-  columns = 4
+  columns = 4,
 }: ImagePreviewProps) {
   const { formatFileSize } = useImageUpload();
 
@@ -26,11 +26,11 @@ export function ImagePreview({
 
   const gridColsClass = {
     1: "grid-cols-1",
-    2: "grid-cols-2", 
+    2: "grid-cols-2",
     3: "grid-cols-3",
     4: "grid-cols-4",
     5: "grid-cols-5",
-    6: "grid-cols-6"
+    6: "grid-cols-6",
   }[columns];
 
   return (
@@ -62,7 +62,10 @@ export function ImagePreview({
               </Button>
             </div>
             <div className="p-1">
-              <div className="text-xs truncate font-medium" title={attachment.name}>
+              <div
+                className="text-xs truncate font-medium"
+                title={attachment.name}
+              >
                 {attachment.name}
               </div>
               <div className="text-xs text-muted-foreground">

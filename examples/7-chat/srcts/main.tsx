@@ -9,7 +9,7 @@ if (container) {
   root.render(
     <ThemeProvider>
       <ChatInterface />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 } else {
   console.error("Could not find root element to mount React component.");

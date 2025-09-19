@@ -1,17 +1,17 @@
-import React from "react";
+import { FilterPanel } from "@/components/FilterPanel";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { FilterPanel } from "@/components/FilterPanel";
-import { 
-  BarChart3, 
-  Users, 
-  ShoppingCart, 
-  Settings, 
+import { cn } from "@/lib/utils";
+import {
+  BarChart3,
   HelpCircle,
   Home,
-  TrendingUp 
+  Settings,
+  ShoppingCart,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React from "react";
 
 interface SidebarProps {
   className?: string;
@@ -22,45 +22,45 @@ const navigationItems = [
     title: "Dashboard",
     icon: Home,
     href: "#",
-    active: true
+    active: true,
   },
   {
     title: "Analytics",
     icon: BarChart3,
     href: "#",
-    active: false
+    active: false,
   },
   {
     title: "Customers",
     icon: Users,
     href: "#",
-    active: false
+    active: false,
   },
   {
     title: "Orders",
     icon: ShoppingCart,
     href: "#",
-    active: false
+    active: false,
   },
   {
     title: "Performance",
     icon: TrendingUp,
     href: "#",
-    active: false
-  }
+    active: false,
+  },
 ];
 
 const secondaryItems = [
   {
     title: "Settings",
     icon: Settings,
-    href: "#"
+    href: "#",
   },
   {
     title: "Help",
     icon: HelpCircle,
-    href: "#"
-  }
+    href: "#",
+  },
 ];
 
 export function Sidebar({ className }: SidebarProps) {

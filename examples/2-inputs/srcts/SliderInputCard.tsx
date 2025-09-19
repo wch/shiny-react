@@ -15,20 +15,20 @@ function SliderInputCard() {
 
   return (
     <InputOutputCard
-      title='Slider Input'
+      title="Slider Input"
       inputElement={
         <div>
           <label>Adjust the slider (0-100):</label>
           <input
-            type='range'
-            min='0'
-            max='100'
+            type="range"
+            min="0"
+            max="100"
             value={sliderIn}
             onChange={handleInputChange}
-            className='slider-input'
+            className="slider-input"
           />
-          <div className='slider-value'>Current value: {sliderIn}</div>
-          <div className='note'>
+          <div className="slider-value">Current value: {sliderIn}</div>
+          <div className="note">
             Note: Debounce is set to 0ms for immediate updates
           </div>
         </div>

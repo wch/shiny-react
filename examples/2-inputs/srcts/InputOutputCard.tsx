@@ -14,17 +14,18 @@ function InputOutputCard({
   outputValue,
   layout = "horizontal",
 }: InputOutputCardProps) {
-  const containerClass = layout === "vertical" 
-    ? 'input-output-container-vertical' 
-    : 'input-output-container';
-    
+  const containerClass =
+    layout === "vertical"
+      ? "input-output-container-vertical"
+      : "input-output-container";
+
   return (
     <Card title={title}>
       <div className={containerClass}>
-        <div className='input-group'>{inputElement}</div>
-        <div className='output-section'>
-          <div className='output-label'>Server response:</div>
-          <div className='output-content'>{outputValue}</div>
+        <div className="input-group">{inputElement}</div>
+        <div className="output-section">
+          <div className="output-label">Server response:</div>
+          <div className="output-content">{outputValue}</div>
         </div>
       </div>
     </Card>

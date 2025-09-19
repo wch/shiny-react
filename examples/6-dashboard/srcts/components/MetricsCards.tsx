@@ -34,16 +34,16 @@ export function MetricsCards() {
 
   if (!metricsData) {
     return (
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i}>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <Skeleton className='h-4 w-24' />
-              <Skeleton className='h-4 w-4' />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <Skeleton className='h-8 w-16 mb-2' />
-              <Skeleton className='h-4 w-20' />
+              <Skeleton className="h-8 w-16 mb-2" />
+              <Skeleton className="h-4 w-20" />
             </CardContent>
           </Card>
         ))}
@@ -75,28 +75,28 @@ export function MetricsCards() {
   ];
 
   return (
-    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {metrics.map((metric) => {
         const IconComponent = metric.icon;
         return (
           <Card key={metric.key}>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
                 {metric.title}
               </CardTitle>
-              <IconComponent className='h-4 w-4 text-muted-foreground' />
+              <IconComponent className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>{metric.value}</div>
-              <div className='flex items-center space-x-2 text-xs text-muted-foreground'>
+              <div className="text-2xl font-bold">{metric.value}</div>
+              <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                 <Badge
                   variant={metric.trend === "up" ? "default" : "destructive"}
                   className={`flex items-center space-x-1 ${metric.trend === "down" ? "text-white" : ""}`}
                 >
                   {metric.trend === "up" ? (
-                    <TrendingUp className='h-3 w-3' />
+                    <TrendingUp className="h-3 w-3" />
                   ) : (
-                    <TrendingDown className='h-3 w-3' />
+                    <TrendingDown className="h-3 w-3" />
                   )}
                   <span>{Math.abs(metric.change)}%</span>
                 </Badge>

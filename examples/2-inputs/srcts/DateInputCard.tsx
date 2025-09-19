@@ -15,17 +15,17 @@ function DateInputCard() {
 
   return (
     <InputOutputCard
-      title='Date Input'
+      title="Date Input"
       inputElement={
         <div>
           <label>Select a date:</label>
           <input
-            type='date'
+            type="date"
             value={dateIn}
             onChange={handleInputChange}
-            className='date-input'
+            className="date-input"
           />
-          <div className='date-value'>Selected date: {dateIn}</div>
+          <div className="date-value">Selected date: {dateIn}</div>
         </div>
       }
       outputValue={dateOut}

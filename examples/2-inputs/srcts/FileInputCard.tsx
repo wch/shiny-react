@@ -49,8 +49,8 @@ function FileInputCard() {
       */}
       <input
         ref={inputRef}
-        type='file'
-        id='filein'
+        type="file"
+        id="filein"
         multiple={true}
         onChange={handleInputChange}
         style={{ display: "none" }}
@@ -64,24 +64,24 @@ function FileInputCard() {
         onDrop={handleDrop}
         onClick={handleButtonClick}
       >
-        <div className='file-drop-content'>
+        <div className="file-drop-content">
           {files.length === 0 ? (
             <>
-              <div className='file-drop-text'>
+              <div className="file-drop-text">
                 Click to select files or drag and drop them here
               </div>
-              <div className='file-drop-hint'>Multiple files are supported</div>
+              <div className="file-drop-hint">Multiple files are supported</div>
             </>
           ) : (
-            <div className='selected-files'>
-              <ul className='selected-files-list'>
+            <div className="selected-files">
+              <ul className="selected-files-list">
                 {files.map((file, index) => (
                   <li key={index}>
                     {file.name} ({Math.round(file.size / 1024)} KB)
                   </li>
                 ))}
               </ul>
-              <div className='file-drop-hint'>
+              <div className="file-drop-hint">
                 Click to select different files or drag new ones here
               </div>
             </div>
@@ -91,15 +91,15 @@ function FileInputCard() {
     </div>
   );
   const outputElement = (
-    <pre className='code-output'>{JSON.stringify(fileout, null, 2)}</pre>
+    <pre className="code-output">{JSON.stringify(fileout, null, 2)}</pre>
   );
 
   return (
     <InputOutputCard
-      title='File Input'
+      title="File Input"
       inputElement={inputElement}
       outputValue={outputElement}
-      layout='vertical'
+      layout="vertical"
     />
   );
 }

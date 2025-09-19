@@ -43,7 +43,7 @@ export function useShinyInput<T>(
   }: {
     debounceMs?: number;
     priority?: EventPriority;
-  } = {}
+  } = {},
 ): [T, (value: T) => void] {
   // NOTE: It's a little odd that debounceMs and priority passed this way; the
   // debounceMs is associated with the specific input name, and in Shiny's API,
@@ -80,7 +80,7 @@ export function useShinyInput<T>(
 
       window.Shiny.reactRegistry.setInputValue(id, value);
     },
-    [shinyInitialized, id]
+    [shinyInitialized, id],
   );
 
   // useEffect(() => {
@@ -109,7 +109,7 @@ export function useShinyInput<T>(
  */
 export function useShinyOutput<T>(
   outputId: string,
-  defaultValue: T | undefined = undefined
+  defaultValue: T | undefined = undefined,
 ): [T | undefined, boolean] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const [recalculating, setRecalculating] = useState<boolean>(false);
@@ -122,7 +122,7 @@ export function useShinyOutput<T>(
     window.Shiny.reactRegistry.registerOutput(
       outputId,
       setValue,
-      setRecalculating
+      setRecalculating,
     );
   }, [outputId, shinyInitialized]);
 
@@ -154,7 +154,7 @@ export function useShinyOutput<T>(
  */
 export function useShinyMessageHandler<T = any>(
   messageType: string,
-  handler: (data: T) => void
+  handler: (data: T) => void,
 ): void {
   const shinyInitialized = useShinyInitialized();
 

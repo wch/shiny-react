@@ -4,9 +4,9 @@ import Card from "./Card";
 
 function PlotCard() {
   return (
-    <Card title='Plot output'>
-      <div className='plot-container'>
-        <ImageOutput id='plot1' className='data-plot' />
+    <Card title="Plot output">
+      <div className="plot-container">
+        <ImageOutput id="plot1" className="data-plot" />
       </div>
     </Card>
   );

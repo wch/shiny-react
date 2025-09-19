@@ -1,9 +1,9 @@
-import React from "react";
-import { Sidebar } from "@/components/Sidebar";
-import { MetricsCards } from "@/components/MetricsCards";
-import { DataTable } from "@/components/DataTable";
 import { Charts } from "@/components/Charts";
+import { DataTable } from "@/components/DataTable";
+import { MetricsCards } from "@/components/MetricsCards";
+import { Sidebar } from "@/components/Sidebar";
 import { Separator } from "@/components/ui/separator";
+import React from "react";
 
 export function Dashboard() {
   return (
@@ -14,14 +14,15 @@ export function Dashboard() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
-              Welcome to your analytics dashboard. Monitor your key metrics and performance.
+              Welcome to your analytics dashboard. Monitor your key metrics and
+              performance.
             </p>
           </div>
-          
+
           <Separator />
-          
+
           <MetricsCards />
-          
+
           <div className="grid gap-6 lg:grid-cols-2">
             <Charts />
             <DataTable />

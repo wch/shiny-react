@@ -145,17 +145,17 @@ export function ImageOutput({
 }) {
   const [imgWidth, setImgWidth] = useShinyInput<number | null>(
     ".clientdata_output_" + id + "_width",
-    null
+    null,
   );
   const [imgHeight, setImgHeight] = useShinyInput<number | null>(
     ".clientdata_output_" + id + "_height",
-    null
+    null,
   );
 
   // Track if the image is hidden
   const [imgHidden] = useShinyInput<boolean>(
     ".clientdata_output_" + id + "_hidden",
-    false
+    false,
   );
   const [imgData, imgRecalculating] = useShinyOutput<ImageData>(id, undefined);
 
@@ -225,7 +225,7 @@ export function ImageOutput({
     <img
       ref={imgRef}
       src={imgData?.src}
-      alt=''
+      alt=""
       className={className}
       style={{
         width: width,

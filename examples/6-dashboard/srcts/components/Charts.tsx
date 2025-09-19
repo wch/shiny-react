@@ -64,11 +64,11 @@ export function Charts() {
                 revenue: chartColumnsData.revenue_trend.revenue?.[index] || 0,
                 orders: chartColumnsData.revenue_trend.orders?.[index] || 0,
                 users: chartColumnsData.revenue_trend.users?.[index] || 0,
-              })
+              }),
             )
           : [],
         category_performance: Array.isArray(
-          chartColumnsData.category_performance?.category
+          chartColumnsData.category_performance?.category,
         )
           ? chartColumnsData.category_performance.category.map(
               (category: string, index: number) => ({
@@ -77,7 +77,7 @@ export function Charts() {
                   chartColumnsData.category_performance.sales?.[index] || 0,
                 revenue:
                   chartColumnsData.category_performance.revenue?.[index] || 0,
-              })
+              }),
             )
           : [],
       }
@@ -102,24 +102,24 @@ export function Charts() {
 
   if (!chartData || isLoading) {
     return (
-      <div className='space-y-6'>
+      <div className="space-y-6">
         {/* Revenue Trend Skeleton */}
         <Card>
           <CardHeader>
-            <Skeleton className='h-6 w-32' />
+            <Skeleton className="h-6 w-32" />
           </CardHeader>
           <CardContent>
-            <Skeleton className='h-64 w-full' />
+            <Skeleton className="h-64 w-full" />
           </CardContent>
         </Card>
 
         {/* Category Performance Skeleton */}
         <Card>
           <CardHeader>
-            <Skeleton className='h-6 w-40' />
+            <Skeleton className="h-6 w-40" />
           </CardHeader>
           <CardContent>
-            <Skeleton className='h-64 w-full' />
+            <Skeleton className="h-64 w-full" />
           </CardContent>
         </Card>
       </div>
@@ -127,36 +127,36 @@ export function Charts() {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       {/* Revenue Trend Chart */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-lg flex items-center'>
-            <TrendingUp className='mr-2 h-5 w-5' />
+          <CardTitle className="text-lg flex items-center">
+            <TrendingUp className="mr-2 h-5 w-5" />
             Revenue Trend
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width='100%' height={300}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData.revenue_trend}>
-              <CartesianGrid strokeDasharray='3 3' className='opacity-30' />
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis
-                dataKey='date'
+                dataKey="date"
                 tickFormatter={formatDate}
                 fontSize={12}
-                className='text-muted-foreground'
+                className="text-muted-foreground"
               />
               <YAxis
-                yAxisId='left'
+                yAxisId="left"
                 tickFormatter={formatCurrency}
                 fontSize={12}
-                className='text-muted-foreground'
+                className="text-muted-foreground"
               />
               <YAxis
-                yAxisId='right'
-                orientation='right'
+                yAxisId="right"
+                orientation="right"
                 fontSize={12}
-                className='text-muted-foreground'
+                className="text-muted-foreground"
               />
               <Tooltip
                 labelFormatter={(label) => formatDate(label)}
@@ -185,9 +185,9 @@ export function Charts() {
                 }}
               />
               <Line
-                type='monotone'
-                dataKey='revenue'
-                stroke='var(--chart-1)'
+                type="monotone"
+                dataKey="revenue"
+                stroke="var(--chart-1)"
                 strokeWidth={2}
                 dot={{ fill: "var(--chart-1)", strokeWidth: 2 }}
                 activeDot={{
@@ -195,15 +195,15 @@ export function Charts() {
                   stroke: "var(--chart-1)",
                   strokeWidth: 2,
                 }}
-                yAxisId='left'
+                yAxisId="left"
               />
               <Line
-                type='monotone'
-                dataKey='orders'
-                stroke='var(--chart-2)'
+                type="monotone"
+                dataKey="orders"
+                stroke="var(--chart-2)"
                 strokeWidth={2}
                 dot={{ fill: "var(--chart-2)", strokeWidth: 2 }}
-                yAxisId='right'
+                yAxisId="right"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -213,27 +213,27 @@ export function Charts() {
       {/* Category Performance Chart */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-lg flex items-center'>
-            <BarChart3 className='mr-2 h-5 w-5' />
+          <CardTitle className="text-lg flex items-center">
+            <BarChart3 className="mr-2 h-5 w-5" />
             Category Performance
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width='100%' height={300}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart
               data={chartData.category_performance}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <CartesianGrid strokeDasharray='3 3' className='opacity-30' />
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis
-                dataKey='category'
+                dataKey="category"
                 fontSize={12}
-                className='text-muted-foreground'
+                className="text-muted-foreground"
               />
               <YAxis
                 tickFormatter={formatCurrency}
                 fontSize={12}
-                className='text-muted-foreground'
+                className="text-muted-foreground"
               />
               <Tooltip
                 formatter={(value: number, name: string) => {
@@ -256,8 +256,8 @@ export function Charts() {
                 }}
               />
               <Bar
-                dataKey='revenue'
-                fill='var(--chart-1)'
+                dataKey="revenue"
+                fill="var(--chart-1)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

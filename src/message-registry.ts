@@ -30,7 +30,7 @@ class ShinyMessageRegistry {
       "shinyReactMessage",
       (msg: { type: string; data: any }) => {
         this.dispatchMessage(msg.type, msg.data);
-      }
+      },
     );
 
     this.initialized = true;

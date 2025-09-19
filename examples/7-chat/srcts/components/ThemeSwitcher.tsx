@@ -27,15 +27,15 @@ export default function ThemeSwitcher() {
   const currentThemeData = getTheme(currentTheme);
 
   return (
-    <div className='relative' ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <Button
-        variant='outline'
-        size='sm'
+        variant="outline"
+        size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className='flex items-center gap-2'
+        className="flex items-center gap-2"
       >
-        <Palette className='h-4 w-4' />
-        <span className='hidden sm:inline'>{currentThemeData.displayName}</span>
+        <Palette className="h-4 w-4" />
+        <span className="hidden sm:inline">{currentThemeData.displayName}</span>
         <ChevronDown
           className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
@@ -58,7 +58,7 @@ export default function ThemeSwitcher() {
             // Terminal theme - dark solid background
             currentTheme === "terminal" && "bg-black border-green-600",
             // Discord theme - solid discord background
-            currentTheme === "discord" && "bg-gray-800 border-gray-600"
+            currentTheme === "discord" && "bg-gray-800 border-gray-600",
           )}
           style={
             currentTheme === "glassmorphism"
@@ -69,11 +69,11 @@ export default function ThemeSwitcher() {
               : undefined
           }
         >
-          <div className='p-2'>
-            <div className='text-sm font-medium text-foreground mb-2 px-2'>
+          <div className="p-2">
+            <div className="text-sm font-medium text-foreground mb-2 px-2">
               Choose Theme
             </div>
-            <div className='space-y-1'>
+            <div className="space-y-1">
               {themes.map((theme) => (
                 <button
                   key={theme.name}
@@ -108,16 +108,16 @@ export default function ThemeSwitcher() {
                           : undefined,
                     }}
                   />
-                  <div className='flex-1'>
-                    <div className='text-sm font-medium text-foreground'>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-foreground">
                       {theme.displayName}
                     </div>
-                    <div className='text-xs text-muted-foreground'>
+                    <div className="text-xs text-muted-foreground">
                       {theme.description}
                     </div>
                   </div>
                   {currentTheme === theme.name && (
-                    <div className='w-2 h-2 bg-primary rounded-full' />
+                    <div className="w-2 h-2 bg-primary rounded-full" />
                   )}
                 </button>
               ))}

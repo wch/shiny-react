@@ -14,7 +14,7 @@ function ButtonInputCard() {
       // previous, it will still cause invalidation of reactive functions on the
       // server.
       priority: "event",
-    }
+    },
   );
   const [buttonOut, _] = useShinyOutput<string>("buttonout", undefined);
 
@@ -24,20 +24,20 @@ function ButtonInputCard() {
 
   return (
     <InputOutputCard
-      title='Button Input'
+      title="Button Input"
       inputElement={
         <div>
           <button
-            type='button'
+            type="button"
             onClick={handleButtonClick}
-            className='button-input'
+            className="button-input"
           >
             Click Me
           </button>
-          <div className='button-value'>
+          <div className="button-value">
             Button sends: {JSON.stringify(buttonIn)}
           </div>
-          <div className='note'>
+          <div className="note">
             Note: useShinyInput is called with priority:"event" so that even
             though the same value (an empty object) is sent every time the
             button is clicked, it will still cause reactive invalidation on the

@@ -28,15 +28,15 @@ function App() {
       setTimeout(() => {
         setToasts((prev) => prev.filter((toast) => toast.id !== newToast.id));
       }, 6000);
-    }
+    },
   );
 
   return (
-    <div className='app-container'>
+    <div className="app-container">
       <h1>Event Message Demo</h1>
-      <div className='card'>
+      <div className="card">
         <h2>Toast messages from server</h2>
-        <div className='toast-container'>
+        <div className="toast-container">
           {toasts.map((toast) => (
             <div key={toast.id} className={`toast toast-${toast.type}`}>
               {toast.message}

@@ -28,7 +28,7 @@ function ChatInterface() {
   const [currentMessage, setCurrentMessage] = useShinyInput<ChatMessage>(
     "chat_input",
     { text: "", attachments: [] },
-    { debounceMs: 0, priority: "event" }
+    { debounceMs: 0, priority: "event" },
   );
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ function ChatInterface() {
       if (window.Shiny && window.Shiny.addCustomMessageHandler) {
         window.Shiny.addCustomMessageHandler(
           "chat_stream",
-          handleStreamingMessage
+          handleStreamingMessage,
         );
       } else {
         setTimeout(registerHandler, 100);
@@ -136,12 +136,12 @@ function ChatInterface() {
   };
 
   return (
-    <div className='chat-container'>
-      <Card className='h-full flex flex-col' data-card>
-        <CardHeader className='flex-shrink-0 border-b border-border/50'>
-          <CardTitle className='flex items-center justify-between gap-2'>
-            <div className='flex items-center gap-2'>
-              <Bot className='h-6 w-6' />
+    <div className="chat-container">
+      <Card className="h-full flex flex-col" data-card>
+        <CardHeader className="flex-shrink-0 border-b border-border/50">
+          <CardTitle className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Bot className="h-6 w-6" />
               <span>AI Chat - Shiny React</span>
               <div
                 className={cn(
@@ -156,7 +156,7 @@ function ChatInterface() {
                     "bg-green-900/20 text-green-400 font-mono",
                   currentTheme === "discord" &&
                     "bg-purple-600/20 text-purple-300",
-                  currentTheme === "default" && "bg-gray-100 text-gray-600"
+                  currentTheme === "default" && "bg-gray-100 text-gray-600",
                 )}
               >
                 {currentTheme}
@@ -166,17 +166,17 @@ function ChatInterface() {
           </CardTitle>
         </CardHeader>
 
-        <CardContent className='flex-1 flex flex-col p-0 min-h-0'>
+        <CardContent className="flex-1 flex flex-col p-0 min-h-0">
           {/* Messages Area */}
           <ScrollArea
             ref={scrollAreaRef}
-            className='flex-1 p-4 overflow-hidden'
+            className="flex-1 p-4 overflow-hidden"
           >
-            <div className='max-w-4xl mx-auto space-y-4'>
+            <div className="max-w-4xl mx-auto space-y-4">
               {messages.length === 0 && (
-                <div className='flex items-center justify-center h-32 text-muted-foreground'>
-                  <div className='text-center'>
-                    <Bot className='h-8 w-8 mx-auto mb-2' />
+                <div className="flex items-center justify-center h-32 text-muted-foreground">
+                  <div className="text-center">
+                    <Bot className="h-8 w-8 mx-auto mb-2" />
                     <p>Start a conversation with the AI assistant</p>
                   </div>
                 </div>
@@ -189,21 +189,21 @@ function ChatInterface() {
                     "flex gap-3 max-w-[65%]",
                     message.role === "user"
                       ? "ml-auto flex-row-reverse"
-                      : "mr-auto"
+                      : "mr-auto",
                   )}
                 >
-                  <Avatar className='h-8 w-8 flex-shrink-0'>
+                  <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarFallback
                       className={cn(
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
+                          : "bg-muted text-muted-foreground",
                       )}
                     >
                       {message.role === "user" ? (
-                        <User className='h-4 w-4' />
+                        <User className="h-4 w-4" />
                       ) : (
-                        <Bot className='h-4 w-4' />
+                        <Bot className="h-4 w-4" />
                       )}
                     </AvatarFallback>
                   </Avatar>
@@ -213,22 +213,22 @@ function ChatInterface() {
                       "message-bubble rounded-lg px-3 py-2 max-w-full",
                       message.role === "user"
                         ? "message-user bg-primary text-primary-foreground"
-                        : "message-assistant bg-muted text-muted-foreground"
+                        : "message-assistant bg-muted text-muted-foreground",
                     )}
                   >
                     {message.content === "" &&
                     message.role === "assistant" &&
                     isLoading ? (
-                      <div className='flex items-center gap-1'>
-                        <div className='typing-indicator'></div>
-                        <div className='typing-indicator'></div>
-                        <div className='typing-indicator'></div>
+                      <div className="flex items-center gap-1">
+                        <div className="typing-indicator"></div>
+                        <div className="typing-indicator"></div>
+                        <div className="typing-indicator"></div>
                       </div>
                     ) : (
                       <div>
                         {/* Message text content */}
                         {message.content && (
-                          <p className='text-sm whitespace-pre-wrap break-words mb-2'>
+                          <p className="text-sm whitespace-pre-wrap break-words mb-2">
                             {message.content}
                           </p>
                         )}
@@ -241,21 +241,21 @@ function ChatInterface() {
                                 "grid gap-2 mb-2",
                                 message.attachments.length === 1
                                   ? "grid-cols-1 max-w-xs"
-                                  : "grid-cols-2 max-w-sm"
+                                  : "grid-cols-2 max-w-sm",
                               )}
                             >
                               {message.attachments.map((attachment, index) => (
                                 <div
                                   key={index}
-                                  className='rounded-lg overflow-hidden border bg-background'
+                                  className="rounded-lg overflow-hidden border bg-background"
                                 >
                                   <img
                                     src={`data:${attachment.type};base64,${attachment.content}`}
                                     alt={attachment.name}
-                                    className='w-full h-auto max-h-48 object-contain'
+                                    className="w-full h-auto max-h-48 object-contain"
                                   />
-                                  <div className='p-2'>
-                                    <div className='text-xs text-muted-foreground truncate'>
+                                  <div className="p-2">
+                                    <div className="text-xs text-muted-foreground truncate">
                                       {attachment.name}
                                     </div>
                                   </div>
@@ -267,7 +267,9 @@ function ChatInterface() {
                         <p
                           className={cn(
                             "text-xs mt-1 opacity-70",
-                            message.role === "user" ? "text-right" : "text-left"
+                            message.role === "user"
+                              ? "text-right"
+                              : "text-left",
                           )}
                         >
                           {formatTime(message.timestamp)}
@@ -282,8 +284,8 @@ function ChatInterface() {
           </ScrollArea>
 
           {/* Input Area */}
-          <div className='chat-input-area flex-shrink-0'>
-            <div className='max-w-4xl mx-auto'>
+          <div className="chat-input-area flex-shrink-0">
+            <div className="max-w-4xl mx-auto">
               <ImageInput
                 attachments={currentAttachments}
                 onAttachmentsChange={setCurrentAttachments}
@@ -292,7 +294,7 @@ function ChatInterface() {
                 onSend={handleSendMessage}
                 onKeyPress={handleKeyPress}
                 isLoading={isLoading}
-                placeholder='Type your message here...'
+                placeholder="Type your message here..."
               />
             </div>
           </div>

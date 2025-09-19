@@ -17,7 +17,7 @@ type InputMap = Map<
     // Possibly debounce Shiny input value setter
     shinySetInputValueDebounced: (
       value: any,
-      opts?: { priority?: EventPriority }
+      opts?: { priority?: EventPriority },
     ) => void;
   }
 >;
@@ -41,7 +41,7 @@ export class ShinyReactRegistry {
   registerInput(
     inputId: string,
     setValueFn: (value: any) => void,
-    opts: { priority?: EventPriority; debounceMs?: number } = {}
+    opts: { priority?: EventPriority; debounceMs?: number } = {},
   ) {
     const { debounceMs = 100 } = opts;
     const setInputValueOpts: { priority?: EventPriority } = {};
@@ -64,7 +64,7 @@ export class ShinyReactRegistry {
   registerOutput(
     outputId: string,
     setValue: (value: any) => void,
-    setRecalculating: (value: boolean) => void
+    setRecalculating: (value: boolean) => void,
   ) {
     if (!this.outputs.has(outputId)) {
       // Need to create a dummy div element with the ID, so that we have
@@ -121,7 +121,7 @@ export class ShinyReactRegistry {
   setInputValue(
     inputId: string,
     value: any,
-    opts?: { priority?: EventPriority }
+    opts?: { priority?: EventPriority },
   ) {
     if (!this.inputs.has(inputId)) {
       console.error(`Input ${inputId} not found`);
@@ -171,5 +171,5 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
 
 window.Shiny.outputBindings.register(
   new ReactOutputBinding(),
-  "shiny.reactOutput"
+  "shiny.reactOutput",
 );

@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
+import { ImageAttachment, useImageUpload } from "@/hooks/useImageUpload";
 import { cn } from "@/lib/utils";
 import { Plus, Send } from "lucide-react";
 import React, { useCallback, useRef } from "react";
-import { ImageAttachment, useImageUpload } from "@/hooks/useImageUpload";
-import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { ImagePreview } from "./ImagePreview";
 
 interface ImageInputProps {
@@ -30,7 +30,7 @@ export function ImageInput({
   className = "",
 }: ImageInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const { processFiles, SUPPORTED_IMAGE_TYPES } = useImageUpload();
   const {
     isDragOver,
@@ -40,31 +40,43 @@ export function ImageInput({
     handleDrop,
   } = useDragAndDrop();
 
-  const handleFilesSelected = useCallback(async (files: FileList) => {
-    if (isLoading) return;
-    
-    const newAttachments = await processFiles(files);
-    if (newAttachments.length > 0) {
-      onAttachmentsChange([...attachments, ...newAttachments]);
-    }
-  }, [attachments, isLoading, onAttachmentsChange, processFiles]);
+  const handleFilesSelected = useCallback(
+    async (files: FileList) => {
+      if (isLoading) return;
 
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFilesSelected(files);
-    }
-    // Reset the input value so the same file can be selected again
-    e.target.value = "";
-  }, [handleFilesSelected]);
+      const newAttachments = await processFiles(files);
+      if (newAttachments.length > 0) {
+        onAttachmentsChange([...attachments, ...newAttachments]);
+      }
+    },
+    [attachments, isLoading, onAttachmentsChange, processFiles],
+  );
 
-  const handleDropFiles = useCallback((e: React.DragEvent) => {
-    handleDrop(e, handleFilesSelected);
-  }, [handleDrop, handleFilesSelected]);
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleFilesSelected(files);
+      }
+      // Reset the input value so the same file can be selected again
+      e.target.value = "";
+    },
+    [handleFilesSelected],
+  );
 
-  const removeAttachment = useCallback((index: number) => {
-    onAttachmentsChange(attachments.filter((_, i) => i !== index));
-  }, [attachments, onAttachmentsChange]);
+  const handleDropFiles = useCallback(
+    (e: React.DragEvent) => {
+      handleDrop(e, handleFilesSelected);
+    },
+    [handleDrop, handleFilesSelected],
+  );
+
+  const removeAttachment = useCallback(
+    (index: number) => {
+      onAttachmentsChange(attachments.filter((_, i) => i !== index));
+    },
+    [attachments, onAttachmentsChange],
+  );
 
   const canSend = (inputValue.trim() || attachments.length > 0) && !isLoading;
 
@@ -84,7 +96,7 @@ export function ImageInput({
           isDragOver && !isLoading
             ? "border-primary bg-primary/10"
             : "border-input",
-          isLoading && "opacity-50"
+          isLoading && "opacity-50",
         )}
         onDrop={handleDropFiles}
         onDragEnter={handleDragEnter}
@@ -109,7 +121,7 @@ export function ImageInput({
           variant="ghost"
           className={cn(
             "h-8 w-8 flex-shrink-0",
-            isDragOver && "pointer-events-none"
+            isDragOver && "pointer-events-none",
           )}
           onClick={() => fileInputRef.current?.click()}
           disabled={isLoading}
@@ -128,7 +140,7 @@ export function ImageInput({
           disabled={isLoading}
           className={cn(
             "flex-1 bg-transparent border-none outline-none focus:ring-0 text-sm",
-            isDragOver && "pointer-events-none"
+            isDragOver && "pointer-events-none",
           )}
         />
 
@@ -139,7 +151,7 @@ export function ImageInput({
           size="icon"
           className={cn(
             "h-8 w-8 flex-shrink-0",
-            isDragOver && "pointer-events-none"
+            isDragOver && "pointer-events-none",
           )}
           aria-label="Send message"
         >

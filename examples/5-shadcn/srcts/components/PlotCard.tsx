@@ -8,10 +8,10 @@ export function PlotCard() {
         <CardTitle>Plot Output</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className='flex flex-col justify-center'>
+        <div className="flex flex-col justify-center">
           <ImageOutput
-            id='plot1'
-            className='flex-1 w-full h-full min-h-[300px]'
+            id="plot1"
+            className="flex-1 w-full h-full min-h-[300px]"
           />
         </div>
       </CardContent>

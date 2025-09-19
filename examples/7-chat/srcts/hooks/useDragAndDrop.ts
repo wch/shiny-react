@@ -46,7 +46,7 @@ export function useDragAndDrop() {
         onFilesDropped(files);
       }
     },
-    []
+    [],
   );
 
   const resetDragState = useCallback(() => {

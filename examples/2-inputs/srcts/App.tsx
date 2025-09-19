@@ -12,9 +12,9 @@ import TextInputCard from "./TextInputCard";
 
 function App() {
   return (
-    <div className='app-container'>
+    <div className="app-container">
       <h1>Shiny React Input Examples</h1>
-      <div className='cards-wrap'>
+      <div className="cards-wrap">
         <TextInputCard />
         <NumberInputCard />
         <CheckboxInputCard />
