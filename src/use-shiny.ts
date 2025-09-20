@@ -2,9 +2,9 @@
 
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useCallback, useEffect, useState } from "react";
+import { type InputRegistryEntry } from "./input-registry";
 import "./message-registry"; // Initialize message registry
 import "./react-registry"; // Initialize react registry
-import { type InputRegistryEntry } from "./react-registry";
 
 /**
  * A React hook for managing a Shiny input value.
