@@ -37,12 +37,12 @@ export class InputRegistryEntry<T> {
     this.opts.priority = priority;
   }
 
-  addUseStateSetValueFn(useStateSetValueFn: (value: T) => void) {
-    this.useStateSetValueFns.add(useStateSetValueFn);
+  addUseStateSetValueFn(fn: (value: T) => void) {
+    this.useStateSetValueFns.add(fn);
   }
 
-  removeUseStateSetValueFn(useStateSetValueFn: (value: T) => void) {
-    this.useStateSetValueFns.delete(useStateSetValueFn);
+  removeUseStateSetValueFn(fn: (value: T) => void) {
+    this.useStateSetValueFns.delete(fn);
   }
 
   setValue(value: T) {

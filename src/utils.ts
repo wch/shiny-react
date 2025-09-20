@@ -4,7 +4,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type DebouncedFunction<T extends (...args: any[]) => any> = {
   (...args: Parameters<T>): void;
-  setDelay: (newWait: number) => void;
+  setDelay: (newDelay: number) => void;
   getDelay: () => number;
   cancel: () => void;
 };

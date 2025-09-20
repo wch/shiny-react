@@ -60,9 +60,13 @@ export function useShinyInput<T>(
 
   if (inputRegistryEntry) {
     // If the input registry entry already exists, use its value as the start
-    // value. We have to do this because the input registry entry is created
-    // when the input is first used, and we don't want to override it with the
-    // default value passed to this hook.
+    // value. We have to do this because if the input registry entry for this ID
+    // was created in the past and there's some (non-default) value in it
+    // already, then we don't want to override it with the default value passed
+    // to this hook. This situation could happen when there are multiple calls to
+    // useShinyInput("foo") in different places, or when the component that calls
+    // useShinyInput("foo") is dynamically generated (and so React won't know that
+    // the useState below is for the same input).
     startValue = inputRegistryEntry.getValue();
   }
   const [value, setValue] = useState<T>(startValue);
@@ -79,7 +83,7 @@ export function useShinyInput<T>(
       defaultValue,
     );
 
-    if (debounceMs) {
+    if (debounceMs !== undefined) {
       inputRegistryEntry.updateDebounceDelay(debounceMs);
     }
     if (priority) {
@@ -87,6 +91,8 @@ export function useShinyInput<T>(
     }
 
     inputRegistryEntry.addUseStateSetValueFn(setValue);
+    // TODO: This is awkward. Maybe just add a trigger method?
+    inputRegistryEntry.setValue(inputRegistryEntry.getValue());
 
     return () => {
       inputRegistryEntry.removeUseStateSetValueFn(setValue);
@@ -143,11 +149,14 @@ export function useShinyOutput<T>(
     if (!shinyInitialized) {
       return;
     }
-    window.Shiny.reactRegistry.registerOutput(
+    window.Shiny.reactRegistry.outputs.add(
       outputId,
       setValue,
       setRecalculating,
     );
+    return () => {
+      window.Shiny.reactRegistry.outputs.remove(outputId);
+    };
   }, [outputId, shinyInitialized]);
 
   return [value, recalculating];
