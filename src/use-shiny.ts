@@ -4,6 +4,7 @@ import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useCallback, useEffect, useState } from "react";
 import "./message-registry"; // Initialize message registry
 import "./react-registry"; // Initialize react registry
+import { type InputRegistryEntry } from "./react-registry";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -52,7 +53,19 @@ export function useShinyInput<T>(
   // multiple calls to useShinyInput("foo"), then the priority will be from the
   // most recent call. This all should be straightened out in the future.
 
-  const [value, setValue] = useState<T>(defaultValue);
+  let startValue: T = defaultValue;
+  const inputRegistryEntry = window.Shiny.reactRegistry.inputs.get(id) as
+    | InputRegistryEntry<T>
+    | undefined;
+
+  if (inputRegistryEntry) {
+    // If the input registry entry already exists, use its value as the start
+    // value. We have to do this because the input registry entry is created
+    // when the input is first used, and we don't want to override it with the
+    // default value passed to this hook.
+    startValue = inputRegistryEntry.getValue();
+  }
+  const [value, setValue] = useState<T>(startValue);
   const shinyInitialized = useShinyInitialized();
 
   useEffect(() => {
@@ -61,8 +74,10 @@ export function useShinyInput<T>(
     }
 
     // Make sure the input registry entry exists for this Shiny input ID
-    const inputRegistryEntry =
-      window.Shiny.reactRegistry.inputs.getOrCreate<T>(id);
+    const inputRegistryEntry = window.Shiny.reactRegistry.inputs.getOrCreate<T>(
+      id,
+      defaultValue,
+    );
 
     if (debounceMs) {
       inputRegistryEntry.updateDebounceDelay(debounceMs);
@@ -71,24 +86,18 @@ export function useShinyInput<T>(
       inputRegistryEntry.updatePriority(priority);
     }
 
-    // Add this useState's setValue function to the registry entry
     inputRegistryEntry.addUseStateSetValueFn(setValue);
 
-    // Send the initial value to Shiny
-    window.Shiny.reactRegistry.setInputValue(id, value);
-
     return () => {
-      // Clean up: remove this useState's setValue function from the registry
-      // entry
       inputRegistryEntry.removeUseStateSetValueFn(setValue);
 
-      // Remove the registry entry if it's no longer needed.
-      // TODO: Will this cause too many things to be created and destroyed?
-      if (inputRegistryEntry.isEmpty()) {
-        window.Shiny.reactRegistry.inputs.remove(id);
-      }
+      // The registry entry will still exist even if it no longer has any
+      // useStateSetValueFns. This preserves the value of the input when the
+      // count drops to zero, which will happen on most re-renders as this
+      // useEffect will be called again. If someone wants to really get rid of
+      // the registry entry, they will have to do so manually.
     };
-  }, [id, shinyInitialized, debounceMs, priority, value]);
+  }, [id, shinyInitialized, debounceMs, priority, defaultValue]);
 
   const setValueWrapped = useCallback(
     (value: T) => {
@@ -96,18 +105,15 @@ export function useShinyInput<T>(
         return;
       }
 
-      window.Shiny.reactRegistry.setInputValue(id, value);
+      const inputRegistryEntry = window.Shiny.reactRegistry.inputs.get(id);
+      if (!inputRegistryEntry) {
+        console.error(`Input ${id} not found`);
+        return;
+      }
+      inputRegistryEntry.setValue(value);
     },
     [shinyInitialized, id],
   );
-
-  // useEffect(() => {
-  //   if (!shinyInitialized) {
-  //     return;
-  //   }
-
-  //   window.Shiny.setInputValue!(inputId, value);
-  // }, [shinyInitialized, inputId, value]);
 
   return [value, setValueWrapped];
 }

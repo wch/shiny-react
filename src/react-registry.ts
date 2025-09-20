@@ -8,29 +8,23 @@ type ErrorsMessageValue = {
   type?: string[];
 };
 
-class InputRegistryEntry<T> {
+export class InputRegistryEntry<T> {
   id: string; // Shiny input ID
+  value: T;
   useStateSetValueFns: Set<(value: T) => void>;
   shinySetInputValueDebounced: DebouncedFunction<(value: T) => void>;
-  opts: { priority?: EventPriority; debounceMs?: number };
+  opts: { priority?: EventPriority; debounceMs: number } = {
+    debounceMs: 100,
+  };
 
-  constructor(
-    id: string,
-    opts: { priority?: EventPriority; debounceMs?: number } = {},
-  ) {
-    const { debounceMs = 100 } = opts;
-    const setInputValueOpts: { priority?: EventPriority } = {};
-    if (opts.priority) {
-      setInputValueOpts.priority = opts.priority;
-    }
-
+  constructor(id: string, value: T) {
     this.id = id;
+    this.value = value;
     this.useStateSetValueFns = new Set();
     this.shinySetInputValueDebounced = createDebouncedFn(
       this.setShinyInputValue.bind(this),
-      debounceMs,
+      this.opts.debounceMs,
     );
-    this.opts = opts;
   }
 
   isEmpty() {
@@ -58,12 +52,15 @@ class InputRegistryEntry<T> {
   }
 
   setValue(value: T) {
+    this.value = value;
     this.shinySetInputValueDebounced(value);
     this.useStateSetValueFns.forEach((fn) => fn(value));
   }
-}
 
-type InputMap = Map<string, InputRegistryEntry<any>>;
+  getValue(): T {
+    return this.value;
+  }
+}
 
 type OutputRegistryEntry = {
   id: string; // Output ID
@@ -74,7 +71,7 @@ type OutputRegistryEntry = {
 type OutputMap = Map<string, OutputRegistryEntry>;
 
 export class InputRegistry {
-  private inputs: InputMap = new Map();
+  private inputs: Map<string, InputRegistryEntry<any>> = new Map();
 
   /**
    * Get an input registry entry by ID
@@ -93,23 +90,26 @@ export class InputRegistry {
   /**
    * Add a new input registry entry
    */
-  add<T>(inputId: string): InputRegistryEntry<T> {
+  add<T>(inputId: string, value: T): InputRegistryEntry<T> {
     if (this.inputs.has(inputId)) {
       throw new Error(`Input ${inputId} already exists`);
     }
 
-    const entry = new InputRegistryEntry<T>(inputId);
+    const entry = new InputRegistryEntry<T>(inputId, value);
     this.inputs.set(inputId, entry);
     return entry;
   }
 
   /**
    * Get or create an input registry entry
+   *
+   * Note that value is used only if the entry is created; if it already exists,
+   * then the existing entry is returned and the value is unused.
    */
-  getOrCreate<T>(inputId: string): InputRegistryEntry<T> {
+  getOrCreate<T>(inputId: string, value: T): InputRegistryEntry<T> {
     let entry = this.get<T>(inputId);
     if (!entry) {
-      entry = this.add<T>(inputId);
+      entry = this.add<T>(inputId, value);
     }
     return entry;
   }
@@ -193,18 +193,6 @@ export class ShinyReactRegistry {
       window.Shiny.bindAll?.(document.body);
       this.bindAllScheduled = false;
     });
-  }
-
-  hasInput(inputId: string) {
-    return this.inputs.has(inputId);
-  }
-
-  setInputValue(inputId: string, value: any) {
-    if (!this.inputs.has(inputId)) {
-      console.error(`Input ${inputId} not found`);
-      return;
-    }
-    this.inputs.get(inputId)!.setValue(value);
   }
 
   hasOutput(outputId: string) {
