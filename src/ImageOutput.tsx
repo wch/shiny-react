@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useShinyInput, useShinyOutput } from "./use-shiny";
-import { debounce } from "./utils";
+import { createDebouncedFn } from "./utils";
 
 export type ImageData = {
   src: string;
@@ -180,14 +180,14 @@ export function ImageOutput({
   }, [imgRecalculating, onRecalculating]);
 
   // Handle image load and dimension changes
-  const handleImageLoad = () => {
+  const handleImageLoad = useCallback(() => {
     if (imgRef.current) {
       const width = imgRef.current.clientWidth;
       const height = imgRef.current.clientHeight;
       setImgWidth(width);
       setImgHeight(height);
     }
-  };
+  }, [setImgWidth, setImgHeight]);
 
   // Set up a mutation observer to detect image dimension changes
   useEffect(() => {
@@ -198,7 +198,7 @@ export function ImageOutput({
     img.addEventListener("load", handleImageLoad);
 
     // Create a debounced version of handleImageLoad with 200ms delay
-    const debouncedHandleResize = debounce(() => {
+    const debouncedHandleResize = createDebouncedFn(() => {
       if (img && img.complete) {
         handleImageLoad();
       }
@@ -219,7 +219,14 @@ export function ImageOutput({
       img.removeEventListener("load", handleImageLoad);
       resizeObserver.disconnect();
     };
-  }, [imgRef, imageVersion, setImgWidth, setImgHeight]);
+  }, [
+    imgRef,
+    imageVersion,
+    setImgWidth,
+    setImgHeight,
+    debounceMs,
+    handleImageLoad,
+  ]);
 
   return (
     <img

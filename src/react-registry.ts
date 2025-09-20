@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
-import { debounce } from "./utils";
+import { createDebouncedFn, type DebouncedFunction } from "./utils";
 
 type ErrorsMessageValue = {
   message: string;
@@ -8,39 +8,14 @@ type ErrorsMessageValue = {
   type?: string[];
 };
 
-type InputMap = Map<
-  string,
-  {
-    // Input ID
-    id: string;
-    setValueFns: Array<(value: any) => void>;
-    // Possibly debounce Shiny input value setter
-    shinySetInputValueDebounced: (
-      value: any,
-      opts?: { priority?: EventPriority },
-    ) => void;
-  }
->;
+class InputRegistryEntry<T> {
+  id: string; // Shiny input ID
+  useStateSetValueFns: Set<(value: T) => void>;
+  shinySetInputValueDebounced: DebouncedFunction<(value: T) => void>;
+  opts: { priority?: EventPriority; debounceMs?: number };
 
-type OutputMap = Map<
-  string,
-  {
-    // Output ID
-    id: string;
-    setValueFns: Array<(value: any) => void>;
-    setRecalculatingFns: Array<(value: boolean) => void>;
-  }
->;
-
-// TODO: Use weakmap?
-export class ShinyReactRegistry {
-  inputs: InputMap = new Map();
-  outputs: OutputMap = new Map();
-  private bindAllScheduled = false;
-
-  registerInput(
-    inputId: string,
-    setValueFn: (value: any) => void,
+  constructor(
+    id: string,
     opts: { priority?: EventPriority; debounceMs?: number } = {},
   ) {
     const { debounceMs = 100 } = opts;
@@ -49,21 +24,126 @@ export class ShinyReactRegistry {
       setInputValueOpts.priority = opts.priority;
     }
 
-    if (!this.inputs.has(inputId)) {
-      this.inputs.set(inputId, {
-        id: inputId,
-        setValueFns: [],
-        shinySetInputValueDebounced: debounce((value: any) => {
-          window.Shiny.setInputValue!(inputId, value, setInputValueOpts);
-        }, debounceMs),
-      });
-    }
-    this.inputs.get(inputId)!.setValueFns.push(setValueFn);
+    this.id = id;
+    this.useStateSetValueFns = new Set();
+    this.shinySetInputValueDebounced = createDebouncedFn(
+      this.setShinyInputValue.bind(this),
+      debounceMs,
+    );
+    this.opts = opts;
   }
 
-  registerOutput(
+  isEmpty() {
+    return this.useStateSetValueFns.size === 0;
+  }
+
+  private setShinyInputValue(value: T) {
+    window.Shiny.setInputValue!(this.id, value, this.opts);
+  }
+
+  updateDebounceDelay(debounceMs: number) {
+    this.shinySetInputValueDebounced.setDelay(debounceMs);
+  }
+
+  updatePriority(priority: EventPriority) {
+    this.opts.priority = priority;
+  }
+
+  addUseStateSetValueFn(useStateSetValueFn: (value: T) => void) {
+    this.useStateSetValueFns.add(useStateSetValueFn);
+  }
+
+  removeUseStateSetValueFn(useStateSetValueFn: (value: T) => void) {
+    this.useStateSetValueFns.delete(useStateSetValueFn);
+  }
+
+  setValue(value: T) {
+    this.shinySetInputValueDebounced(value);
+    this.useStateSetValueFns.forEach((fn) => fn(value));
+  }
+}
+
+type InputMap = Map<string, InputRegistryEntry<any>>;
+
+type OutputRegistryEntry = {
+  id: string; // Output ID
+  useStateSetValueFns: Set<(value: any) => void>;
+  useStateSetRecalculatingFns: Set<(value: boolean) => void>;
+};
+
+type OutputMap = Map<string, OutputRegistryEntry>;
+
+export class InputRegistry {
+  private inputs: InputMap = new Map();
+
+  /**
+   * Get an input registry entry by ID
+   */
+  get<T>(inputId: string): InputRegistryEntry<T> | undefined {
+    return this.inputs.get(inputId) as InputRegistryEntry<T> | undefined;
+  }
+
+  /**
+   * Check if an input registry entry exists
+   */
+  has(inputId: string): boolean {
+    return this.inputs.has(inputId);
+  }
+
+  /**
+   * Add a new input registry entry
+   */
+  add<T>(inputId: string): InputRegistryEntry<T> {
+    if (this.inputs.has(inputId)) {
+      throw new Error(`Input ${inputId} already exists`);
+    }
+
+    const entry = new InputRegistryEntry<T>(inputId);
+    this.inputs.set(inputId, entry);
+    return entry;
+  }
+
+  /**
+   * Get or create an input registry entry
+   */
+  getOrCreate<T>(inputId: string): InputRegistryEntry<T> {
+    let entry = this.get<T>(inputId);
+    if (!entry) {
+      entry = this.add<T>(inputId);
+    }
+    return entry;
+  }
+
+  /**
+   * Remove an input registry entry
+   */
+  remove(inputId: string): boolean {
+    return this.inputs.delete(inputId);
+  }
+
+  /**
+   * Get all input IDs
+   */
+  keys(): IterableIterator<string> {
+    return this.inputs.keys();
+  }
+
+  /**
+   * Get the number of registered inputs
+   */
+  size(): number {
+    return this.inputs.size;
+  }
+}
+
+export class ShinyReactRegistry {
+  inputs: InputRegistry = new InputRegistry();
+  outputs: OutputMap = new Map();
+  private bindAllScheduled = false;
+
+  registerOutput<T>(
     outputId: string,
-    setValue: (value: any) => void,
+    setValue: (value: T) => void,
     setRecalculating: (value: boolean) => void,
   ) {
     if (!this.outputs.has(outputId)) {
@@ -79,16 +159,17 @@ export class ShinyReactRegistry {
 
       this.outputs.set(outputId, {
         id: outputId,
-        setValueFns: [],
-        setRecalculatingFns: [],
+        useStateSetValueFns: new Set(),
+        useStateSetRecalculatingFns: new Set(),
       });
 
       this.scheduleBindAll();
     }
 
-    // TODO: Do we need to dedupe?
-    this.outputs.get(outputId)!.setValueFns.push(setValue);
-    this.outputs.get(outputId)!.setRecalculatingFns.push(setRecalculating);
+    this.outputs.get(outputId)!.useStateSetValueFns.add(setValue);
+    this.outputs
+      .get(outputId)!
+      .useStateSetRecalculatingFns.add(setRecalculating);
   }
 
   /**
@@ -118,17 +199,12 @@ export class ShinyReactRegistry {
     return this.inputs.has(inputId);
   }
 
-  setInputValue(
-    inputId: string,
-    value: any,
-    opts?: { priority?: EventPriority },
-  ) {
+  setInputValue(inputId: string, value: any) {
     if (!this.inputs.has(inputId)) {
       console.error(`Input ${inputId} not found`);
       return;
     }
-    this.inputs.get(inputId)!.shinySetInputValueDebounced(value, opts);
-    this.inputs.get(inputId)!.setValueFns.forEach((fn) => fn(value));
+    this.inputs.get(inputId)!.setValue(value);
   }
 
   hasOutput(outputId: string) {
@@ -150,7 +226,7 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
     }
     window.Shiny.reactRegistry.outputs
       .get(el.id)!
-      .setValueFns.forEach((fn) => fn(data));
+      .useStateSetValueFns.forEach((fn) => fn(data));
   }
 
   override renderError(el: HTMLElement, err: ErrorsMessageValue): void {
@@ -165,7 +241,7 @@ export class ReactOutputBinding extends window.Shiny.OutputBinding {
     }
     window.Shiny.reactRegistry.outputs
       .get(el.id)!
-      .setRecalculatingFns.forEach((fn) => fn(show));
+      .useStateSetRecalculatingFns.forEach((fn) => fn(show));
   }
 }
 

@@ -1,19 +1,29 @@
 /**
- * Creates a debounced function that delays invoking func until after wait milliseconds have elapsed
- * since the last time the debounced function was invoked.
- *
- * @param func The function to debounce
- * @param wait The number of milliseconds to delay
- * @returns A debounced version of the function
+ * Type definition for a debounced function with dynamic delay capabilities
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function debounce<T extends (...args: any[]) => any>(
+export type DebouncedFunction<T extends (...args: any[]) => any> = {
+  (...args: Parameters<T>): void;
+  setDelay: (newWait: number) => void;
+  getDelay: () => number;
+  cancel: () => void;
+};
+
+/**
+ * Creates a debounced function with dynamic delay that can be changed at runtime.
+ *
+ * @param func The function to debounce
+ * @param delay The initial number of milliseconds to delay
+ * @returns A debounced function with setDelay, getDelay, and cancel methods attached
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function createDebouncedFn<T extends (...args: any[]) => any>(
   func: T,
-  wait: number,
-): (...args: Parameters<T>) => void {
+  delay: number,
+): DebouncedFunction<T> {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
-  return function (...args: Parameters<T>) {
+  const debouncedFunction = function (...args: Parameters<T>) {
     const later = () => {
       timeout = null;
       func(...args);
@@ -23,6 +33,21 @@ export function debounce<T extends (...args: any[]) => any>(
       clearTimeout(timeout);
     }
 
-    timeout = setTimeout(later, wait);
+    timeout = setTimeout(later, delay);
+  } as DebouncedFunction<T>;
+
+  debouncedFunction.setDelay = (newDelay: number) => {
+    delay = newDelay;
   };
+
+  debouncedFunction.getDelay = () => delay;
+
+  debouncedFunction.cancel = () => {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+
+  return debouncedFunction;
 }
