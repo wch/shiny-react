@@ -11,11 +11,13 @@ export {
   useShinyOutput,
 } from "./use-shiny";
 
+export type ShinyClassExtended = ShinyClass & {
+  reactRegistry: ShinyReactRegistry;
+  messageRegistry: ShinyMessageRegistry;
+};
+
 declare global {
   interface Window {
-    Shiny: ShinyClass & {
-      reactRegistry: ShinyReactRegistry;
-      messageRegistry: ShinyMessageRegistry;
-    };
+    Shiny?: ShinyClassExtended;
   }
 }

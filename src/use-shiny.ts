@@ -2,9 +2,11 @@
 
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useCallback, useEffect, useState } from "react";
+import { getShiny } from "./get-shiny";
 import { type InputRegistryEntry } from "./input-registry";
-import "./message-registry"; // Initialize message registry
-import "./react-registry"; // Initialize react registry
+import { initializeMessageRegistry } from "./message-registry";
+import { createReactOutputBinding } from "./output-registry";
+import { getReactRegistry, initializeReactRegistry } from "./react-registry";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -46,6 +48,8 @@ export function useShinyInput<T>(
     priority?: EventPriority;
   } = {},
 ): [T, (value: T) => void] {
+  ensureShinyReactInitialized();
+
   // NOTE: It's a little odd that debounceMs and priority passed this way; the
   // debounceMs is associated with the specific input name, and in Shiny's API,
   // priority is associated with each individual call to setInputValue(). But
@@ -54,9 +58,10 @@ export function useShinyInput<T>(
   // most recent call. This all should be straightened out in the future.
 
   let startValue: T = defaultValue;
-  const inputRegistryEntry = window.Shiny.reactRegistry.inputs.get(id) as
-    | InputRegistryEntry<T>
-    | undefined;
+  const reactRegistry = getReactRegistry();
+  const inputRegistryEntry = reactRegistry.inputs.get(
+    id,
+  ) as InputRegistryEntry<T>;
 
   if (inputRegistryEntry) {
     // If the input registry entry already exists, use its value as the start
@@ -73,12 +78,13 @@ export function useShinyInput<T>(
   const shinyInitialized = useShinyInitialized();
 
   useEffect(() => {
-    if (!shinyInitialized) {
-      return;
-    }
+    // if (!shinyInitialized) {
+    //   return;
+    // }
 
     // Make sure the input registry entry exists for this Shiny input ID
-    const inputRegistryEntry = window.Shiny.reactRegistry.inputs.getOrCreate<T>(
+    const reactRegistry = getReactRegistry();
+    const inputRegistryEntry = reactRegistry.inputs.getOrCreate<T>(
       id,
       defaultValue,
     );
@@ -107,18 +113,19 @@ export function useShinyInput<T>(
 
   const setValueWrapped = useCallback(
     (value: T) => {
-      if (!shinyInitialized) {
-        return;
-      }
+      // if (!shinyInitialized) {
+      //   return;
+      // }
 
-      const inputRegistryEntry = window.Shiny.reactRegistry.inputs.get(id);
+      const reactRegistry = getReactRegistry();
+      const inputRegistryEntry = reactRegistry.inputs.get(id);
       if (!inputRegistryEntry) {
         console.error(`Input ${id} not found`);
         return;
       }
       inputRegistryEntry.setValue(value);
     },
-    [shinyInitialized, id],
+    [id],
   );
 
   return [value, setValueWrapped];
@@ -145,17 +152,17 @@ export function useShinyOutput<T>(
   const [recalculating, setRecalculating] = useState<boolean>(false);
   const shinyInitialized = useShinyInitialized();
 
+  ensureShinyReactInitialized();
+
   useEffect(() => {
     if (!shinyInitialized) {
       return;
     }
-    window.Shiny.reactRegistry.outputs.add(
-      outputId,
-      setValue,
-      setRecalculating,
-    );
+
+    const reactRegistry = getReactRegistry();
+    reactRegistry.outputs.add(outputId, setValue, setRecalculating);
     return () => {
-      window.Shiny.reactRegistry.outputs.remove(outputId);
+      reactRegistry.outputs.remove(outputId);
     };
   }, [outputId, shinyInitialized]);
 
@@ -191,18 +198,24 @@ export function useShinyMessageHandler<T = any>(
 ): void {
   const shinyInitialized = useShinyInitialized();
 
+  ensureShinyReactInitialized();
+
   useEffect(() => {
     if (!shinyInitialized || !messageType || !handler) {
       return;
     }
+    const shiny = getShiny();
+    if (!shiny) {
+      return;
+    }
 
     // Register the message handler with our dedicated message registry
-    window.Shiny.messageRegistry.addHandler(messageType, handler);
+    shiny.messageRegistry.addHandler(messageType, handler);
 
     // Cleanup function that removes the handler when component unmounts
     // or when messageType/handler changes
     return () => {
-      window.Shiny.messageRegistry.removeHandler(messageType, handler);
+      shiny.messageRegistry.removeHandler(messageType, handler);
     };
   }, [shinyInitialized, messageType, handler]);
 }
@@ -216,11 +229,28 @@ export function useShinyInitialized(): boolean {
   const [shinyInitialized, setShinyInitialized] = useState<boolean>(false);
 
   useEffect(() => {
+    const shiny = getShiny();
+    if (!shiny) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    window.Shiny.initializedPromise.then(() => {
+    shiny.initializedPromise.then(() => {
       setShinyInitialized(true);
     });
   }, []);
 
   return shinyInitialized;
+}
+
+let shinyReactInitialized = false;
+function ensureShinyReactInitialized() {
+  if (shinyReactInitialized) {
+    return;
+  }
+
+  initializeReactRegistry();
+  createReactOutputBinding();
+  initializeMessageRegistry();
+
+  shinyReactInitialized = true;
 }

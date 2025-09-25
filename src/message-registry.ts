@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { getShiny } from "./get-shiny";
+
 /**
  * ShinyMessageRegistry manages custom message handlers for React components.
  *
@@ -25,14 +27,17 @@ class ShinyMessageRegistry {
       return;
     }
 
-    // Register single dispatcher for all React custom messages
-    window.Shiny.addCustomMessageHandler(
+    const shiny = getShiny();
+    if (!shiny) {
+      return;
+    }
+
+    shiny.addCustomMessageHandler(
       "shinyReactMessage",
       (msg: { type: string; data: any }) => {
         this.dispatchMessage(msg.type, msg.data);
       },
     );
-
     this.initialized = true;
   }
 
@@ -108,7 +113,16 @@ const messageRegistry = new ShinyMessageRegistry();
 
 // Note: Global Window interface is extended in use-shiny.ts to avoid conflicts
 
-// Make the registry available globally
-window.Shiny.messageRegistry = messageRegistry;
+/**
+ * Initialize the global message registry and make it available on window.Shiny
+ * This function should be called after Shiny is initialized
+ */
+export function initializeMessageRegistry(): void {
+  const shiny = getShiny();
+  if (!shiny) {
+    return;
+  }
+  shiny.messageRegistry = messageRegistry;
+}
 
-export { ShinyMessageRegistry, messageRegistry };
+export { messageRegistry, ShinyMessageRegistry };

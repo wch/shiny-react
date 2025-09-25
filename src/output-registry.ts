@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { getShiny } from "./get-shiny";
+
 export type ErrorsMessageValue = {
   message: string;
   call: string[];
@@ -105,6 +107,11 @@ export class OutputRegistry {
    * will provide perfect reliability for this.
    */
   private scheduleBindAll() {
+    const shiny = getShiny();
+    if (!shiny) {
+      return;
+    }
+
     if (this.bindAllScheduled) {
       return;
     }
@@ -113,45 +120,53 @@ export class OutputRegistry {
 
     // Use requestAnimationFrame to ensure DOM updates are complete
     requestAnimationFrame(() => {
-      console.log("rebinding");
-      window.Shiny.unbindAll?.(this.container);
+      shiny.unbindAll?.(this.container);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      window.Shiny.bindAll?.(this.container);
+      shiny.bindAll?.(this.container);
       this.bindAllScheduled = false;
     });
   }
 }
 
-export class ReactOutputBinding extends window.Shiny.OutputBinding {
-  override find(scope: HTMLElement | JQuery<HTMLElement>): JQuery<HTMLElement> {
-    return $(scope).find(".shiny-react-output");
+/**
+ * Create and register the React output binding when Shiny is available
+ */
+export function createReactOutputBinding() {
+  const shiny = getShiny();
+  if (!shiny) {
+    return;
   }
 
-  override renderValue(el: HTMLElement, data: any): void {
-    const outputEntry = window.Shiny.reactRegistry.outputs.get(el.id);
-    if (!outputEntry) {
-      console.error(`Output ${el.id} not found`);
-      return;
+  class ReactOutputBinding extends shiny.OutputBinding {
+    override find(
+      scope: HTMLElement | JQuery<HTMLElement>,
+    ): JQuery<HTMLElement> {
+      return $(scope).find(".shiny-react-output");
     }
-    outputEntry.setValue(data);
-  }
 
-  override renderError(el: HTMLElement, err: ErrorsMessageValue): void {
-    console.log(`Error for ${el.id}: ${err}`);
-  }
-
-  override showProgress(el: HTMLElement, show: boolean): void {
-    // console.log(`Progress for ${el.id}: ${show}`);
-    const outputEntry = window.Shiny.reactRegistry.outputs.get(el.id);
-    if (!outputEntry) {
-      console.error(`Output ${el.id} not found`);
-      return;
+    override renderValue(el: HTMLElement, data: any): void {
+      const outputEntry = shiny!.reactRegistry?.outputs.get(el.id);
+      if (!outputEntry) {
+        console.error(`Output ${el.id} not found`);
+        return;
+      }
+      outputEntry.setValue(data);
     }
-    outputEntry.setRecalculating(show);
+
+    override renderError(el: HTMLElement, err: ErrorsMessageValue): void {
+      console.log(`Error for ${el.id}: ${err}`);
+    }
+
+    override showProgress(el: HTMLElement, show: boolean): void {
+      // console.log(`Progress for ${el.id}: ${show}`);
+      const outputEntry = shiny!.reactRegistry?.outputs.get(el.id);
+      if (!outputEntry) {
+        console.error(`Output ${el.id} not found`);
+        return;
+      }
+      outputEntry.setRecalculating(show);
+    }
   }
+
+  shiny.outputBindings.register(new ReactOutputBinding(), "shiny.reactOutput");
 }
-
-window.Shiny.outputBindings.register(
-  new ReactOutputBinding(),
-  "shiny.reactOutput",
-);
