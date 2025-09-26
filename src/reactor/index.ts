@@ -1,2 +1,3 @@
-export { useValue } from "./use-value";
-export { Value, ValueStore, getValueStore } from "./value-store";
+export { Reactor } from "./reactor";
+export { ReactorStore, getReactorStore } from "./reactor-store";
+export { useReactor } from "./use-reactor";

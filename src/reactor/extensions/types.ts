@@ -1,4 +1,4 @@
-import type { Value } from "..";
+import type { Reactor } from "..";
 
 /**
  * Interface for extensions that can be attached to Value instances.
@@ -10,7 +10,7 @@ export interface Extension<T = any> {
    * @param value The Value instance to attach to
    * @returns A cleanup function that removes the extension
    */
-  attach(value: Value<T>): () => void;
+  attach(value: Reactor<T>): () => void;
 
   /** Unique name identifier for this extension */
   readonly name: string;
@@ -23,7 +23,7 @@ export interface Extension<T = any> {
  * @returns A new Extension instance
  */
 export type ExtensionFactory<T = any, TOptions = any> = (
-  value: Value<T>,
+  value: Reactor<T>,
   options: TOptions,
 ) => Extension<T>;
 

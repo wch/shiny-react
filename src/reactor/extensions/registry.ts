@@ -1,4 +1,4 @@
-import type { Value } from "..";
+import type { Reactor } from "..";
 import type { ExtensionFactory, NotifyOption } from "./types";
 
 /**
@@ -43,7 +43,7 @@ export function getRegisteredExtensions(): string[] {
  * @returns Array of cleanup functions for the created extensions
  */
 export function createExtensions<T>(
-  value: Value<T>,
+  value: Reactor<T>,
   notifyOptions: NotifyOption,
   context: { name: string; [key: string]: any },
 ): (() => void)[] {

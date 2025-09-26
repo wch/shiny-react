@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getValueStore } from "./value-store";
+import { getReactorStore } from "./reactor-store";
 
 // Import extension system - using relative paths since this might be moved to a separate package
 import { createExtensions } from "./extensions/registry";
@@ -27,14 +27,14 @@ import type { UseValueOptions } from "./extensions/types";
  * @returns A tuple containing the current value and a function to set the
  * value: `[value, setValue]`.
  */
-export function useValue<T>(
+export function useReactor<T>(
   key: string,
   defaultValue: T,
   options: UseValueOptions = {},
 ): [T, (value: T) => void] {
   const { notify, ...extensionOptions } = options;
 
-  const valueStore = getValueStore();
+  const valueStore = getReactorStore();
   const valueObj = valueStore.getOrCreate<T>(key, defaultValue);
 
   // The store may already have a value for this key, so we need to make sure we

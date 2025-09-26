@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { OutputBinding } from "@posit/shiny/srcts/types/src/bindings";
 import { getShiny } from "./get-shiny";
-import { getValueStore } from "./reactor";
+import { getReactorStore } from "./reactor";
 
 export type ErrorsMessageValue = {
   message: string;
@@ -19,7 +20,7 @@ export class OutputRegistryEntry<T> {
   setValue(value: T) {
     // Get the reactor Value from the ValueStore and update it directly
     // This will notify all React components that are subscribed to this Value
-    const valueStore = getValueStore();
+    const valueStore = getReactorStore();
     // let reactorValue = valueStore.get<T>(this.id);
     // if (!reactorValue) {
     //   // Create the Value if it doesn't exist (edge case where Shiny sends data
@@ -33,7 +34,7 @@ export class OutputRegistryEntry<T> {
   setRecalculating(value: boolean) {
     // Get the reactor Value for recalculating state and update it directly
     // This will notify all React components that are subscribed to this Value
-    const valueStore = getValueStore();
+    const valueStore = getReactorStore();
     const recalculatingKey = `${this.id}:recalculating`;
     let recalculatingValue = valueStore.get<boolean>(recalculatingKey);
     if (!recalculatingValue) {
@@ -133,7 +134,7 @@ export function createReactOutputBinding() {
     return;
   }
 
-  class ReactOutputBinding extends shiny.OutputBinding {
+  class ReactOutputBinding extends OutputBinding {
     override find(
       scope: HTMLElement | JQuery<HTMLElement>,
     ): JQuery<HTMLElement> {

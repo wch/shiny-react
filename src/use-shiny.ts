@@ -2,7 +2,7 @@ import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useEffect, useState } from "react";
 import { getShiny } from "./get-shiny";
 import { getShinyOutputRegistry } from "./output-registry";
-import { useValue } from "./reactor";
+import { useReactor } from "./reactor";
 
 // Make sure Shiny extension for Reactor is registered by importing it
 import "./reactor-shiny";
@@ -50,7 +50,7 @@ export function useShinyInput<T>(
     priority?: EventPriority;
   } = {},
 ): [T, (value: T) => void] {
-  return useValue(id, defaultValue, {
+  return useReactor(id, defaultValue, {
     notify: "shiny",
     inputId: id,
     debounceMs,
@@ -75,8 +75,8 @@ export function useShinyOutput<T>(
   outputId: string,
   defaultValue: T | undefined = undefined,
 ): [T | undefined, boolean] {
-  const [value, _setValue] = useValue<T | undefined>(outputId, defaultValue);
-  const [recalculating, setRecalculating] = useValue<boolean>(
+  const [value, _setValue] = useReactor<T | undefined>(outputId, defaultValue);
+  const [recalculating, setRecalculating] = useReactor<boolean>(
     `${outputId}:recalculating`,
     false,
   );

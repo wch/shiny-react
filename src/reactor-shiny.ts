@@ -1,6 +1,6 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { getShiny } from "./get-shiny";
-import type { Value } from "./reactor";
+import type { Reactor } from "./reactor";
 import { registerExtension } from "./reactor/extensions/registry";
 import type { Extension, ExtensionFactory } from "./reactor/extensions/types";
 import { createDebouncedFn, type DebouncedFunction } from "./utils";
@@ -42,7 +42,7 @@ class ShinyExtension<T> implements Extension<T> {
   private hasPendingSend = false;
 
   constructor(
-    private value: Value<T>,
+    private value: Reactor<T>,
     private options: ShinyOptions,
   ) {
     // Create debounced function for sending to Shiny
@@ -74,7 +74,7 @@ class ShinyExtension<T> implements Extension<T> {
     }
   }
 
-  private async sendWhenShinyIsInitialized(value: Value<T>): Promise<void> {
+  private async sendWhenShinyIsInitialized(value: Reactor<T>): Promise<void> {
     const shiny = getShiny();
     if (!shiny) {
       return;
@@ -90,7 +90,7 @@ class ShinyExtension<T> implements Extension<T> {
     }
   }
 
-  attach(value: Value<T>): () => void {
+  attach(value: Reactor<T>): () => void {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.sendWhenShinyIsInitialized(value);
 
@@ -146,7 +146,7 @@ class ShinyExtension<T> implements Extension<T> {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createShinyExtension: ExtensionFactory<any, ShinyOptions> = <T>(
-  value: Value<T>,
+  value: Reactor<T>,
   options: ShinyOptions,
 ) => {
   return new ShinyExtension(value, options);
