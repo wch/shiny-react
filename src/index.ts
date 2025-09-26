@@ -10,7 +10,6 @@ export {
   useShinyMessageHandler,
   useShinyOutput,
 } from "./use-shiny";
-export { useValue as useValueStore } from "./reactive-values";
 
 export type ShinyClassExtended = ShinyClass & {
   reactRegistry: ShinyReactRegistry;

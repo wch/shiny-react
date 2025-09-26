@@ -2,11 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import { getValueStore } from "./value-store";
 
 // Import extension system - using relative paths since this might be moved to a separate package
-import { createExtensions } from "../extensions/registry";
-import type { UseValueOptions } from "../extensions/types";
+import { createExtensions } from "./extensions/registry";
+import type { UseValueOptions } from "./extensions/types";
 
 // Make sure Shiny extension is registered by importing it
-import "../extensions/shiny";
+import "./extensions/shiny";
 
 /**
  * A React hook for managing external state values outside of the React tree.

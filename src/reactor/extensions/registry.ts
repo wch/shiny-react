@@ -1,4 +1,4 @@
-import type { Value } from "../reactive-values";
+import type { Value } from "..";
 import type { ExtensionFactory, NotifyOption } from "./types";
 
 /**

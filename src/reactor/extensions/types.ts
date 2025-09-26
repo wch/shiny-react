@@ -1,4 +1,4 @@
-import type { Value } from "../reactive-values";
+import type { Value } from "..";
 
 /**
  * Interface for extensions that can be attached to Value instances.

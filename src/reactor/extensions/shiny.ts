@@ -1,7 +1,7 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
-import { getShiny } from "../get-shiny";
-import type { Value } from "../reactive-values";
-import { createDebouncedFn, type DebouncedFunction } from "../utils";
+import type { Value } from "..";
+import { getShiny } from "../../get-shiny";
+import { createDebouncedFn, type DebouncedFunction } from "../../utils";
 import { registerExtension } from "./registry";
 import type { Extension, ExtensionFactory } from "./types";
 

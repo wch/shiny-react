@@ -6,7 +6,7 @@ import { getShiny } from "./get-shiny";
 import { initializeMessageRegistry } from "./message-registry";
 import { createReactOutputBinding } from "./output-registry";
 import { getReactRegistry, initializeReactRegistry } from "./react-registry";
-import { useValue } from "./reactive-values";
+import { useValue } from "./reactor";
 
 /**
  * A React hook for managing a Shiny input value.
