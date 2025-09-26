@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useEffect, useState } from "react";
 import { getShiny } from "./get-shiny";
@@ -7,6 +5,9 @@ import { initializeMessageRegistry } from "./message-registry";
 import { createReactOutputBinding } from "./output-registry";
 import { getReactRegistry, initializeReactRegistry } from "./react-registry";
 import { useValue } from "./reactor";
+
+// Make sure Shiny extension for Reactor is registered by importing it
+import "./reactor-shiny";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -120,6 +121,7 @@ export function useShinyOutput<T>(
  * @param handler The function to call when a message of this type is received.
  * The handler receives the message data as its parameter.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useShinyMessageHandler<T = any>(
   messageType: string,
   handler: (data: T) => void,

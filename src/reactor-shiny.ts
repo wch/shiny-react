@@ -1,9 +1,9 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
-import type { Value } from "..";
-import { getShiny } from "../../get-shiny";
-import { createDebouncedFn, type DebouncedFunction } from "../../utils";
-import { registerExtension } from "./registry";
-import type { Extension, ExtensionFactory } from "./types";
+import { getShiny } from "./get-shiny";
+import type { Value } from "./reactor";
+import { registerExtension } from "./reactor/extensions/registry";
+import type { Extension, ExtensionFactory } from "./reactor/extensions/types";
+import { createDebouncedFn, type DebouncedFunction } from "./utils";
 
 const DEFAULT_DEBOUNCE_MS = 100;
 
@@ -100,6 +100,7 @@ class ShinyExtension<T> implements Extension<T> {
 /**
  * Factory function for creating Shiny extensions
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createShinyExtension: ExtensionFactory<any, ShinyOptions> = <T>(
   value: Value<T>,
   options: ShinyOptions,

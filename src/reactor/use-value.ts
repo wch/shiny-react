@@ -5,16 +5,12 @@ import { getValueStore } from "./value-store";
 import { createExtensions } from "./extensions/registry";
 import type { UseValueOptions } from "./extensions/types";
 
-// Make sure Shiny extension is registered by importing it
-import "./extensions/shiny";
-
 /**
  * A React hook for managing external state values outside of the React tree.
  *
  * This hook provides a way to store and share state across multiple components
- * without prop drilling or React context. It is similar to libraries like
- * Zustand or Jotai, allowing you to maintain state that persists across
- * component re-renders and unmounts.
+ * without prop drilling or React context. It allows you to maintain state that
+ * persists across component re-renders and unmounts.
  *
  * The hook returns the current value and a setter function, similar to
  * React.useState, but the state is stored in an external ValueStore that can be
