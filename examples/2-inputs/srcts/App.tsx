@@ -1,4 +1,3 @@
-import React from "react";
 import BatchFormCard from "./BatchFormCard";
 import ButtonInputCard from "./ButtonInputCard";
 import CheckboxInputCard from "./CheckboxInputCard";

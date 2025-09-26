@@ -6,7 +6,9 @@ function DateInputCard() {
   // Get today's date as default in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
-  const [dateIn, setDateIn] = useShinyInput<string>("datein", today);
+  const [dateIn, setDateIn] = useShinyInput<string>("datein", today, {
+    debounceMs: 0,
+  });
   const [dateOut, _] = useShinyOutput<string>("dateout", undefined);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

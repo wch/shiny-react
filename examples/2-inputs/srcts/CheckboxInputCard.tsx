@@ -6,6 +6,7 @@ function CheckboxInputCard() {
   const [checkboxIn, setCheckboxIn] = useShinyInput<boolean>(
     "checkboxin",
     false,
+    { debounceMs: 0 },
   );
   const [checkboxOut, _] = useShinyOutput<boolean>("checkboxout", undefined);
 
