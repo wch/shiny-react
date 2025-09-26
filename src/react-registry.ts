@@ -1,10 +1,12 @@
 import { getShiny } from "./get-shiny";
 import { InputRegistry } from "./input-registry";
 import { OutputRegistry } from "./output-registry";
+import { getShinyInputValueStore } from "./shiny-input-value";
 
 export interface ShinyReactRegistry {
   inputs: InputRegistry;
   outputs: OutputRegistry;
+  shinyValueStore: ReturnType<typeof getShinyInputValueStore>;
 }
 
 let reactRegistry: ShinyReactRegistry | undefined = undefined;
@@ -17,6 +19,7 @@ export function initializeReactRegistry(): void {
   reactRegistry = {
     inputs: new InputRegistry(),
     outputs: new OutputRegistry(),
+    shinyValueStore: getShinyInputValueStore(),
   };
 
   const shiny = getShiny();

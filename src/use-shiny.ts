@@ -7,6 +7,7 @@ import { type InputRegistryEntry } from "./input-registry";
 import { initializeMessageRegistry } from "./message-registry";
 import { createReactOutputBinding } from "./output-registry";
 import { getReactRegistry, initializeReactRegistry } from "./react-registry";
+import { getShinyInputValueStore } from "./shiny-input-value";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -57,75 +58,48 @@ export function useShinyInput<T>(
   // multiple calls to useShinyInput("foo"), then the priority will be from the
   // most recent call. This all should be straightened out in the future.
 
-  let startValue: T = defaultValue;
-  const reactRegistry = getReactRegistry();
-  const inputRegistryEntry = reactRegistry.inputs.get(
-    id,
-  ) as InputRegistryEntry<T>;
+  const shinyInputValueStore = getShinyInputValueStore();
+  const valueObj = shinyInputValueStore.getOrCreate<T>(id, defaultValue, {
+    debounceMs,
+    priority,
+  });
 
-  if (inputRegistryEntry) {
-    // If the input registry entry already exists, use its value as the start
-    // value. We have to do this because if the input registry entry for this ID
-    // was created in the past and there's some (non-default) value in it
-    // already, then we don't want to override it with the default value passed
-    // to this hook. This situation could happen when there are multiple calls to
-    // useShinyInput("foo") in different places, or when the component that calls
-    // useShinyInput("foo") is dynamically generated (and so React won't know that
-    // the useState below is for the same input).
-    startValue = inputRegistryEntry.getValue();
-  }
-  const [value, setValue] = useState<T>(startValue);
-  const shinyInitialized = useShinyInitialized();
+  // Use the current value from the store as the initial state
+  const [value, setValue] = useState<T>(valueObj.getValue());
 
   useEffect(() => {
-    // if (!shinyInitialized) {
-    //   return;
-    // }
-
-    // Make sure the input registry entry exists for this Shiny input ID
-    const reactRegistry = getReactRegistry();
-    const inputRegistryEntry = reactRegistry.inputs.getOrCreate<T>(
-      id,
-      defaultValue,
-    );
-
+    // Update debounce delay if it changed
     if (debounceMs !== undefined) {
-      inputRegistryEntry.updateDebounceDelay(debounceMs);
-    }
-    if (priority) {
-      inputRegistryEntry.updatePriority(priority);
+      valueObj.updateDebounceDelay(debounceMs);
     }
 
-    inputRegistryEntry.addUseStateSetValueFn(setValue);
-    // TODO: This is awkward. Maybe just add a trigger method?
-    inputRegistryEntry.setValue(inputRegistryEntry.getValue());
+    // Update priority if provided
+    if (priority !== undefined) {
+      valueObj.setPriority(priority);
+    }
+
+    // Subscribe to changes
+    valueObj.subscribe(setValue);
+
+    // Make sure we have the latest value
+    valueObj.invokeUpdateHooks();
 
     return () => {
-      inputRegistryEntry.removeUseStateSetValueFn(setValue);
+      valueObj.unsubscribe(setValue);
 
-      // The registry entry will still exist even if it no longer has any
-      // useStateSetValueFns. This preserves the value of the input when the
+      // The value will still exist in the store even if it no longer has any
+      // subscribers. This preserves the value of the input when the subscriber
       // count drops to zero, which will happen on most re-renders as this
       // useEffect will be called again. If someone wants to really get rid of
-      // the registry entry, they will have to do so manually.
+      // the value, they will have to do so manually.
     };
-  }, [id, shinyInitialized, debounceMs, priority, defaultValue]);
+  }, [id, valueObj, debounceMs, priority, value]);
 
   const setValueWrapped = useCallback(
-    (value: T) => {
-      // if (!shinyInitialized) {
-      //   return;
-      // }
-
-      const reactRegistry = getReactRegistry();
-      const inputRegistryEntry = reactRegistry.inputs.get(id);
-      if (!inputRegistryEntry) {
-        console.error(`Input ${id} not found`);
-        return;
-      }
-      inputRegistryEntry.setValue(value);
+    (newValue: T) => {
+      valueObj.setValue(newValue);
     },
-    [id],
+    [valueObj],
   );
 
   return [value, setValueWrapped];
