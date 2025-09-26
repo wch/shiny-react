@@ -1,6 +1,7 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useEffect, useState } from "react";
 import { getShiny } from "./get-shiny";
+import { getMessageRegistry } from "./message-registry";
 import { getShinyOutputRegistry } from "./output-registry";
 import { useReactor } from "./reactor";
 
@@ -138,12 +139,14 @@ export function useShinyMessageHandler<T = any>(
     }
 
     // Register the message handler with our dedicated message registry
-    shiny.messageRegistry.addHandler(messageType, handler);
+    const messageRegistry = getMessageRegistry();
+    messageRegistry.init(); // Ensure registry is initialized
+    messageRegistry.addHandler(messageType, handler);
 
     // Cleanup function that removes the handler when component unmounts
     // or when messageType/handler changes
     return () => {
-      shiny.messageRegistry.removeHandler(messageType, handler);
+      messageRegistry.removeHandler(messageType, handler);
     };
   }, [shinyInitialized, messageType, handler]);
 }

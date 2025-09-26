@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { OutputBinding } from "@posit/shiny/srcts/types/src/bindings";
+import { type OutputBinding } from "@posit/shiny/srcts/types/src/bindings";
 import { getShiny } from "./get-shiny";
 import { getReactorStore } from "./reactor";
 
@@ -134,7 +134,7 @@ export function createReactOutputBinding() {
     return;
   }
 
-  class ReactOutputBinding extends OutputBinding {
+  class ReactOutputBinding extends shiny.OutputBinding {
     override find(
       scope: HTMLElement | JQuery<HTMLElement>,
     ): JQuery<HTMLElement> {

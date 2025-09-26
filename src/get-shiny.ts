@@ -1,8 +1,8 @@
-import { type ShinyClassExtended } from "./index";
+/// <reference types="@posit/shiny" />
 
 /**
  * Get the Shiny object if it is available
  */
-export function getShiny(): ShinyClassExtended | undefined {
+export function getShiny(): typeof window.Shiny | undefined {
   return window.Shiny;
 }
