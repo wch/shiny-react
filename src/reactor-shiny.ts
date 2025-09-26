@@ -19,6 +19,19 @@ export interface ShinyOptions {
   priority?: EventPriority;
 }
 
+let shinyInitialized = false;
+let shinyInitializedPromise: Promise<void>;
+{
+  const shiny = getShiny();
+  if (shiny) {
+    shinyInitializedPromise = shiny.initializedPromise;
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    shinyInitializedPromise.then(() => {
+      shinyInitialized = true;
+    });
+  }
+}
+
 /**
  * Extension that notifies a Shiny server when a Value changes
  */
@@ -26,6 +39,7 @@ class ShinyExtension<T> implements Extension<T> {
   readonly name = "shiny";
   private debouncedSendToShiny: DebouncedFunction<(value: T) => void>;
   private cleanupFn?: () => void;
+  private hasPendingSend = false;
 
   constructor(
     private value: Value<T>,
@@ -39,6 +53,17 @@ class ShinyExtension<T> implements Extension<T> {
   }
 
   private sendToShiny(value: T): void {
+    // If Shiny isn't ready yet, queue a send
+    if (!shinyInitialized) {
+      this.hasPendingSend = true;
+      return;
+    }
+
+    // Actually send to Shiny
+    this.actualSendToShiny(value);
+  }
+
+  private actualSendToShiny(value: T): void {
     const shiny = getShiny();
     if (shiny?.setInputValue) {
       const options: { priority?: EventPriority } = {};
@@ -49,7 +74,26 @@ class ShinyExtension<T> implements Extension<T> {
     }
   }
 
+  private async sendWhenShinyIsInitialized(value: Value<T>): Promise<void> {
+    const shiny = getShiny();
+    if (!shiny) {
+      return;
+    }
+
+    // Wait for Shiny to initialize
+    await shinyInitializedPromise;
+
+    const currentValue = value.getValue();
+    if (this.hasPendingSend) {
+      this.actualSendToShiny(currentValue);
+      this.hasPendingSend = false;
+    }
+  }
+
   attach(value: Value<T>): () => void {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    this.sendWhenShinyIsInitialized(value);
+
     // Add the debounced send function as an update hook
     value.addUpdateHook(this.debouncedSendToShiny);
 
