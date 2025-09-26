@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getShiny } from "./get-shiny";
-import { type InputRegistryEntry } from "./input-registry";
 import { initializeMessageRegistry } from "./message-registry";
 import { createReactOutputBinding } from "./output-registry";
 import { getReactRegistry, initializeReactRegistry } from "./react-registry";
-import { getShinyInputValueStore } from "./shiny-input-value";
+import { useValue } from "./reactive-values";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -51,58 +50,13 @@ export function useShinyInput<T>(
 ): [T, (value: T) => void] {
   ensureShinyReactInitialized();
 
-  // NOTE: It's a little odd that debounceMs and priority passed this way; the
-  // debounceMs is associated with the specific input name, and in Shiny's API,
-  // priority is associated with each individual call to setInputValue(). But
-  // here they're both associated with the input name, and also if there are
-  // multiple calls to useShinyInput("foo"), then the priority will be from the
-  // most recent call. This all should be straightened out in the future.
-
-  const shinyInputValueStore = getShinyInputValueStore();
-  const valueObj = shinyInputValueStore.getOrCreate<T>(id, defaultValue, {
+  // Use the enhanced useValue hook with Shiny notification enabled
+  return useValue(id, defaultValue, {
+    notify: "shiny",
+    inputId: id,
     debounceMs,
     priority,
   });
-
-  // Use the current value from the store as the initial state
-  const [value, setValue] = useState<T>(valueObj.getValue());
-
-  useEffect(() => {
-    // Update debounce delay if it changed
-    if (debounceMs !== undefined) {
-      valueObj.updateDebounceDelay(debounceMs);
-    }
-
-    // Update priority if provided
-    if (priority !== undefined) {
-      valueObj.setPriority(priority);
-    }
-
-    // Subscribe to changes
-    valueObj.subscribe(setValue);
-
-    // Make sure we have the latest value
-    valueObj.invokeUpdateHooks();
-
-    return () => {
-      valueObj.unsubscribe(setValue);
-
-      // The value will still exist in the store even if it no longer has any
-      // subscribers. This preserves the value of the input when the subscriber
-      // count drops to zero, which will happen on most re-renders as this
-      // useEffect will be called again. If someone wants to really get rid of
-      // the value, they will have to do so manually.
-    };
-  }, [id, valueObj, debounceMs, priority, value]);
-
-  const setValueWrapped = useCallback(
-    (newValue: T) => {
-      valueObj.setValue(newValue);
-    },
-    [valueObj],
-  );
-
-  return [value, setValueWrapped];
 }
 
 /**

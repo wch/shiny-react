@@ -86,19 +86,41 @@ export class Value<T> {
  *
  * This class provides a centralized way to manage multiple reactive values,
  * typically used for managing application state or input/output bindings.
- * Values are stored by string keys and can be retrieved, created, or removed as needed.
+ * Values are stored by string keys and can be retrieved, created, or removed as
+ * needed.
  *
- * @template V The type of Value instances stored (defaults to Value<any>)
+ * **Type Safety Contract:** This store does not enforce type consistency at
+ * runtime. It is the caller's responsibility to ensure that the same type T is
+ * used when setting and getting values for the same key. Using different types
+ * for the same key will result in runtime type errors.
+ *
+ * @example
+ * ```typescript
+ * const store = new ValueStore();
+ *
+ * // Correct usage - consistent types
+ * store.set("count", new Value<number>(0));
+ * const count = store.get<number>("count"); // Safe
+ *
+ * // Incorrect usage - inconsistent types
+ * store.set("count", new Value<number>(0));
+ * const count = store.get<string>("count"); // Compiles but unsafe!
+ * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class ValueStore<V extends Value<any> = Value<any>> {
-  protected _values: Map<string, V> = new Map();
+export class ValueStore {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected _values: Map<string, Value<any>> = new Map();
 
   /**
    * Retrieves a value by its key.
+   *
+   * **Warning:** The type parameter T must match the type used when the value
+   * was originally stored. This method performs no runtime type checking.
+   *
+   * @param key The key to look up
    * @returns The value if found, undefined otherwise
    */
-  get<T>(key: string): V | undefined {
+  get<T>(key: string): Value<T> | undefined {
     return this._values.get(key);
   }
 
@@ -111,22 +133,30 @@ export class ValueStore<V extends Value<any> = Value<any>> {
 
   /**
    * Stores a value with the given key.
+   *
+   * @param key The key to store the value under
+   * @param value The Value instance to store
    */
-  set(key: string, value: V): void {
+  set<T>(key: string, value: Value<T>): void {
     this._values.set(key, value);
   }
 
   /**
    * Gets an existing value or creates a new one if it doesn't exist.
+   *
+   * **Type Safety:** If a value already exists for the key, the caller must
+   * ensure that the type T matches the type of the existing value. This method
+   * performs no runtime type checking on existing values.
+   *
    * @param key The key to look up or create
    * @param initialValue The initial value to use if creating a new Value
    * @param options Optional configuration (unused in base implementation)
    * @returns The existing or newly created value
    */
-  getOrCreate<T>(key: string, initialValue: T, options?: {}): V {
+  getOrCreate<T>(key: string, initialValue: T, options?: {}): Value<T> {
     let value = this.get<T>(key);
     if (!value) {
-      value = new Value<T>(initialValue) as V;
+      value = new Value<T>(initialValue);
       this.set(key, value);
     }
     return value;
