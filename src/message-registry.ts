@@ -117,12 +117,8 @@ const messageRegistry = new ShinyMessageRegistry();
  * Initialize the global message registry and make it available on window.Shiny
  * This function should be called after Shiny is initialized
  */
-export function initializeMessageRegistry(): void {
-  const shiny = getShiny();
-  if (!shiny) {
-    return;
-  }
-  shiny.messageRegistry = messageRegistry;
+export function getMessageRegistry(): ShinyMessageRegistry {
+  return messageRegistry;
 }
 
 export { messageRegistry, ShinyMessageRegistry };

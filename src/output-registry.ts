@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { getShiny } from "./get-shiny";
+import { getValueStore } from "./reactor";
 
 export type ErrorsMessageValue = {
   message: string;
@@ -10,37 +11,39 @@ export type ErrorsMessageValue = {
 
 export class OutputRegistryEntry<T> {
   id: string; // Output ID
-  private useStateSetValueFns: Set<(value: T) => void>;
-  private useStateSetRecalculatingFns: Set<(value: boolean) => void>;
 
   constructor(id: string) {
     this.id = id;
-    this.useStateSetValueFns = new Set();
-    this.useStateSetRecalculatingFns = new Set();
-  }
-
-  addUseStateSetValueFn(fn: (value: T) => void) {
-    this.useStateSetValueFns.add(fn);
-  }
-
-  removeUseStateSetValueFn(fn: (value: T) => void) {
-    this.useStateSetValueFns.delete(fn);
-  }
-
-  addUseStateSetRecalculatingFn(fn: (value: boolean) => void) {
-    this.useStateSetRecalculatingFns.add(fn);
-  }
-
-  removeUseStateSetRecalculatingFn(fn: (value: boolean) => void) {
-    this.useStateSetRecalculatingFns.delete(fn);
   }
 
   setValue(value: T) {
-    this.useStateSetValueFns.forEach((fn) => fn(value));
+    // Get the reactor Value from the ValueStore and update it directly
+    // This will notify all React components that are subscribed to this Value
+    const valueStore = getValueStore();
+    // let reactorValue = valueStore.get<T>(this.id);
+    // if (!reactorValue) {
+    //   // Create the Value if it doesn't exist (edge case where Shiny sends data
+    //   // before any component has called useShinyOutput)
+    //   reactorValue = valueStore.getOrCreate<T>(this.id, undefined as any);
+    // }
+    const reactorValue = valueStore.getOrCreate<T>(this.id, undefined as T);
+    reactorValue.setValue(value);
   }
 
   setRecalculating(value: boolean) {
-    this.useStateSetRecalculatingFns.forEach((fn) => fn(value));
+    // Get the reactor Value for recalculating state and update it directly
+    // This will notify all React components that are subscribed to this Value
+    const valueStore = getValueStore();
+    const recalculatingKey = `${this.id}:recalculating`;
+    let recalculatingValue = valueStore.get<boolean>(recalculatingKey);
+    if (!recalculatingValue) {
+      // Create the recalculating Value if it doesn't exist
+      recalculatingValue = valueStore.getOrCreate<boolean>(
+        recalculatingKey,
+        false,
+      );
+    }
+    recalculatingValue.setValue(value);
   }
 }
 
@@ -57,11 +60,7 @@ export class OutputRegistry {
     document.body.appendChild(this.container);
   }
 
-  add<T>(
-    outputId: string,
-    setValue: (value: T) => void,
-    setRecalculating: (value: boolean) => void,
-  ) {
+  add(outputId: string, setRecalculating: (value: boolean) => void) {
     let outputEntry = this.get(outputId);
     if (!outputEntry) {
       // Need to create a dummy div element with the ID, so that we have
@@ -77,9 +76,6 @@ export class OutputRegistry {
 
       this.scheduleBindAll();
     }
-
-    outputEntry.addUseStateSetValueFn(setValue);
-    outputEntry.addUseStateSetRecalculatingFn(setRecalculating);
   }
 
   has(outputId: string) {
@@ -145,7 +141,7 @@ export function createReactOutputBinding() {
     }
 
     override renderValue(el: HTMLElement, data: any): void {
-      const outputEntry = shiny!.reactRegistry?.outputs.get(el.id);
+      const outputEntry = getShinyOutputRegistry()!.get(el.id);
       if (!outputEntry) {
         console.error(`Output ${el.id} not found`);
         return;
@@ -158,8 +154,7 @@ export function createReactOutputBinding() {
     }
 
     override showProgress(el: HTMLElement, show: boolean): void {
-      // console.log(`Progress for ${el.id}: ${show}`);
-      const outputEntry = shiny!.reactRegistry?.outputs.get(el.id);
+      const outputEntry = getShinyOutputRegistry()!.get(el.id);
       if (!outputEntry) {
         console.error(`Output ${el.id} not found`);
         return;
@@ -170,3 +165,11 @@ export function createReactOutputBinding() {
 
   shiny.outputBindings.register(new ReactOutputBinding(), "shiny.reactOutput");
 }
+
+const outputRegistry: OutputRegistry = new OutputRegistry();
+
+export function getShinyOutputRegistry() {
+  return outputRegistry;
+}
+
+createReactOutputBinding();

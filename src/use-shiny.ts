@@ -1,13 +1,14 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
 import { useEffect, useState } from "react";
 import { getShiny } from "./get-shiny";
-import { initializeMessageRegistry } from "./message-registry";
-import { createReactOutputBinding } from "./output-registry";
-import { getReactRegistry, initializeReactRegistry } from "./react-registry";
+import { getShinyOutputRegistry } from "./output-registry";
 import { useValue } from "./reactor";
 
 // Make sure Shiny extension for Reactor is registered by importing it
 import "./reactor-shiny";
+// Initialize message registry and output registry
+import "./message-registry";
+import "./output-registry";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -49,9 +50,6 @@ export function useShinyInput<T>(
     priority?: EventPriority;
   } = {},
 ): [T, (value: T) => void] {
-  ensureShinyReactInitialized();
-
-  // Use the enhanced useValue hook with Shiny notification enabled
   return useValue(id, defaultValue, {
     notify: "shiny",
     inputId: id,
@@ -77,23 +75,25 @@ export function useShinyOutput<T>(
   outputId: string,
   defaultValue: T | undefined = undefined,
 ): [T | undefined, boolean] {
-  const [value, setValue] = useState<T | undefined>(defaultValue);
-  const [recalculating, setRecalculating] = useState<boolean>(false);
+  const [value, _setValue] = useValue<T | undefined>(outputId, defaultValue);
+  const [recalculating, setRecalculating] = useValue<boolean>(
+    `${outputId}:recalculating`,
+    false,
+  );
   const shinyInitialized = useShinyInitialized();
-
-  ensureShinyReactInitialized();
 
   useEffect(() => {
     if (!shinyInitialized) {
       return;
     }
 
-    const reactRegistry = getReactRegistry();
-    reactRegistry.outputs.add(outputId, setValue, setRecalculating);
+    const shinyOutputRegistry = getShinyOutputRegistry();
+    shinyOutputRegistry.add(outputId, setRecalculating);
+
     return () => {
-      reactRegistry.outputs.remove(outputId);
+      shinyOutputRegistry.remove(outputId);
     };
-  }, [outputId, shinyInitialized]);
+  }, [outputId, shinyInitialized, setRecalculating]);
 
   return [value, recalculating];
 }
@@ -127,8 +127,6 @@ export function useShinyMessageHandler<T = any>(
   handler: (data: T) => void,
 ): void {
   const shinyInitialized = useShinyInitialized();
-
-  ensureShinyReactInitialized();
 
   useEffect(() => {
     if (!shinyInitialized || !messageType || !handler) {
@@ -170,17 +168,4 @@ export function useShinyInitialized(): boolean {
   }, []);
 
   return shinyInitialized;
-}
-
-let shinyReactInitialized = false;
-function ensureShinyReactInitialized() {
-  if (shinyReactInitialized) {
-    return;
-  }
-
-  initializeReactRegistry();
-  createReactOutputBinding();
-  initializeMessageRegistry();
-
-  shinyReactInitialized = true;
 }
