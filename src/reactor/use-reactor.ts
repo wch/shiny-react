@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getReactorStore } from "./reactor-store";
 
 // Import extension system - using relative paths since this might be moved to a separate package
 import { createExtensions } from "./extensions/registry";
-import type { UseValueOptions } from "./extensions/types";
+import type { UseReactorOptions } from "./extensions/types";
 
 /**
  * A React hook for managing external state values outside of the React tree.
@@ -13,8 +13,8 @@ import type { UseValueOptions } from "./extensions/types";
  * persists across component re-renders and unmounts.
  *
  * The hook returns the current value and a setter function, similar to
- * React.useState, but the state is stored in an external ValueStore that can be
- * accessed by any component using the same key.
+ * React.useState, but the state is stored in an external ReactorStore that can
+ * be accessed by any component using the same key.
  *
  * Extensions can be enabled via the options parameter to add functionality like
  * notifying external systems when values change (e.g., Shiny servers,
@@ -30,22 +30,22 @@ import type { UseValueOptions } from "./extensions/types";
 export function useReactor<T>(
   key: string,
   defaultValue: T,
-  options: UseValueOptions = {},
+  options: UseReactorOptions = {},
 ): [T, (value: T) => void] {
   const { notify, ...extensionOptions } = options;
 
-  const valueStore = getReactorStore();
-  const valueObj = valueStore.getOrCreate<T>(key, defaultValue);
+  const reactorStore = getReactorStore();
+  const reactor = reactorStore.getOrCreate<T>(key, defaultValue);
 
   // The store may already have a value for this key, so we need to make sure we
   // initialize the useState with the value from the store.
-  const [value, setValue] = useState<T>(valueObj.getValue());
+  const [value, setValue] = useState<T>(reactor.getValue());
 
   // Handle extensions based on notification configuration
   useEffect(() => {
     if (!notify) return;
 
-    const cleanupFunctions = createExtensions(valueObj, notify, {
+    const cleanupFunctions = createExtensions(reactor, notify, {
       name: key,
       ...extensionOptions,
     });
@@ -53,26 +53,26 @@ export function useReactor<T>(
     return () => {
       cleanupFunctions.forEach((cleanup) => cleanup());
     };
-  }, [valueObj, notify, key, JSON.stringify(extensionOptions)]);
+  }, [reactor, notify, key, JSON.stringify(extensionOptions)]);
 
   useEffect(() => {
     // Connect the setValue function to the valueObj so that it will be called
     // when someone else calls valueObj.setValue().
-    valueObj.subscribe(setValue);
+    reactor.subscribe(setValue);
 
     // Make sure we have the latest value
-    valueObj.invokeUpdateHooks();
+    reactor.invokeUpdateHooks();
 
     return () => {
-      valueObj.unsubscribe(setValue);
+      reactor.unsubscribe(setValue);
     };
-  }, [key, valueObj]);
+  }, [key, reactor]);
 
   const setValueWrapped = useCallback(
     (newValue: T) => {
-      valueObj.setValue(newValue);
+      reactor.setValue(newValue);
     },
-    [valueObj],
+    [reactor],
   );
 
   return [value, setValueWrapped];

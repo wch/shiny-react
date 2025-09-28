@@ -18,28 +18,22 @@ export class OutputRegistryEntry<T> {
   }
 
   setValue(value: T) {
-    // Get the reactor Value from the ValueStore and update it directly
-    // This will notify all React components that are subscribed to this Value
-    const valueStore = getReactorStore();
-    // let reactorValue = valueStore.get<T>(this.id);
-    // if (!reactorValue) {
-    //   // Create the Value if it doesn't exist (edge case where Shiny sends data
-    //   // before any component has called useShinyOutput)
-    //   reactorValue = valueStore.getOrCreate<T>(this.id, undefined as any);
-    // }
-    const reactorValue = valueStore.getOrCreate<T>(this.id, undefined as T);
-    reactorValue.setValue(value);
+    // Get the Reactor from the ReactorStore and update it directly
+    // This will notify all components that are subscribed to this Reactor
+    const reactorStore = getReactorStore();
+    const reactor = reactorStore.getOrCreate<T>(this.id, undefined as T);
+    reactor.setValue(value);
   }
 
   setRecalculating(value: boolean) {
     // Get the reactor Value for recalculating state and update it directly
     // This will notify all React components that are subscribed to this Value
-    const valueStore = getReactorStore();
+    const reactorStore = getReactorStore();
     const recalculatingKey = `${this.id}:recalculating`;
-    let recalculatingValue = valueStore.get<boolean>(recalculatingKey);
+    let recalculatingValue = reactorStore.get<boolean>(recalculatingKey);
     if (!recalculatingValue) {
       // Create the recalculating Value if it doesn't exist
-      recalculatingValue = valueStore.getOrCreate<boolean>(
+      recalculatingValue = reactorStore.getOrCreate<boolean>(
         recalculatingKey,
         false,
       );

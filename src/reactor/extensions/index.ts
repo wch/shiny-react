@@ -12,5 +12,5 @@ export type {
   Extension,
   ExtensionFactory,
   NotifyOption,
-  UseValueOptions,
+  UseReactorOptions,
 } from "./types";

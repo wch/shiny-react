@@ -35,7 +35,7 @@ export type NotifyOption = string | string[];
 /**
  * Options passed to useValue for configuring extensions
  */
-export interface UseValueOptions {
+export interface UseReactorOptions {
   /** Extensions to notify when value changes (e.g. "shiny", ["shiny", "observable"]) */
   notify?: NotifyOption;
   /** Additional options passed to extensions */

@@ -15,14 +15,14 @@ import { Reactor } from "./reactor";
  *
  * @example
  * ```typescript
- * const store = new ValueStore();
+ * const store = new ReactorStore();
  *
  * // Correct usage - consistent types
- * store.set("count", new Value<number>(0));
+ * store.set("count", new Reactor<number>(0));
  * const count = store.get<number>("count"); // Safe
  *
  * // Incorrect usage - inconsistent types
- * store.set("count", new Value<number>(0));
+ * store.set("count", new Reactor<number>(0));
  * const count = store.get<string>("count"); // Compiles but unsafe!
  * ```
  */
@@ -111,11 +111,11 @@ export class ReactorStore {
   }
 }
 
-let globalValueStore: ReactorStore | undefined = undefined;
+let globalReactorStore: ReactorStore | undefined = undefined;
 
 export function getReactorStore(): ReactorStore {
-  if (!globalValueStore) {
-    globalValueStore = new ReactorStore();
+  if (!globalReactorStore) {
+    globalReactorStore = new ReactorStore();
   }
-  return globalValueStore;
+  return globalReactorStore;
 }
