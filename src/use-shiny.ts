@@ -1,5 +1,5 @@
 import { type EventPriority } from "@posit/shiny/srcts/types/src/inputPolicies";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { getShiny } from "./get-shiny";
 import { getMessageRegistry } from "./message-registry";
 import { getShinyOutputRegistry } from "./output-registry";
@@ -50,7 +50,7 @@ export function useShinyInput<T>(
     debounceMs?: number;
     priority?: EventPriority;
   } = {},
-): [T, (value: T) => void] {
+): [T, Dispatch<SetStateAction<T>>] {
   return useReactor(id, defaultValue, {
     notify: "shiny",
     inputId: id,

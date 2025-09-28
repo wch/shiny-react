@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { getReactorStore } from "./reactor-store";
 
 // Import extension system - using relative paths since this might be moved to a separate package
@@ -20,18 +26,39 @@ import type { UseReactorOptions } from "./extensions/types";
  * notifying external systems when values change (e.g., Shiny servers,
  * Observable notebooks).
  *
+ * The setter function works identically to React's useState setter:
+ * - Direct value: `setValue(newValue)`
+ * - Functional update: `setValue(prevValue => newValue)`
+ * - When T is a function type, wrap the function: `setValue(() => myFunction)`
+ *
  * @param key The unique identifier for this value in the store.
  * @param defaultValue The initial value to use if none exists in the store.
  * @param options Optional configuration including notification targets and
  * their options.
- * @returns A tuple containing the current value and a function to set the
- * value: `[value, setValue]`.
+ * @returns A tuple containing the current value and a setter function that
+ * accepts either a new value or a function that computes the new value from
+ * the previous value: `[value, setValue]`.
+ *
+ * @example
+ * ```tsx
+ * const [count, setCount] = useReactor("counter", 0);
+ *
+ * // Direct value update
+ * setCount(5);
+ *
+ * // Functional update
+ * setCount(prev => prev + 1);
+ *
+ * // For function types, wrap the function
+ * const [fn, setFn] = useReactor("callback", () => {});
+ * setFn(() => () => console.log("new function"));
+ * ```
  */
 export function useReactor<T>(
   key: string,
   defaultValue: T,
   options: UseReactorOptions = {},
-): [T, (value: T) => void] {
+): [T, Dispatch<SetStateAction<T>>] {
   const { notify, ...extensionOptions } = options;
 
   const reactorStore = getReactorStore();
@@ -76,8 +103,17 @@ export function useReactor<T>(
   }, [key, reactor]);
 
   const setValueWrapped = useCallback(
-    (newValue: T) => {
-      reactor.setValue(newValue);
+    (action: SetStateAction<T>) => {
+      // Handle functional updates similar to React's useState
+      // When action is a function, it's treated as a state updater function
+      // If T itself is a function type and you want to set a function as the value,
+      // you need to wrap it: setValue(() => myFunction)
+      if (typeof action === "function") {
+        const updater = action as (prev: T) => T;
+        reactor.setValue(updater(reactor.getValue()));
+      } else {
+        reactor.setValue(action);
+      }
     },
     [reactor],
   );
