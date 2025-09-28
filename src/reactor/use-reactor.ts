@@ -37,8 +37,15 @@ export function useReactor<T>(
   const reactorStore = getReactorStore();
   const reactor = reactorStore.getOrCreate<T>(key, defaultValue);
 
-  // The store may already have a value for this key, so we need to make sure we
-  // initialize the useState with the value from the store.
+  // This useState with the current value from the reactor is an unusual
+  // pattern.
+  //
+  // useState will only use the initial value the first time a component is
+  // rendered. Subsequent re-renders will use the value from the previous
+  // render. However, in some cases, the first time a component is rendered (or
+  // if it is removed and then the same component is added back later), there
+  // will already be a reactor for that key in the store. When that happens,
+  // we want to use that reactor's value as the initial value for the useState.
   const [value, setValue] = useState<T>(reactor.getValue());
 
   // Handle extensions based on notification configuration
@@ -56,8 +63,8 @@ export function useReactor<T>(
   }, [reactor, notify, key, JSON.stringify(extensionOptions)]);
 
   useEffect(() => {
-    // Connect the setValue function to the valueObj so that it will be called
-    // when someone else calls valueObj.setValue().
+    // Connect the setValue function to the reactor so that it will be called
+    // when someone else calls reactor.setValue().
     reactor.subscribe(setValue);
 
     // Make sure we have the latest value
