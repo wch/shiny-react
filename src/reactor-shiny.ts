@@ -80,8 +80,11 @@ class ShinyExtension<T> implements Extension<T> {
       return;
     }
 
-    // Wait for Shiny to initialize
-    await shinyInitializedPromise;
+    try {
+      await shinyInitializedPromise;
+    } catch (error) {
+      console.error("Error waiting for Shiny initialization:", error);
+    }
 
     const currentValue = value.getValue();
     if (this.hasPendingSend) {
@@ -91,8 +94,10 @@ class ShinyExtension<T> implements Extension<T> {
   }
 
   attach(value: Reactor<T>): () => void {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.sendWhenShinyIsInitialized(value);
+    // Handle promise with proper error catching
+    this.sendWhenShinyIsInitialized(value).catch((error) => {
+      console.error("Error in ShinyExtension initialization:", error);
+    });
 
     // Add the debounced send function as an update hook
     value.addUpdateHook(this.debouncedSendToShiny);

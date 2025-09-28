@@ -28,11 +28,23 @@ export class Reactor<T> {
   /**
    * Sets the value and notifies all subscribers and update hooks.
    * Subscribers are notified first, followed by update hooks.
+   * Errors in individual subscribers/hooks are caught to prevent cascade failures.
    */
   setValue(value: T): void {
     this._value = value;
-    this._subscribers.forEach((subscriber) => subscriber(value));
-    this._updateHooks.forEach((hook) => hook(value));
+
+    // Notify subscribers
+    this._subscribers.forEach((subscriber) => {
+      try {
+        subscriber(value);
+      } catch (error) {
+        console.error(`[Reactor] Error in subscriber for value update:`, error);
+        console.error(`[Reactor] Current value:`, value);
+        console.error(`[Reactor] Subscriber function:`, subscriber.toString());
+      }
+    });
+
+    this.invokeUpdateHooks();
   }
 
   /**
@@ -77,8 +89,17 @@ export class Reactor<T> {
    * Manually invokes all update hooks with the current value.
    * This is useful when you need to trigger hooks without changing the value,
    * such as when external conditions change that affect hook behavior.
+   * Errors in individual hooks are caught to prevent cascade failures.
    */
   invokeUpdateHooks(): void {
-    this._updateHooks.forEach((hook) => hook(this._value));
+    this._updateHooks.forEach((hook) => {
+      try {
+        hook(this._value);
+      } catch (error) {
+        console.error(`[Reactor] Error in update hook:`, error);
+        console.error(`[Reactor] Current value:`, this._value);
+        console.error(`[Reactor] Hook function:`, hook.toString());
+      }
+    });
   }
 }
