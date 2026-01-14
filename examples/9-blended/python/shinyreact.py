@@ -126,7 +126,7 @@ def react_nav_panel(title, *args, icon=None, value=None):
             icon_svg = icon
 
     attrs = {
-        "data-panel-id": value,
+        "data-slot": value,
         "data-panel-title": title,
         "class": "react-sidebar-panel-content",
         "style": "display: none;"  # Hidden until React takes over
@@ -176,7 +176,7 @@ def react_sidebar_layout(
     for p in panels:
         if hasattr(p, 'attrs'):
             panel_config.append({
-                "id": p.attrs.get("data-panel-id"),
+                "id": p.attrs.get("data-slot"),
                 "title": p.attrs.get("data-panel-title"),
                 "icon": p.attrs.get("data-panel-icon")
             })

@@ -93,55 +93,83 @@ def server(input, output, session):
 
 ## Creating Reusable React Widgets
 
-When building React widgets for Shiny apps, **use custom web elements** for self-contained components with automatic lifecycle management:
+For self-contained React widgets, extend `ShinyReactComponentElement` - a custom HTML element base class that handles React lifecycle, Shiny bindings, and namespace support automatically.
+
+### Simple Widget
 
 ```typescript
-// Define a custom element that wraps your React component
-class MyWidgetElement extends HTMLElement {
-  private root: Root | null = null;
+import { ShinyReactComponentElement } from "@posit/shiny-react";
+import { CounterWidget } from "./CounterWidget";
 
-  connectedCallback() {
-    // Read attributes from the HTML element using dataset
-    const namespace = this.id;
-    const title = this.dataset.title || "Default Title";
-    const initialValue = parseInt(this.dataset.initialValue || "0");
+class CounterWidgetElement extends ShinyReactComponentElement {
+  static component = CounterWidget;
+}
 
-    this.root = createRoot(this);
-    this.root.render(
-      <StrictMode>
-        <ShinyModuleProvider namespace={namespace}>
-          <MyWidget title={title} initialValue={initialValue} />
-        </ShinyModuleProvider>
-      </StrictMode>
+if (!customElements.get("counter-widget")) {
+  customElements.define("counter-widget", CounterWidgetElement);
+}
+```
+
+That's it! The base class automatically:
+- Creates a React root and renders your component
+- Wraps in `ShinyModuleProvider` if the element has an `id` attribute
+- Parses `data-*` attributes into props via `getConfig()` (with JSON auto-parsing)
+- Cleans up React and Shiny bindings on disconnect
+
+### Blended Components (React + Shiny Content)
+
+For layouts where React controls the structure but Shiny provides the content (inputs, outputs, plots), use the slot system:
+
+```typescript
+import { ShinyReactComponentElement } from "@posit/shiny-react";
+import { SidebarLayout } from "./SidebarLayout";
+
+class SidebarLayoutElement extends ShinyReactComponentElement {
+  protected render() {
+    const config = this.getConfig();
+    return (
+      <SidebarLayout
+        {...config}
+        onSlotMount={this.onSlotMount}  // Pass the slot mounting callback
+      />
     );
-  }
-
-  disconnectedCallback() {
-    if (this.root) {
-      this.root.unmount();
-      this.root = null;
-    }
   }
 }
 
-customElements.define("my-widget", MyWidgetElement);
+if (!customElements.get("react-sidebar-layout")) {
+  customElements.define("react-sidebar-layout", SidebarLayoutElement);
+}
 ```
 
-**Why custom web elements?**
-- Pass configuration through HTML attributes to React props
-- Automatic initialization when added to DOM
-- Automatic cleanup when removed (works with dynamic rendering)
-- Semantic HTML: `<my-widget>` instead of generic `<div>`
-- Self-contained: all widget logic in one place
-- Compatible with Shiny's `insertUI()`/`removeUI()` and `ui.insert_ui()`/`ui.remove_ui()`
+In your React component, call `onSlotMount(slotName, containerElement)` after the container mounts to move Shiny content into place.
 
-Then create clean Shiny APIs that pass attributes:
+**Slot naming:**
+- Use `data-slot="name"` attributes in R/Python to create named slots
+- If no `data-slot` elements exist, all children are captured as `__children__`
 
+### Configuration via Data Attributes
+
+The `getConfig()` method automatically parses `data-*` attributes:
+
+```html
+<my-widget data-count="5" data-enabled="true" data-items="[1,2,3]" data-title="Hello">
+```
+
+Becomes: `{ count: 5, enabled: true, items: [1,2,3], title: "Hello" }`
+
+- Numbers and booleans are parsed from JSON
+- Arrays and objects work via JSON
+- Plain strings that aren't valid JSON stay as strings
+
+### R/Python Widget APIs
+
+Create clean Shiny APIs that pass attributes:
+
+**R:**
 ```r
-# R
 my_widget_ui <- function(id, title = "My Widget", initial_value = 0) {
-  card(
-    card_header(title),
+  tagList(
+    htmlDependency(...),  # Include your JS/CSS
     tag("my-widget", list(
       id = id,
       `data-title` = title,
@@ -151,18 +179,23 @@ my_widget_ui <- function(id, title = "My Widget", initial_value = 0) {
 }
 ```
 
+**Python:**
 ```python
-# Python
 def my_widget_ui(id: str, title: str = "My Widget", initial_value: int = 0):
-    return ui.card(
-        ui.card_header(title),
+    return ui.TagList(
+        ui.include_js(...),  # Include your JS/CSS
         ui.HTML(f'<my-widget id="{id}" data-title="{title}" data-initial-value="{initial_value}"></my-widget>')
     )
 ```
 
-**Tip:** Use `data-*` attributes for custom configuration to follow HTML standards. In the custom element, you can read these attributes and pass them as props to your React component.
+**Why custom web elements?**
+- Automatic initialization when added to DOM
+- Automatic cleanup when removed (works with `insertUI()`/`removeUI()`)
+- Configuration via HTML attributes → React props
+- Semantic HTML: `<my-widget>` instead of generic `<div>`
+- Self-contained: all widget logic in one place
 
-See [examples/8-modules/app-standard.R](examples/8-modules/app-standard.R) for a complete working example with dynamic widget rendering.
+See [examples/8-modules/](examples/8-modules/) for complete working examples.
 
 ## Shiny Module Namespaces
 

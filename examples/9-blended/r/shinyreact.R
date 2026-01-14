@@ -107,7 +107,7 @@ react_nav_panel <- function(title, ..., icon = NULL, value = title) {
   }
 
   div(
-    `data-panel-id` = value,
+    `data-slot` = value,
     `data-panel-title` = title,
     `data-panel-icon` = icon_svg,
     class = "react-sidebar-panel-content",
@@ -144,7 +144,7 @@ react_sidebar_layout <- function(
   # Extract panel metadata for React
   panel_config <- lapply(panels, function(p) {
     list(
-      id = p$attribs$`data-panel-id`,
+      id = p$attribs$`data-slot`,
       title = p$attribs$`data-panel-title`,
       icon = p$attribs$`data-panel-icon`
     )
