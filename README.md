@@ -91,22 +91,198 @@ def server(input, output, session):
 ```
 
 
+## Creating Reusable React Widgets
+
+When building React widgets for Shiny apps, **use custom web elements** for self-contained components with automatic lifecycle management:
+
+```typescript
+// Define a custom element that wraps your React component
+class MyWidgetElement extends HTMLElement {
+  private root: Root | null = null;
+
+  connectedCallback() {
+    // Read attributes from the HTML element using dataset
+    const namespace = this.id;
+    const title = this.dataset.title || "Default Title";
+    const initialValue = parseInt(this.dataset.initialValue || "0");
+
+    this.root = createRoot(this);
+    this.root.render(
+      <StrictMode>
+        <ShinyModuleProvider namespace={namespace}>
+          <MyWidget title={title} initialValue={initialValue} />
+        </ShinyModuleProvider>
+      </StrictMode>
+    );
+  }
+
+  disconnectedCallback() {
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
+  }
+}
+
+customElements.define("my-widget", MyWidgetElement);
+```
+
+**Why custom web elements?**
+- Pass configuration through HTML attributes to React props
+- Automatic initialization when added to DOM
+- Automatic cleanup when removed (works with dynamic rendering)
+- Semantic HTML: `<my-widget>` instead of generic `<div>`
+- Self-contained: all widget logic in one place
+- Compatible with Shiny's `insertUI()`/`removeUI()` and `ui.insert_ui()`/`ui.remove_ui()`
+
+Then create clean Shiny APIs that pass attributes:
+
+```r
+# R
+my_widget_ui <- function(id, title = "My Widget", initial_value = 0) {
+  card(
+    card_header(title),
+    tag("my-widget", list(
+      id = id,
+      `data-title` = title,
+      `data-initial-value` = initial_value
+    ))
+  )
+}
+```
+
+```python
+# Python
+def my_widget_ui(id: str, title: str = "My Widget", initial_value: int = 0):
+    return ui.card(
+        ui.card_header(title),
+        ui.HTML(f'<my-widget id="{id}" data-title="{title}" data-initial-value="{initial_value}"></my-widget>')
+    )
+```
+
+**Tip:** Use `data-*` attributes for custom configuration to follow HTML standards. In the custom element, you can read these attributes and pass them as props to your React component.
+
+See [examples/8-modules/app-standard.R](examples/8-modules/app-standard.R) for a complete working example with dynamic widget rendering.
+
+## Shiny Module Namespaces
+
+Shiny-React supports Shiny module namespaces, enabling multiple independent React components on a single page without ID conflicts. This is essential when:
+
+- Embedding multiple instances of the same React widget
+- Integrating React components with Shiny modules (`moduleServer` in R, `@module.server` in Python)
+- Creating reusable React widgets that work like standard Shiny UI components
+
+### Using ShinyModuleProvider
+
+Wrap your React components in `ShinyModuleProvider` to automatically namespace all hooks:
+
+```typescript
+import { ShinyModuleProvider } from '@posit/shiny-react';
+
+<ShinyModuleProvider namespace="counter1">
+  <CounterWidget />
+</ShinyModuleProvider>
+```
+
+All hooks inside the provider (`useShinyInput`, `useShinyOutput`, `useShinyMessageHandler`, and `ImageOutput`) will automatically prefix their IDs with the module namespace using a `-` separator (e.g., `count` becomes `counter1-count`).
+
+### Explicit Namespace Option
+
+Alternatively, pass a `namespace` option directly to hooks:
+
+```typescript
+const [value, setValue] = useShinyInput("count", 0, { namespace: "counter1" });
+// Connects to input$counter1-count in R or input.counter1_count() in Python
+```
+
+The explicit option overrides any context-provided namespace.
+
+### Server-Side Integration
+
+On the server side, use Shiny's standard module pattern. The `post_message()` function automatically applies namespacing via `session$ns()` (R) or `resolve_id()` (Python):
+
+**R Example:**
+```r
+counter_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    # input$count is automatically namespaced
+    output$serverCount <- render_json({ input$count * 2 })
+
+    # Messages are automatically namespaced via session$ns()
+    post_message(session, "notification", list(text = "Updated!"))
+  })
+}
+```
+
+**Python Example:**
+```python
+@module.server
+def counter_server(input, output, session):
+    @render_json
+    def serverCount():
+        return input.count() * 2
+
+    # Messages are automatically namespaced via resolve_id()
+    await post_message(session, "notification", {"text": "Updated!"})
+```
+
+### Example: Reusable React Widget
+
+See [examples/8-modules/](examples/8-modules/) for a complete example with two variants:
+
+1. **Full React app** using `page_react()` with multiple `ShinyModuleProvider` instances
+2. **Standard Shiny app** (recommended) with React widgets embedded in traditional Shiny UI, following a clean API pattern:
+
+```r
+# Create widget UI
+counter_ui <- function(id, title = "Counter") {
+  card(
+    card_header(title),
+    tags$tag("counter-widget", list(`data-namespace` = id))
+  )
+}
+
+# Widget server returns reactive value
+counter_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    # ... server logic ...
+    reactive({ input$count })
+  })
+}
+
+# Use in app
+ui <- page_fluid(
+  counter_ui("counter1", "Counter A"),
+  counter_ui("counter2", "Counter B")
+)
+
+server <- function(input, output, session) {
+  count1 <- counter_server("counter1")
+  count2 <- counter_server("counter2")
+  # Use reactive values elsewhere
+}
+```
+
+
 ## TypeScript/JavaScript API
 
 ### React Hooks
 
-- **`useShinyInput<T>(id, defaultValue, options?)`** - Send data from React to Shiny server with debouncing and priority control
-- **`useShinyOutput<T>(outputId, defaultValue?)`** - Receive reactive data from Shiny server outputs
-- **`useShinyMessageHandler<T>(messageType, handler)`** - Handle custom messages sent from Shiny server with automatic cleanup
+- **`useShinyInput<T>(id, defaultValue, options?)`** - Send data from React to Shiny server with debouncing, priority control, and optional namespace
+- **`useShinyOutput<T>(outputId, defaultValue?, options?)`** - Receive reactive data from Shiny server outputs with optional namespace
+- **`useShinyMessageHandler<T>(messageType, handler, options?)`** - Handle custom messages sent from Shiny server with automatic cleanup and optional namespace
 - **`useShinyInitialized()`** - Hook to determine when Shiny has finished initializing
 
 ### Components
 
-- **`ImageOutput`** - Display Shiny image/plot outputs with automatic sizing
+- **`ImageOutput`** - Display Shiny image/plot outputs with automatic sizing and optional namespace
+- **`ShinyModuleProvider`** - Context provider for automatic namespace application to child hooks
 
 ### Options
 
-Input options support debouncing (`debounceMs`) and event priority (`priority`) for fine-grained control over server communication timing.
+- **Debouncing** (`debounceMs`) - Control timing of server communication (default: 100ms for inputs)
+- **Event Priority** (`priority`) - Use `"event"` for button clicks to ensure each event is captured
+- **Namespace** (`namespace`) - Apply Shiny module namespace to IDs (available in all hooks and `ImageOutput`)
 
 
 
@@ -282,4 +458,28 @@ Key features demonstrated:
 - **Custom Message Handlers** - Server-initiated streaming communication
 
 ![AI Chat Example](docs/7-chat.jpeg)
+
+### Shiny Module Namespaces
+
+The [examples/8-modules/](examples/8-modules/) directory demonstrates how to use Shiny module namespaces to create multiple independent React widgets on a single page. This example includes two variants:
+
+1. **Full React App** (`app.R` / `app.py`) - Single-page React application using `page_react()` with multiple `ShinyModuleProvider` instances
+2. **Standard Shiny App** (`app-standard.R` / `app-standard.py`) - Traditional Shiny/bslib app embedding React widgets as reusable components (recommended for integration)
+
+Key features demonstrated:
+- **Module Namespacing** - Multiple widget instances without ID conflicts
+- **Independent State** - Each widget maintains its own state
+- **Custom Element Pattern** - Uses `<counter-widget>` for semantic initialization
+- **Communication Patterns** - Demonstrates inputs, outputs, and messages with namespacing
+- **Reactive Return Values** - Server functions return reactive values for integration
+- **Clean API** - Simple `counter_ui()` and `counter_server()` functions following Shiny conventions
+
+The standard app variant shows the recommended pattern for embedding React widgets in traditional Shiny applications, making React components feel like native Shiny UI components.
+
+**Run it:**
+```bash
+cd examples/8-modules
+npm install
+npm run dev-standard    # Runs both R and Python variants
+```
 

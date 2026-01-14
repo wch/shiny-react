@@ -10,6 +10,10 @@ export {
   useShinyMessageHandler,
   useShinyOutput,
 } from "./use-shiny";
+export {
+  ShinyModuleProvider,
+  useShinyModuleNamespace,
+} from "./ShinyModuleContext";
 
 export type ShinyClassExtended = ShinyClass & {
   reactRegistry: ShinyReactRegistry;

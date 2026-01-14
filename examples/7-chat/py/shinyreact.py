@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Sequence, Union
-
-from shiny import Session, ui
+from shiny import ui, Session
 from shiny.html_dependencies import shiny_deps
-from shiny.render.renderer import Renderer, ValueFn
 from shiny.types import Jsonifiable
+from shiny.render.renderer import Renderer, ValueFn
+from shiny.module import resolve_id
+from typing import Any, Mapping, Optional, Sequence, Union
 
 
 def page_bare(*args: ui.TagChild, title: str | None = None, lang: str = "en") -> ui.Tag:
@@ -23,7 +23,6 @@ def page_react(
     css_file: str | None = "main.css",
     lang: str = "en",
 ) -> ui.Tag:
-
     head_items: list[ui.TagChild] = []
 
     if js_file:
@@ -90,6 +89,10 @@ async def post_message(session: Session, type: str, data: JsonifiableIn):
     React components using useShinyMessageHandler() hook. This wraps messages in
     a standard format and sends them via the "shinyReactMessage" channel.
 
+    When used within a Shiny module (@module.server), the type is automatically
+    namespaced using resolve_id(). Outside of modules, the type is passed through
+    unchanged.
+
     Parameters
     ----------
     session
@@ -100,4 +103,7 @@ async def post_message(session: Session, type: str, data: JsonifiableIn):
     data
         The data to send to the client
     """
-    await session.send_custom_message("shinyReactMessage", {"type": type, "data": data})
+    namespaced_type = resolve_id(type)
+    await session.send_custom_message(
+        "shinyReactMessage", {"type": namespaced_type, "data": data}
+    )

@@ -7,6 +7,10 @@ import { type InputRegistryEntry } from "./input-registry";
 import { initializeMessageRegistry } from "./message-registry";
 import { createReactOutputBinding } from "./output-registry";
 import { getReactRegistry, initializeReactRegistry } from "./react-registry";
+import {
+  applyNamespace,
+  useShinyModuleNamespace,
+} from "./ShinyModuleContext";
 
 /**
  * A React hook for managing a Shiny input value.
@@ -34,6 +38,8 @@ import { getReactRegistry, initializeReactRegistry } from "./react-registry";
  * (default: 100).
  * @param options.priority Priority level for the input event (from Shiny's
  * EventPriority enum).
+ * @param options.namespace Optional namespace prefix for Shiny module support.
+ * If provided, the ID will be prefixed as `${namespace}-${id}`.
  * @returns A tuple containing the current value and a function to set the
  * value: `[value, setValue]`.
  */
@@ -43,12 +49,19 @@ export function useShinyInput<T>(
   {
     debounceMs = 100,
     priority,
+    namespace: explicitNamespace,
   }: {
     debounceMs?: number;
     priority?: EventPriority;
+    namespace?: string;
   } = {},
 ): [T, (value: T) => void] {
   ensureShinyReactInitialized();
+
+  // Apply namespace from context or explicit option
+  const contextNamespace = useShinyModuleNamespace();
+  const namespace = explicitNamespace ?? contextNamespace;
+  const namespacedId = applyNamespace(id, namespace);
 
   // NOTE: It's a little odd that debounceMs and priority passed this way; the
   // debounceMs is associated with the specific input name, and in Shiny's API,
@@ -60,7 +73,7 @@ export function useShinyInput<T>(
   let startValue: T = defaultValue;
   const reactRegistry = getReactRegistry();
   const inputRegistryEntry = reactRegistry.inputs.get(
-    id,
+    namespacedId,
   ) as InputRegistryEntry<T>;
 
   if (inputRegistryEntry) {
@@ -85,7 +98,7 @@ export function useShinyInput<T>(
     // Make sure the input registry entry exists for this Shiny input ID
     const reactRegistry = getReactRegistry();
     const inputRegistryEntry = reactRegistry.inputs.getOrCreate<T>(
-      id,
+      namespacedId,
       defaultValue,
     );
 
@@ -109,7 +122,7 @@ export function useShinyInput<T>(
       // useEffect will be called again. If someone wants to really get rid of
       // the registry entry, they will have to do so manually.
     };
-  }, [id, shinyInitialized, debounceMs, priority, defaultValue]);
+  }, [namespacedId, shinyInitialized, debounceMs, priority, defaultValue]);
 
   const setValueWrapped = useCallback(
     (value: T) => {
@@ -118,14 +131,14 @@ export function useShinyInput<T>(
       // }
 
       const reactRegistry = getReactRegistry();
-      const inputRegistryEntry = reactRegistry.inputs.get(id);
+      const inputRegistryEntry = reactRegistry.inputs.get(namespacedId);
       if (!inputRegistryEntry) {
         console.error(`Input ${id} not found`);
         return;
       }
       inputRegistryEntry.setValue(value);
     },
-    [id],
+    [namespacedId, id],
   );
 
   return [value, setValueWrapped];
@@ -139,6 +152,9 @@ export function useShinyInput<T>(
  * @param outputId The ID of the Shiny output to subscribe to.
  * @param defaultValue Optional default value to use before the first server
  * update.
+ * @param options Optional configuration object.
+ * @param options.namespace Optional namespace prefix for Shiny module support.
+ * If provided, the outputId will be prefixed as `${namespace}-${outputId}`.
  * @returns A tuple containing [value, recalculating] where:
  *   - value: The current value of the Shiny output
  *   - recalculating: Boolean indicating if the server is currently
@@ -147,6 +163,11 @@ export function useShinyInput<T>(
 export function useShinyOutput<T>(
   outputId: string,
   defaultValue: T | undefined = undefined,
+  {
+    namespace: explicitNamespace,
+  }: {
+    namespace?: string;
+  } = {},
 ): [T | undefined, boolean] {
   const [value, setValue] = useState<T | undefined>(defaultValue);
   const [recalculating, setRecalculating] = useState<boolean>(false);
@@ -154,17 +175,22 @@ export function useShinyOutput<T>(
 
   ensureShinyReactInitialized();
 
+  // Apply namespace from context or explicit option
+  const contextNamespace = useShinyModuleNamespace();
+  const namespace = explicitNamespace ?? contextNamespace;
+  const namespacedOutputId = applyNamespace(outputId, namespace);
+
   useEffect(() => {
     if (!shinyInitialized) {
       return;
     }
 
     const reactRegistry = getReactRegistry();
-    reactRegistry.outputs.add(outputId, setValue, setRecalculating);
+    reactRegistry.outputs.add(namespacedOutputId, setValue, setRecalculating);
     return () => {
-      reactRegistry.outputs.remove(outputId);
+      reactRegistry.outputs.remove(namespacedOutputId);
     };
-  }, [outputId, shinyInitialized]);
+  }, [namespacedOutputId, shinyInitialized]);
 
   return [value, recalculating];
 }
@@ -191,17 +217,30 @@ export function useShinyOutput<T>(
  * @param messageType The type/name of the custom message to listen for.
  * @param handler The function to call when a message of this type is received.
  * The handler receives the message data as its parameter.
+ * @param options Optional configuration object.
+ * @param options.namespace Optional namespace prefix for Shiny module support.
+ * If provided, the messageType will be prefixed as `${namespace}-${messageType}`.
  */
 export function useShinyMessageHandler<T = any>(
   messageType: string,
   handler: (data: T) => void,
+  {
+    namespace: explicitNamespace,
+  }: {
+    namespace?: string;
+  } = {},
 ): void {
   const shinyInitialized = useShinyInitialized();
 
   ensureShinyReactInitialized();
 
+  // Apply namespace from context or explicit option
+  const contextNamespace = useShinyModuleNamespace();
+  const namespace = explicitNamespace ?? contextNamespace;
+  const namespacedMessageType = applyNamespace(messageType, namespace);
+
   useEffect(() => {
-    if (!shinyInitialized || !messageType || !handler) {
+    if (!shinyInitialized || !namespacedMessageType || !handler) {
       return;
     }
     const shiny = getShiny();
@@ -210,14 +249,14 @@ export function useShinyMessageHandler<T = any>(
     }
 
     // Register the message handler with our dedicated message registry
-    shiny.messageRegistry.addHandler(messageType, handler);
+    shiny.messageRegistry.addHandler(namespacedMessageType, handler);
 
     // Cleanup function that removes the handler when component unmounts
     // or when messageType/handler changes
     return () => {
-      shiny.messageRegistry.removeHandler(messageType, handler);
+      shiny.messageRegistry.removeHandler(namespacedMessageType, handler);
     };
-  }, [shinyInitialized, messageType, handler]);
+  }, [shinyInitialized, namespacedMessageType, handler]);
 }
 
 /**
