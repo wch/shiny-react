@@ -1,0 +1,39 @@
+{
+  "private": true,
+  "name": "shiny-react-blended",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Blended React layout with native Shiny UI content",
+  "scripts": {
+    "build": "concurrently -c auto \"npm run build-r\" \"npm run build-py\" \"tsc --noEmit\"",
+    "build-r": "esbuild srcts/main.tsx --bundle --minify --outdir=r/www --entry-names=sidebar --format=esm --alias:react=react",
+    "build-py": "esbuild srcts/main.tsx --bundle --minify --outdir=python/www --entry-names=sidebar --format=esm --alias:react=react",
+    "dev-r": "concurrently -c auto \"npm run watch-r\" \"npm run shinyapp-r\"",
+    "dev-py": "concurrently -c auto \"npm run watch-py\" \"npm run shinyapp-py\"",
+    "watch-r": "esbuild srcts/main.tsx --bundle --outdir=r/www --entry-names=sidebar --sourcemap --format=esm --alias:react=react --watch",
+    "watch-py": "esbuild srcts/main.tsx --bundle --outdir=python/www --entry-names=sidebar --sourcemap --format=esm --alias:react=react --watch",
+    "shinyapp-r": "Rscript -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${R_PORT:-8000})\"",
+    "shinyapp-py": "uvx --with matplotlib,pandas,faicons,jinja2 shiny run python/app.py --port ${PY_PORT:-8001} --reload",
+    "clean": "rm -rf r/www python/www"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "concurrently": "^9.0.1",
+    "esbuild": "^0.25.9",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@posit/shiny-react": "file:../.."
+  },
+  "exampleMetadata": {
+    "title": "Blended React + Shiny UI",
+    "description": "React sidebar layout containing native Shiny UI elements",
+    "deployToShinylive": true,
+    "comment": ""
+  }
+}

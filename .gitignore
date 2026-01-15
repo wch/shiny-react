@@ -5,3 +5,4 @@ dist/
 .DS_Store
 examples/*/package-lock.json
 shinylive-pages/
+examples/*/*/www/

@@ -70,10 +70,14 @@ render_json <- function(
 #' @param type The message type (should match messageType in useShinyMessageHandler)
 #' @param data The data to send to the client
 post_message <- function(session, type, data) {
+  # Apply namespace to message type using session$ns()
+  # session$ns() returns the ID unchanged if not in a module context
+  namespaced_type <- session$ns(type)
+
   session$sendCustomMessage(
     "shinyReactMessage",
     list(
-      type = type,
+      type = namespaced_type,
       data = data
     )
   )

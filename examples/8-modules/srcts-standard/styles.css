@@ -1,0 +1,72 @@
+.counter-widget-content {
+  padding: 16px;
+}
+
+.counter-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.counter-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.counter-value .label {
+  font-weight: 500;
+  color: #666;
+}
+
+.counter-value .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.increment-button {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.increment-button:hover {
+  opacity: 0.9;
+}
+
+.increment-button:active {
+  transform: scale(0.98);
+}
+
+.notification {
+  margin-top: 16px;
+  padding: 12px;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  border-radius: 6px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

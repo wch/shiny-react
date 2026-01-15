@@ -1,0 +1,55 @@
+{
+  "private": true,
+  "name": "shiny-react-modules",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Shiny module namespace example using shiny-react",
+  "scripts": {
+    "build": "concurrently -c auto \"npm run build-app\" \"npm run build-standard\" \"tsc --noEmit\"",
+    "build-app": "concurrently -c auto \"npm run build-app-r\" \"npm run build-app-py\"",
+    "build-app-r": "esbuild srcts/main.tsx --bundle --minify --outdir=r/www --entry-names=app --format=esm --alias:react=react",
+    "build-app-py": "esbuild srcts/main.tsx --bundle --minify --outdir=py/www --entry-names=app --format=esm --alias:react=react",
+    "build-standard": "concurrently -c auto \"npm run build-standard-r\" \"npm run build-standard-py\"",
+    "build-standard-r": "esbuild srcts-standard/main.tsx --bundle --minify --outdir=r/www --entry-names=widget --format=esm --alias:react=react",
+    "build-standard-py": "esbuild srcts-standard/main.tsx --bundle --minify --outdir=py/www --entry-names=widget --format=esm --alias:react=react",
+    "dev": "concurrently -c auto \"npm run watch-app\" \"npm run shinyapp\"",
+    "dev-r": "concurrently -c auto \"npm run watch-app-r\" \"npm run shinyapp-r\"",
+    "dev-py": "concurrently -c auto \"npm run watch-app-py\" \"npm run shinyapp-py\"",
+    "dev-standard": "concurrently -c auto \"npm run watch-standard\" \"npm run shinyapp-standard\"",
+    "dev-standard-r": "concurrently -c auto \"npm run watch-standard-r\" \"npm run shinyapp-standard-r\"",
+    "dev-standard-py": "concurrently -c auto \"npm run watch-standard-py\" \"npm run shinyapp-standard-py\"",
+    "watch-app": "concurrently -c auto \"npm run watch-app-r\" \"npm run watch-app-py\" \"tsc --noEmit --watch --preserveWatchOutput\"",
+    "watch-app-r": "esbuild srcts/main.tsx --bundle --outdir=r/www --entry-names=app --sourcemap --format=esm --alias:react=react --watch",
+    "watch-app-py": "esbuild srcts/main.tsx --bundle --outdir=py/www --entry-names=app --sourcemap --format=esm --alias:react=react --watch",
+    "watch-standard": "concurrently -c auto \"npm run watch-standard-r\" \"npm run watch-standard-py\"",
+    "watch-standard-r": "esbuild srcts-standard/main.tsx --bundle --outdir=r/www --entry-names=widget --sourcemap --format=esm --alias:react=react --watch",
+    "watch-standard-py": "esbuild srcts-standard/main.tsx --bundle --outdir=py/www --entry-names=widget --sourcemap --format=esm --alias:react=react --watch",
+    "shinyapp": "concurrently -c auto \"npm run shinyapp-r\" \"npm run shinyapp-py\"",
+    "shinyapp-r": "Rscript -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app.R', port=${R_PORT:-8000})\"",
+    "shinyapp-py": "cd py && shiny run app.py --reload --port ${PY_PORT:-8001}",
+    "shinyapp-standard": "concurrently -c auto \"npm run shinyapp-standard-r\" \"npm run shinyapp-standard-py\"",
+    "shinyapp-standard-r": "Rscript -e \"options(shiny.autoreload = TRUE); shiny::runApp('r/app-standard.R', port=${R_PORT:-8000})\"",
+    "shinyapp-standard-py": "cd py && shiny run app-standard.py --reload --port ${PY_PORT:-8001}",
+    "clean": "rm -rf r/www py/www"
+  },
+  "author": "Winston Chang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "concurrently": "^9.0.1",
+    "esbuild": "^0.25.9",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@posit/shiny-react": "file:../.."
+  },
+  "exampleMetadata": {
+    "title": "Module Namespaces",
+    "description": "Multiple React widgets using Shiny module namespaces",
+    "deployToShinylive": true,
+    "comment": ""
+  }
+}
