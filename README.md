@@ -271,7 +271,7 @@ See [examples/8-modules/](examples/8-modules/) for a complete example with two v
 counter_ui <- function(id, title = "Counter") {
   card(
     card_header(title),
-    tags$tag("counter-widget", list(`data-namespace` = id))
+    tags$tag("counter-widget", list(id = id))
   )
 }
 
